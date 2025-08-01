@@ -36,7 +36,7 @@
 
 
 		<!--
-https://mvnrepository.com/artifact/javax.servlet.jsp/javax.servlet.jsp-api -->
+		https://mvnrepository.com/artifact/javax.servlet.jsp/javax.servlet.jsp-api -->
 		<dependency>
 			<groupId>javax.servlet.jsp</groupId>
 			<artifactId>javax.servlet.jsp-api</artifactId>
@@ -52,15 +52,107 @@ https://mvnrepository.com/artifact/javax.servlet.jsp/javax.servlet.jsp-api -->
 			<version>1.2</version>
 		</dependency>
 
-
 		<!--
-https://mvnrepository.com/artifact/org.springframework/spring-webmvc -->
+		https://mvnrepository.com/artifact/org.springframework/spring-webmvc -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
 			<version>5.3.27</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple -->
+		<dependency>
+		    <groupId>com.googlecode.json-simple</groupId>
+		    <artifactId>json-simple</artifactId>
+		    <version>1.1.1</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+		<dependency>
+		    <groupId>org.projectlombok</groupId>
+		    <artifactId>lombok</artifactId>
+		    <version>1.18.38</version>
+		</dependency>
+		
+		
+		
+		<!-- https://mvnrepository.com/artifact/org.springframework/spring-jdbc -->				
+		<dependency>				
+			<groupId>org.springframework</groupId>			
+			<artifactId>spring-jdbc</artifactId>			
+			<version>5.3.27</version>			
+		</dependency>				
+						
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-dbcp2 -->				
+		<dependency>				
+			<groupId>org.apache.commons</groupId>			
+			<artifactId>commons-dbcp2</artifactId>			
+			<version>2.9.0</version>			
+		</dependency>				
+						
+		<!-- https://mvnrepository.com/artifact/org.mybatis/mybatis -->				
+		<dependency>				
+			<groupId>org.mybatis</groupId>			
+			<artifactId>mybatis</artifactId>			
+			<version>3.5.10</version>			
+		</dependency>				
+						
+		<!-- https://mvnrepository.com/artifact/org.mybatis/mybatis-spring -->				
+		<dependency>				
+			<groupId>org.mybatis</groupId>			
+			<artifactId>mybatis-spring</artifactId>			
+			<version>3.0.0</version>			
+		</dependency>				
+						
+		<!-- https://mvnrepository.com/artifact/com.oracle.database.jdbc/ojdbc10 -->				
+		<dependency>				
+			<groupId>com.oracle.database.jdbc</groupId>			
+			<artifactId>ojdbc10</artifactId>			
+			<version>19.21.0.0</version>			
+		</dependency>				
+
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-databind</artifactId>
+		    <version>2.19.2</version>
+		</dependency>
+		
+		
+		<!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->		
+		<dependency>		
+			<groupId>org.apache.logging.log4j</groupId>	
+			<artifactId>log4j-core</artifactId>	
+			<version>2.22.1</version>	
+		</dependency>		
+		<!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api -->		
+		<dependency>		
+			<groupId>org.apache.logging.log4j</groupId>	
+			<artifactId>log4j-api</artifactId>	
+			<version>2.22.1</version>	
+		</dependency>		
+		<!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j2-impl -->		
+		<dependency>		
+			<groupId>org.apache.logging.log4j</groupId>	
+			<artifactId>log4j-slf4j2-impl</artifactId>	
+			<version>2.22.1</version>	
+		</dependency>		
+
+
+
+		<!-- https://mvnrepository.com/artifact/javax.validation/validation-api -->
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+			<version>2.0.1.Final</version>
+		</dependency> 
+		
+		<!-- https://mvnrepository.com/artifact/org.hibernate.validator/hibernate-validator -->
+		<dependency>
+			<groupId>org.hibernate.validator</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>6.1.2.Final</version>
+		</dependency>
 
 	</dependencies>
 </project>
