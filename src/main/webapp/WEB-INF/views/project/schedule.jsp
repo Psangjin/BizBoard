@@ -97,6 +97,7 @@ body {
 
 .body-container {
 	width: 90vw;
+	height: 100%;
 	flex: 1;
 	display: flex;
 	padding: 5px;
@@ -104,9 +105,9 @@ body {
 
 .body-left {
   height: 100%;
-  flex-grow:1;
+  flex:1;
   position: relative;
-
+  min-width: 220px;
 }
 
 #external-events {
@@ -129,13 +130,6 @@ body {
 	cursor: move;
 }
 
-.cal-red-bg {
-	background-color: red;
-}
-
-.cal-blue-bg {
-	background-color: blue;
-}
 
 .fc-day-today {
 	background-color: #ffecb3 !important;
@@ -144,7 +138,7 @@ body {
 }
 
 #calendar {
-	flex-grow:4;
+	flex:4;
 }
 
 #event-details {
@@ -250,6 +244,25 @@ body {
   background-color: #3344dd;
 }
 
+.color-circle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: transform 0.2s, border 0.2s;
+  display: inline-block;
+}
+
+.color-circle:hover {
+  transform: scale(1.2);
+}
+
+.color-circle.selected {
+  border: 2px solid #333;
+}
+
+
 </style>
 </head>
 <body>
@@ -266,10 +279,9 @@ body {
 						<p>
 							<strong>달력에 드래그하여 추가</strong>
 						</p>
-						<div class="fc-event cal-red-bg" data-title="기본일정1"
-							data-color="red">일정1</div>
-						<div class="fc-event cal-blue-bg" data-title="기본일정2"
-							data-color="blue">일정2</div>
+						<div class="fc-event" data-title="기본일정1"
+							data-color="#888888" style="background-color: #888888;">일정 추가</div>
+						
 					</div>
 	
 					<!-- 일정 상세 보기 박스 -->
@@ -290,7 +302,18 @@ body {
 				<div id="eventModal">
 					<h3>일정 추가</h3>
 					<label>제목: <input type="text" id="modal-title" /></label><br>
-					<br> <label>설명: <textarea id="modal-description"/></textarea></label>
+					<br> <label>설명: <textarea id="modal-description"></textarea></label>
+					<div style="margin-top: 10px;">
+					  <label><strong>색상 선택:</strong></label>
+					  <div id="color-options" style="margin-top: 5px; display: flex; gap: 10px;">
+					    <div class="color-circle" data-color="#007bff" style="background-color: #007bff;"></div>
+					    <div class="color-circle" data-color="#28a745" style="background-color: #28a745;"></div>
+					    <div class="color-circle" data-color="#ffc107" style="background-color: #ffc107;"></div>
+					    <div class="color-circle" data-color="#dc3545" style="background-color: #dc3545;"></div>
+					    <div class="color-circle" data-color="#6f42c1" style="background-color: #6f42c1;"></div>
+					  </div>
+					  <input type="hidden" id="modal-color" value="#007bff" />
+					</div>
 					<br> <br>
 					<button id="save-event">저장</button>
 					<button id="cancel-event">취소</button>
@@ -304,140 +327,123 @@ body {
 	</div>
 </div>
 	<script>
-		document.addEventListener('DOMContentLoaded', function() {
-			let draggedEventInfo = null;
+  document.addEventListener('DOMContentLoaded', function() {
+    let draggedEventInfo = null;
+	//캘린더에 일정 드래그시 가져올 정보
+    new FullCalendar.Draggable(document.getElementById('external-events'), {
+      itemSelector: '.fc-event',
+      eventData: function(eventEl) {
+        const color = eventEl.dataset.color;
+        return {
+          title: eventEl.dataset.title,
+          backgroundColor: color,
+          borderColor: color,
+          extendedProps: {
+            typecolor: color,
+            description: eventEl.dataset.description || ''
+          }
+        };
+      }
+    });
+
+    const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
+      initialView: 'dayGridMonth',
+      headerToolbar: {
+        left: 'prevYear,prev,next,nextYear today',
+        center: 'title',
+        right: 'dayGridMonth,dayGridWeek,timeGridDay'
+      },
+      droppable: true,
+      editable: true, // 편집 가능 여부
+      events: [], //초기 설정 일정
+	  //캘린더에 일정 드래그앤 드롭시
+      eventReceive: function(info) {
+        draggedEventInfo = info;
+        document.getElementById('modal-title').value = '';
+        document.getElementById('modal-description').value = '';
+        document.getElementById('modal-color').value = '#007bff';
+
+        document.querySelectorAll('.color-circle').forEach(c => c.classList.remove('selected'));
+        document.querySelector('.color-circle[data-color="#007bff"]').classList.add('selected');
+
+        document.getElementById('eventModal').style.display = 'block';
+        document.getElementById('modalBackdrop').style.display = 'block';
+      },
+	  //캘린더의 일정 클릭시
+      eventClick: function(info) {
+        const event = info.event;
+        const title = event.title || '제목 없음';
+        const description = event.extendedProps.description || '설명 없음';
+        document.getElementById('event-title').textContent = title;
+        document.getElementById('event-description').textContent = description;
+        document.getElementById('event-details').style.display = 'block';
+      }
+    });
+
+    //일정 추가 완료
+    document.getElementById('save-event').addEventListener('click', function() {
+      const title = document.getElementById('modal-title').value.trim();
+      const desc = document.getElementById('modal-description').value.trim();
+      const color = document.getElementById('modal-color').value;
+
+      if (!title) {
+        alert('제목을 입력해주세요.');
+        return;
+      }
+
+      if (draggedEventInfo) {
+        draggedEventInfo.event.setProp('title', title);
+        draggedEventInfo.event.setExtendedProp('description', desc);
+        if (color) {
+          draggedEventInfo.event.setProp('backgroundColor', color);
+          draggedEventInfo.event.setProp('borderColor', color);
+          draggedEventInfo.event.setExtendedProp('typecolor', color);
+        }
+      }
+
+      closeModal();
+    });
+
+    //일정 생성 취소
+    document.getElementById('cancel-event').addEventListener('click', function() {
+      if (draggedEventInfo) {
+        draggedEventInfo.event.remove();
+      }
+      closeModal();
+    });
+
+    //모든 모달 닫기
+    function closeModal() {
+      document.getElementById('eventModal').style.display = 'none';
+      document.getElementById('modalBackdrop').style.display = 'none';
+      draggedEventInfo = null;
+    }
+
+    calendar.render();
 	
-			new FullCalendar.Draggable(document
-					.getElementById('external-events'), {
-				itemSelector : '.fc-event',
-				eventData : function(eventEl) {
-					const color = eventEl.dataset.color;
-					
-					return {
-						title: eventEl.dataset.title,
-					      backgroundColor: color,
-					      borderColor: color,
-					      extendedProps: {
-					        typecolor: color,
-					        description: eventEl.dataset.description || ''
-						}
-					};
-				}
-			});
-	
-			const calendar = new FullCalendar.Calendar( document.getElementById('calendar'),{
-				initialView : 'dayGridMonth',
-				headerToolbar : {
-					left : 'prevYear,prev,next,nextYear today',
-					center : 'title',
-					right : 'dayGridMonth,dayGridWeek,timeGridDay'
-				},
-				droppable : true,
-				editable : true,
-				events : [],
-				eventReceive : function(info) {
-					// 드롭된 이벤트를 저장하고 모달 표시
-					draggedEventInfo = info;
-					document.getElementById('modal-title').value = '';
-					document.getElementById('modal-description').value = '';
-					document.getElementById('eventModal').style.display = 'block';
-					document.getElementById('modalBackdrop').style.display = 'block';
-				},
-				eventClick : function(info) {
-					// 클릭된 일정 정보
-					const event = info.event;
+    //레이아웃 사이드바 기능
+    document.getElementById('toggleSidebar').addEventListener('click', function () {
+      const sidebar = document.querySelector('.body-side-menubar');
+      sidebar.classList.toggle('hidden');
+    });
 
-					// 제목과 설명 가져오기
-					const title = event.title
-							|| '제목 없음';
-					const description = event.extendedProps.description
-							|| '설명 없음';
+    document.getElementById('fa-project-icon').addEventListener('click', function() {
+      location.href = "/project/main";
+    });
 
-					// HTML 요소에 데이터 삽입
-					document.getElementById('event-title').textContent = title;
-					document.getElementById('event-description').textContent = description;
+    document.getElementById('fa-calendar-icon').addEventListener('click', function() {
+      location.href = "/project/schedule";
+    });
 
-					// 설명창 보여주기
-					document.getElementById('event-details').style.display = 'block';
-				}
-			});
-	
-			// 저장 버튼 클릭
-			document.getElementById('save-event').addEventListener('click',function() {
-				const title = document.getElementById('modal-title').value.trim();
-				const desc = document.getElementById('modal-description').value.trim();
-
-				if (!title) {
-					alert('제목을 입력해주세요.');
-					return;
-				}
-
-				if (draggedEventInfo) {
-					draggedEventInfo.event.setProp('title', title);
-					draggedEventInfo.event.setExtendedProp('description', desc);
-					const color = draggedEventInfo.event.extendedProps.typecolor;
-					if (color) {
-						draggedEventInfo.event.setProp('backgroundColor', color);
-						draggedEventInfo.event.setProp('borderColor', color);
-					}
-				}
-
-				closeModal();
-			});
-	
-			// 취소 버튼 클릭
-			document.getElementById('cancel-event').addEventListener('click', function() {
-				if (draggedEventInfo) {
-					draggedEventInfo.event.remove();
-				}
-				closeModal();
-			});
-	
-			function closeModal() {
-				document.getElementById('eventModal').style.display = 'none';
-				document.getElementById('modalBackdrop').style.display = 'none';
-				draggedEventInfo = null;
-			}
-	
-			calendar.render();
-	
-			document.getElementById('toggleSidebar').addEventListener('click', function () {
-				  const sidebar = document.querySelector('.body-side-menubar');
-				  sidebar.classList.toggle('hidden');
-				});
-			document.getElementById('fa-project-icon').addEventListener('click', function() {
-				location.href = "/project/main";
-			});
-			
-			document.getElementById('fa-calendar-icon').addEventListener('click', function() {
-				location.href = "/project/schedule";
-			});
-		});
-		//아래 코드는 +메뉴 호버 효과 나중에 모듈로 빼기
-		const fabMain = document.querySelector('.fab-main');
-		  const fabMenu = document.querySelector('.fab-menu');
-
-		  fabMain.addEventListener('mouseenter', () => {
-		    fabMenu.style.opacity = '1';
-		    fabMenu.style.pointerEvents = 'auto';
-		    fabMenu.style.transform = 'translateY(0)';
-		  });
-
-		  fabMain.addEventListener('mouseleave', () => {
-		    setTimeout(() => {
-		      if (!fabMenu.matches(':hover')) {
-		        fabMenu.style.opacity = '0';
-		        fabMenu.style.pointerEvents = 'none';
-		        fabMenu.style.transform = 'translateY(10px)';
-		      }
-		    }, 200);
-		  });
-
-		  fabMenu.addEventListener('mouseleave', () => {
-		    fabMenu.style.opacity = '0';
-		    fabMenu.style.pointerEvents = 'none';
-		    fabMenu.style.transform = 'translateY(10px)';
-		  });
-	</script>
+    //일정 추가시 색상 저장
+    document.querySelectorAll('.color-circle').forEach(circle => {
+      circle.addEventListener('click', function () {
+        document.querySelectorAll('.color-circle').forEach(c => c.classList.remove('selected'));
+        this.classList.add('selected');
+        document.getElementById('modal-color').value = this.dataset.color;
+      });
+    });
+  });
+</script>
 </body>
 </html>
