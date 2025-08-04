@@ -1,0 +1,11 @@
+CREATE TABLE schedule (
+  id NUMBER PRIMARY KEY,
+  title VARCHAR2(100),
+  content VARCHAR2(4000),
+  start_dt TIMESTAMP,
+  end_dt TIMESTAMP,
+  completed VARCHAR(5),
+  color VARCHAR2(20)
+);
+
+CREATE SEQUENCE schedule_seq START WITH 1 INCREMENT BY 1 NOCACHE;
