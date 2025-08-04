@@ -2,6 +2,7 @@ CREATE TABLE schedule (
   id NUMBER PRIMARY KEY,
   title VARCHAR2(100),
   content VARCHAR2(4000),
+  type VARCHAR2(10),
   start_dt TIMESTAMP,
   end_dt TIMESTAMP,
   completed VARCHAR(5),
