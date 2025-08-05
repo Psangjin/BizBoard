@@ -5,40 +5,57 @@
 document.addEventListener('DOMContentLoaded', function() {
     let draggedEventInfo = null;
 	//캘린더에 일정 드래그시 가져올 정보
-    new FullCalendar.Draggable(document.getElementById('external-events'), {
+    new FullCalendar.Draggable(document.getElementById('fc-external-events'), {
       itemSelector: '.fc-event',
-      eventData: function(eventEl) {
-        const color = eventEl.dataset.color;
-        return {
-          title: eventEl.dataset.title,
-          backgroundColor: color,
-          borderColor: color,
-          extendedProps: {
-            typecolor: color,
-            description: eventEl.dataset.description || ''
-          }
-        };
+	  eventData: function (eventEl) {
+	      // 편집 도구는 isEditTool을 true로 설정
+	      const isEditTool = eventEl.dataset.edit === "true";
+	      const title = eventEl.dataset.title;
+	      const color = eventEl.dataset.color;
+
+	      return {
+	        title: title,
+	        backgroundColor: color,
+	        borderColor: color,
+	        extendedProps: {
+	          isEditTool: isEditTool
+	        }
+	      };
       }
     });
 	
+	// 모달 닫기 함수
+	 function closeModal() {
+	    const eventModal = document.getElementById('fc-eventModal');
+	    const modalBackdrop = document.getElementById('fc-modalBackdrop');
+	    if(eventModal) eventModal.style.display = 'none';
+	    if(modalBackdrop) modalBackdrop.style.display = 'none';
+	  }
+	// date 객체 datetimelocal 로 변환
+	function toDatetimeLocal(date) {
+	  if (!(date instanceof Date)) return '';
+	  
+	  const year = date.getFullYear();
+	  const month = String(date.getMonth() + 1).padStart(2, '0'); // 0~11
+	  const day = String(date.getDate()).padStart(2, '0');
+	  const hour = String(date.getHours()).padStart(2, '0');
+	  const minute = String(date.getMinutes()).padStart(2, '0');
+
+	  return `${year}-${month}-${day}T${hour}:${minute}`;
+	}
 	//시작 날짜 자동 설정 함수
     function setInputDate(datetimeStr) {
-   	  const input = document.getElementById('event-start');
+   	  const input = document.getElementById('fc-event-start');
 
    	  // datetime-local 형식은 "YYYY-MM-DDTHH:MM" 이어야 함
    	  const date = new Date(datetimeStr);
-   	  const year = date.getFullYear();
-   	  const month = String(date.getMonth() + 1).padStart(2, '0'); // 0~11
-   	  const day = String(date.getDate()).padStart(2, '0');
-   	  const hour = String(date.getHours()).padStart(2, '0');
-   	  const minute = String(date.getMinutes()).padStart(2, '0');
+   	  
 
-   	  let formatted = year+'-'+month+'-'+day+'T'+hour+':'+minute;
-   	  input.value = formatted;
+   	  input.value = toDatetimeLocal(date);
    	}
 
     function handleTrashHover(e) {
-   	  const trashEl = document.getElementById("event-trash");
+   	  const trashEl = document.getElementById("fc-event-trash");
    	  const trashRect = trashEl.getBoundingClientRect();
    	  const x = e.clientX;
    	  const y = e.clientY;
@@ -55,6 +72,27 @@ document.addEventListener('DOMContentLoaded', function() {
    	    trashEl.classList.remove("hovered");
    	  }
    	}
+	
+	function openEditModal(event) {
+	  // 모달에 데이터 채우기
+	  document.getElementById('fc-modal-title').value = event.title || '';
+	  document.getElementById('fc-modal-description').value = event.extendedProps.description || '';
+	  document.getElementById('fc-modal-color').value = event.backgroundColor || '#007bff';
+	  document.getElementById('fc-event-allday').checked = event.allDay;
+	  
+	  // 시작일 설정 (datetime-local 포맷)
+	  document.getElementById('fc-event-start').value = toDatetimeLocal(event.start);
+	  
+	  // 종료일 설정 (있으면)
+	  document.getElementById('fc-event-end').value = toDatetimeLocal(event.end);
+
+	  // 모달 보이기
+	  document.getElementById('fc-eventModal').style.display = 'block';
+	  document.getElementById('fc-modalBackdrop').style.display = 'block';
+
+	  // 편집 중인 이벤트 저장 (글로벌 변수 등)
+	  window.currentEditEvent = event;
+	}
     
     //스케쥴 수정 함수
     function updateScheduleEvent(info) {
@@ -72,15 +110,15 @@ document.addEventListener('DOMContentLoaded', function() {
 		  };
 
 		  $.ajax({
-		    url: '/project/schedule/updateDate',
+		    url: '/project/schedule/update',
 		    type: 'POST',
 		    contentType: 'application/json',
 		    data: JSON.stringify(updatedData),
 		    success: function () {
-		      console.log('일정 이동 후 업데이트 성공');
+		      console.log('업데이트 성공');
 		    },
 		    error: function () {
-		      alert('일정 날짜 업데이트 실패');
+		      alert('일정 업데이트 실패');
 		      info.revert();
 		    }
 		  });
@@ -100,38 +138,43 @@ document.addEventListener('DOMContentLoaded', function() {
       
 	  //캘린더에 일정 드래그앤 드롭시
       eventReceive: function(info) {
+		  
         draggedEventInfo = info;
         // 드롭한 날짜 시작날짜로 설정
         const droppedDate = info.event.startStr;
         setInputDate(droppedDate);
         
         //새로운 데이터 입력을 위한 다른 데이터 초기화
-        document.getElementById('modal-title').value = '';
-        document.getElementById('modal-description').value = '';
-        document.getElementById('modal-color').value = '#007bff';
+        document.getElementById('fc-modal-title').value = '';
+        document.getElementById('fc-modal-description').value = '';
+        document.getElementById('fc-modal-color').value = '#007bff';
 
-        document.querySelectorAll('.color-circle').forEach(c => c.classList.remove('selected'));
-        document.querySelector('.color-circle[data-color="#007bff"]').classList.add('selected');
+        document.querySelectorAll('.fc-color-circle').forEach(c => c.classList.remove('selected'));
+        document.querySelector('.fc-color-circle[data-color="#007bff"]').classList.add('selected');
 
-        document.getElementById('eventModal').style.display = 'block';
-        document.getElementById('modalBackdrop').style.display = 'block';
+        document.getElementById('fc-eventModal').style.display = 'block';
+        document.getElementById('fc-modalBackdrop').style.display = 'block';
       },
 	  //캘린더의 일정 클릭시
       eventClick: function(info) {
+		const id = info.event.id;
         const event = info.event;
         const title = event.title || '제목 없음';
         const description = event.extendedProps.description || '설명 없음';
         console.log(event);
-        document.getElementById('event-title').textContent = title;
-        document.getElementById('event-description').textContent = description;
-        document.getElementById('event-details').style.display = 'block';
+        document.getElementById('fc-event-title').textContent = title;
+        document.getElementById('fc-event-description').textContent = description;
+        document.getElementById('fc-event-details').style.display = 'block';
+		document.getElementById('fc-modal-id').value = id;
+		
+		openEditModal(event);
       },
       eventDragStart: function(info) {
     	  document.addEventListener("mousemove", handleTrashHover);
       },
       eventDragStop: function(info) {
    	    document.removeEventListener("mousemove", handleTrashHover);
-   	    const trashEl = document.getElementById("event-trash");
+   	    const trashEl = document.getElementById("fc-event-trash");
    	    const trashRect = trashEl.getBoundingClientRect();
    	    const x = info.jsEvent.clientX;
    	    const y = info.jsEvent.clientY;
@@ -147,7 +190,6 @@ document.addEventListener('DOMContentLoaded', function() {
    	    if (inTrash) {
    	      if (confirm("일정을 삭제하시겠습니까?")) {
    	        const eventId = info.event.id;
-			console.log(eventId);
    	        // 캘린더에서 삭제
    	        info.event.remove();
 
@@ -181,14 +223,19 @@ document.addEventListener('DOMContentLoaded', function() {
     
 
     //일정 추가 완료
-    document.getElementById('save-event').addEventListener('click', function() {
-   	  const title = document.getElementById('modal-title').value.trim();
-   	  const desc = document.getElementById('modal-description').value.trim();
-   	  const color = document.getElementById('modal-color').value;
-   	  const start = document.getElementById('event-start').value;
-   	  const end = document.getElementById('event-end').value;
-   	  const alldayCheckbox = document.getElementById('event-allday');
+    document.getElementById('fc-save-event').addEventListener('click', function() {
+   	  const title = document.getElementById('fc-modal-title').value.trim();
+   	  const desc = document.getElementById('fc-modal-description').value.trim();
+   	  const color = document.getElementById('fc-modal-color').value;
+   	  const start = document.getElementById('fc-event-start').value;
+   	  const end = document.getElementById('fc-event-end').value;
+   	  const alldayCheckbox = document.getElementById('fc-event-allday');
+	  const id = document.getElementById('fc-modal-id').value;
    	  
+	  const url = id ? '/project/schedule/update' : '/project/schedule/save';
+	  
+	  console.log(id);
+	  
       if (!title) {
         alert('제목을 입력해주세요.');
         return;
@@ -209,6 +256,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const type = alldayCheckbox.checked ? alldayCheckbox.value : '';
 
       const scheduleData = {
+		id: id,
         title: title,
         content: desc,
         type: type,
@@ -219,7 +267,7 @@ document.addEventListener('DOMContentLoaded', function() {
       };
       
       $.ajax({
-    	    url: '/project/schedule/save',
+    	    url: url,
     	    type: 'POST',
     	    contentType: 'application/json',
     	    data: JSON.stringify(scheduleData),
@@ -236,7 +284,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     //일정 생성 취소
-    document.getElementById('cancel-event').addEventListener('click', function() {
+    document.getElementById('fc-cancel-event').addEventListener('click', function() {
       if (draggedEventInfo) {
         draggedEventInfo.event.remove();
       }
@@ -247,11 +295,11 @@ document.addEventListener('DOMContentLoaded', function() {
 	
 
     //일정 추가시 색상 저장
-    document.querySelectorAll('.color-circle').forEach(circle => {
+    document.querySelectorAll('.fc-color-circle').forEach(circle => {
       circle.addEventListener('click', function () {
-        document.querySelectorAll('.color-circle').forEach(c => c.classList.remove('selected'));
+        document.querySelectorAll('.fc-color-circle').forEach(c => c.classList.remove('selected'));
         this.classList.add('selected');
-        document.getElementById('modal-color').value = this.dataset.color;
+        document.getElementById('fc-modal-color').value = this.dataset.color;
       });
     });
   });

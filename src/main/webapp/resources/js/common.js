@@ -53,11 +53,4 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // 모달 닫기 공통 함수 (필요 시 외부에서 호출 가능하게 전역화 or 모듈화 가능)
-  window.closeModal = function() {
-    const eventModal = document.getElementById('eventModal');
-    const modalBackdrop = document.getElementById('modalBackdrop');
-    if(eventModal) eventModal.style.display = 'none';
-    if(modalBackdrop) modalBackdrop.style.display = 'none';
-  }
 });

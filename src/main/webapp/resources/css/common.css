@@ -15,7 +15,7 @@ body {
 }
 
 /* 전체 감싸는 컨테이너 */
-.calendar-wrapper {
+.layout-wrapper {
 	width: 99vw;
 	height: 98vh;
 	/* max-width : 1200px; */

@@ -14,13 +14,13 @@
   <script src="/js/common.js"></script>
 </head>
 <body>
-<div class="calendar-wrapper">
+<div class="layout-wrapper">
 	<!-- 헤더 부분 -->
 	<div class="header">
 		<div class="header-menu-and-logo">
 			<i class="fa-solid fa-bars fa-2xl" id="toggleSidebar"
 				style="padding-right: 15px; cursor: pointer;"></i>
-			<img src="http://localhost:8080/image/BizBoard_Logo.png" alt="BizBoard_Logo" id="header-logo"/>
+			<img src="/image/BizBoard_Logo.png" alt="BizBoard_Logo" id="header-logo"/>
 		</div>
 		<h2>로그인</h2>
 	</div>

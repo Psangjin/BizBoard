@@ -14,7 +14,7 @@
 	min-width: 220px;
 }
 
-#external-events {
+#fc-external-events {
 	position: relative;
 	top: 10px;
 	width: 90%;
@@ -23,21 +23,6 @@
 	margin: 10px auto;
 	border-radius: 10px;
 	background-color: #f0f0f0;
-}
-
-#event-trash {
-	width: 100px;
-	height: 100px;
-	border: 2px dashed red;
-	text-align: center;
-	line-height: 100px;
-	transition: all 0.3s ease;
-}
-
-#event-trash.hovered {
-	background-color: rgba(255, 0, 0, 0.1);
-	border-color: darkred;
-	transform: scale(1.1);
 }
 
 .fc-event {
@@ -49,17 +34,22 @@
 	cursor: move;
 }
 
-.fc-day-today {
-	background-color: #ffecb3 !important;
-	border: 2px solid #ffa000;
-	font-weight: bold;
+#fc-event-trash {
+	width: 100px;
+	height: 100px;
+	border: 2px dashed red;
+	text-align: center;
+	line-height: 100px;
+	transition: all 0.3s ease;
 }
 
-#calendar {
-	flex: 4;
+#fc-event-trash.hovered {
+	background-color: rgba(255, 0, 0, 0.1);
+	border-color: darkred;
+	transform: scale(1.1);
 }
 
-#event-details {
+#fc-event-details {
 	position: absolute;
 	bottom: 10px;
 	left: 50%;
@@ -78,16 +68,27 @@
 	border-radius: 10px;
 }
 
-#event-details h3 {
+#fc-event-details h3 {
 	margin-bottom: 8px;
 	color: #333;
 }
 
-#event-details p {
+#fc-event-details p {
 	margin: 5px 0;
 }
 
-#eventModal {
+
+.fc-day-today {
+	background-color: #ffecb3 !important;
+	border: 2px solid #ffa000;
+	font-weight: bold;
+}
+
+#calendar {
+	flex: 4;
+}
+
+#fc-eventModal {
 	display: none;
 	position: fixed;
 	top: 50%;
@@ -105,14 +106,14 @@
 	color: #333;
 }
 
-#eventModal h2 {
+#fc-eventModal h3 {
 	margin-top: 0;
 	font-size: 22px;
 	margin-bottom: 20px;
 	color: #2c3e50;
 }
 
-#eventModal input[type="text"] {
+#fc-eventModal input[type="text"] {
 	width: 100%;
 	height: 42px;
 	padding: 8px 12px;
@@ -123,7 +124,7 @@
 	transition: border-color 0.3s ease;
 }
 
-#eventModal textarea {
+#fc-eventModal textarea {
 	width: 100%;
 	height: 120px;
 	padding: 10px 12px;
@@ -136,12 +137,12 @@
 	font-family: inherit;
 }
 
-#eventModal input[type="text"]:focus, #eventModal textarea:focus {
+#fc-eventModal input[type="text"]:focus, #fc-eventModal textarea:focus {
 	border-color: #446dff;
 	outline: none;
 }
 
-#eventModal button {
+#fc-eventModal button {
 	background-color: #446dff;
 	color: white;
 	padding: 10px 18px;
@@ -152,19 +153,19 @@
 	transition: background-color 0.3s ease;
 }
 
-#eventModal button:hover {
+#fc-eventModal button:hover {
 	background-color: #3344dd;
 }
 
-#eventModal-inputDate {
+#fc-eventModal-inputDate {
 	display: flex;
 }
 
-.eventModal-inputDate-area {
+.fc-eventModal-inputDate-area {
 	flex: 1;
 }
 
-#eventModal-inputDate .custom-datetime {
+#fc-eventModal-inputDate .fc-custom-datetime {
 	padding: 10px 14px;
 	height: 40px;
 	margin: 2px 0;
@@ -177,20 +178,20 @@
 	transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-#eventModal-inputDate .custom-datetime:focus {
+#fc-eventModal-inputDate .fc-custom-datetime:focus {
 	outline: none;
 	border-color: #4a90e2;
 	box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
 	background-color: #fff;
 }
 
-#eventModal-inputDate .custom-datetime::-webkit-calendar-picker-indicator
+#fc-eventModal-inputDate .fc-custom-datetime::-webkit-calendar-picker-indicator
 	{
 	filter: invert(0.4);
 	cursor: pointer;
 }
 
-.color-circle {
+.fc-color-circle {
 	width: 24px;
 	height: 24px;
 	border-radius: 50%;
@@ -200,10 +201,10 @@
 	display: inline-block;
 }
 
-.color-circle:hover {
+.fc-color-circle:hover {
 	transform: scale(1.2);
 }
 
-.color-circle.selected {
+.fc-color-circle.selected {
 	border: 2px solid #333;
 }

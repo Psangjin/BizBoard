@@ -77,13 +77,13 @@ public class ScheduleRestController {
 		return ResponseEntity.ok().build();
 	}
 
-	@PostMapping("/project/schedule/updateDate")
-	public ResponseEntity<?> updateScheduleDate(@RequestBody Schedule schedule) {
+	@PostMapping("/project/schedule/update")
+	public ResponseEntity<?> updateSchedule(@RequestBody Schedule schedule) {
 		try {
 			scheduleService.modifySchedule(schedule);
 			return ResponseEntity.ok().build();
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("일정 날짜 업데이트 실패: " + e.getMessage());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("일정 업데이트 실패: " + e.getMessage());
 		}
 	}
 
