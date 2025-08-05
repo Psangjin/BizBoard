@@ -1,0 +1,7 @@
+CREATE TABLE users(
+	id VARCHAR2(50) Primary key,
+	pw VARCHAR2(100) NOT NULL,
+	email VARCHAR2(100) NOT NULL,
+	name VARCHAR2(50) NOT NULL,
+	sign_date DATE DEFAULT SYSDATE
+);
