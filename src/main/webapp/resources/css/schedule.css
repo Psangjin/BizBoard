@@ -1,0 +1,867 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	font-family: sans-serif;
+	background-color: #296aa2;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 100vh;
+}
+
+/* 전체 감싸는 컨테이너 */
+.calendar-wrapper {
+	width: 98vw;
+	height: 90vh;
+	/* max-width : 1200px; */
+	background-color: #fff;
+	border-radius: 20px;
+	box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+}
+
+.header {
+	height: 10vh;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0 30px;
+	background-color: #3c85da;
+}
+
+.header-menu-and-logo {
+	display: flex;
+	align-items: center;
+}
+
+.body {
+	display: flex;
+	background-color: white;
+	height: 80vh;
+}
+
+.body-side-menubar {
+	width: 8vw;
+	background-color: #3c85da;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding-top: 20px;
+	transition: all 0.3s ease;
+}
+
+.body-side-menubar.hidden {
+	transform: translateX(-100%);
+}
+
+.body-side-menubar.background-invisible {
+	background-color: #296aa2;
+}
+
+.body-side-menubar-items {
+	margin: 20px 0;
+}
+
+.body-side-menubar-items i {
+  transition: color 0.3s ease, background-color 0.3s ease, transform 0.3s ease;
+  padding: 5px;
+  border-radius: 8px;
+}
+
+.body-side-menubar-items i:hover {
+  color: #ffffff;
+  background-color: rgba(255, 204, 0, 0.1);
+  transform: scale(1.4);
+  cursor: pointer;
+}
+
+.body-container {
+	width: 90vw;
+	flex: 1;
+	display: flex;
+	padding: 5px;
+}
+
+.body-left {
+  min-height: 80vh;	/* height 지우기 */
+  
+  flex:1;	/* flex-grow에서 플렉스로 수정 */
+  position: relative;
+  min-width: 230px;	/* 최소 설정 */
+}
+
+#external-events {
+	position: relative;
+	top:10px;
+	width: 90%;
+	border: 1px solid #ccc;
+	padding: 10px;
+	margin: 10px auto;
+	border-radius: 10px;
+	background-color: #f0f0f0;
+}
+
+.fc-event {
+	background-color: #007bff;
+	color: white;
+	padding: 4px;
+	margin: 4px 0;
+	border-radius: 4px;
+	cursor: move;
+}
+
+.cal-red-bg {
+	background-color: red;
+}
+
+.cal-blue-bg {
+	background-color: blue;
+}
+
+.fc-day-today {
+	background-color: #ffecb3 !important;
+	border: 2px solid #ffa000;
+	font-weight: bold;
+}
+
+#calendar {
+	flex-grow:4;
+}
+
+#event-details {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  width: 200px;
+  height: 300px;         /* ✅ 일정한 높이로 고정 */
+  overflow-x: hidden;
+  overflow-y: scroll;      /* 내용 넘칠 경우 숨김 */
+  
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  font-size: 14px;
+  display: none;
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin: 10px auto;
+  border-radius: 10px;
+}
+
+#event-details h3 {
+	margin-bottom: 8px;
+	color: #333;
+}
+
+#event-details p {
+	margin: 5px 0;
+}
+
+#eventModal {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  
+  width: 500px;
+  max-width: 90%;
+  padding: 30px 25px;
+
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  border: none;
+
+  z-index: 1000;
+  
+  font-family: 'Segoe UI', sans-serif;
+  color: #333;
+}
+
+#eventModal h2 {
+  margin-top: 0;
+  font-size: 22px;
+  margin-bottom: 20px;
+  color: #2c3e50;
+}
+
+#eventModal input[type="text"] {
+  width: 100%;
+  height: 42px;
+  padding: 8px 12px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: border-color 0.3s ease;
+}
+
+#eventModal textarea {
+  width: 100%;
+  height: 120px;
+  padding: 10px 12px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  resize: vertical;
+  transition: border-color 0.3s ease;
+  font-family: inherit; 
+}
+
+#eventModal input[type="text"]:focus,
+#eventModal textarea:focus {
+  border-color: #446dff;
+  outline: none;
+}
+
+#eventModal button {
+  background-color: #446dff;
+  color: white;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#eventModal button:hover {
+  background-color: #3344dd;
+}
+/*****************간트 스타일 시작********************/
+.hidden-view-section {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.hidden-section {
+	display: none !important;
+}
+/***/
+.body-right {
+	flex: 4;
+	
+	overflow: hidden !important; /* or auto */
+}
+
+#gantt {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	z-index: 1;
+}
+
+#gantt-up-area {
+	height: 6%;
+	display: flex;
+	align-items: center;
+	padding: 0 20px;
+}
+
+#gantt-header-toolbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+}
+
+#work-manage-btn {
+	padding: 6px 12px;
+	background-color: #ffffff;
+	color: #3c85da;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+#gantt-target {
+	height: 94%;
+	width: 100%;
+	z-index: 1;
+}
+
+/* 캘린더 글자색 */
+.fc a {
+	color: black !important;
+	text-decoration: none;
+}
+
+#ganttTaskModal{
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  max-width: 90%;
+  padding: 30px 25px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  border: none;
+  z-index: 1000;
+  font-family: 'Segoe UI', sans-serif;
+  color: #333;
+}
+#ganttTaskBackdrop{
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+#task-detail-panel {
+	position: absolute;
+	bottom: 10px;
+	left: 50%;
+	transform: translate(-50%, 0%);
+	width: 200px;
+	height: 300px; /* ✅ 일정한 높이로 고정 */
+	overflow-x: hidden;
+	overflow-y: scroll; /* 내용 넘칠 경우 숨김 */
+	background-color: #f9f9f9;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+	font-size: 14px;
+	display: none;
+	border: 1px solid #ccc;
+	padding: 10px;
+	margin: 10px auto;
+	border-radius: 10px;
+}
+
+#task-detail-panel h3 {
+	margin-bottom: 8px;
+	color: #333;
+}
+
+#task-detail-panel p {
+	margin: 5px 0;
+}
+#detail-member {
+  white-space: nowrap;       /* 줄바꿈 금지 */
+  overflow: auto;          /* 넘치는 부분 숨김 */
+  display: block;            /* span이 기본 inline이므로 block으로 설정 */
+}
+
+#work-edit-modal button{
+	width: 100%;
+	display: block;
+	margin: 1%;
+}
+#task-detail-panel button{
+	display: block;
+	margin: 1%;
+}
+#gantt-target{
+	height: 80vh;
+}
+.gantt-container{
+	width:100% !important;
+	height: 80vh !important;
+}
+#gantt{
+	width:100% !important;
+	height: 100%;
+	overflow: auto !important;
+}
+
+#ganttDetail{
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  
+  max-width: 90%;
+  padding: 30px 25px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  border: none;
+  z-index: 1000;
+  font-family: 'Segoe UI', sans-serif;
+  color: #333;
+  
+  overflow: auto;
+  max-height: 80vh;
+}
+#task-comment{
+	width: 100%;
+	height: 40vh;
+	background-color: yellow;
+}
+.task-comment-up{
+	display: flex;
+	justify-content: space-between;
+}
+.comment-modify-btn-area{
+	width:100%;
+	display: flex;
+	justify-content: space-between;
+}
+#task-comment-add{
+	width: 100%;
+	height: 40vh;
+	background-color: beige;
+}
+#comment-add-btn-area{
+	width: 100%;
+	display: flex;
+	justify-content: end;
+}
+
+/**********************/
+
+#task-detail-panel button {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+
+}
+
+#ganttDetail {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  padding: 10px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  font-family: 'Segoe UI', sans-serif;
+  color: #333;
+  overflow: auto;
+  height: 100%;
+}
+#ganttDetailContainer{
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 30px;
+}
+#ganttDetailLeft{
+  width: 30%;
+}
+#ganttDetailRight{
+	width: 68%;
+}
+
+#ganttDetail h2 {
+  font-size: 22px;
+  margin-bottom: 20px;
+  color: #2c3e50;
+  text-align: center;
+}
+
+#ganttDetail label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+#ganttDetail input[type="text"],
+#ganttDetail input[type="date"],
+#ganttDetail select,
+#ganttDetail textarea {
+  width: 100%;
+
+
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+#ganttDetail textarea {
+  resize: vertical;
+  min-height: 40px;
+}
+
+#ganttDetail select {
+  cursor: pointer;
+}
+
+#task-comment {
+  width: 100%;
+  height: 50vh;
+  overflow-y: auto;
+  background-color: #fcf8e3;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+#task-comment-add {
+  width: 100%;
+  background-color: #eef9f1;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  
+  height: 30vh;
+  overflow: auto;
+}
+
+.task-comment-up {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.comment-modify-btn-area {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+#comment-add-btn-area {
+  display: flex;
+  justify-content: flex-end;
+}
+#ganttDetailCloseArea{
+	margin-top: 10px;
+	width: 100%;
+}
+#cancel-detail-btn{
+	width: 100%;
+}
+/***********작업변경**********/
+#ganttTaskModal {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  max-width: 90%;
+  padding: 10px;
+  background : #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  border: none;
+  z-index: 1000;
+  font-family: 'Segoe UI', sans-serif;
+  color: #333;
+  overflow-y: auto;
+  max-height: 90vh;
+}
+
+#ganttTaskModal h2 {
+  font-size: 22px;
+  margin-bottom: 10px;
+  color: #2c3e50;
+  text-align: center;
+}
+
+#ganttTaskModal label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+#ganttTaskModal input[type="text"],
+#ganttTaskModal input[type="date"],
+#ganttTaskModal select,
+#ganttTaskModal textarea {
+  width: 100%;
+  padding: 5px 6px;
+  margin-bottom: 5px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+#ganttTaskModal textarea {
+  resize: vertical;
+  min-height: 40px;
+}
+
+#ganttTaskModal select {
+  cursor: pointer;
+}
+
+#ganttTaskModal button {
+  width: 100%;
+  padding: 10px;
+  font-size: 12px;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  margin-top: 5px;
+  transition: background-color 0.3s ease;
+}
+
+#ganttTaskModal .btn-primary {
+  background-color: #446dff;
+  color: white;
+}
+
+#ganttTaskModal .btn-primary:hover {
+  background-color: #3344dd;
+}
+
+#ganttTaskModal .btn-secondary {
+  background-color: #ccc;
+  color: #333;
+}
+
+#ganttTaskModal .btn-secondary:hover {
+  background-color: #bbb;
+}
+
+#task-edit-panel{
+	position: relative;
+	top:10px;
+	width: 90%;
+	border: 1px solid #ccc;
+	padding: 10px;
+	margin: 10px auto;
+	border-radius: 10px;
+	background-color: #f0f0f0;
+}
+#task-edit-panel button{
+	display: block;
+	width:100%;
+	margin: 5px;
+}
+.comment-input-area {
+  display: flex;
+  flex-wrap: nowrap;    /* 한 줄로 강제 정렬 */
+  width: 100%;
+  gap: 10px;             /* 간격 */
+  margin-bottom: 10px;
+}
+
+.comment-field {
+  flex: 1;               /* 1:1:1:1:1 비율 */
+  min-width: 0;          /* overflow 처리 */
+  display: flex;
+  flex-direction: column;
+}
+.comment-field input {
+  width: 100%;
+}
+.comment-field label {
+  font-size: 12px;
+  margin-bottom: 3px;
+}
+.comment-row{
+  background-color: wheat;
+ margin-bottom: 5px;
+}
+
+/*******************####***********/
+#task-comment-add-modal {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  max-width: 90%;
+  padding: 10px;
+  background : #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  border: none;
+  z-index: 1100;
+  font-family: 'Segoe UI', sans-serif;
+  color: #333;
+  overflow-y: auto;
+  max-height: 90vh;
+}
+#task-comment-add-modal label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+#open-add-comment-btn-area{
+  width: 100%;
+  display: flex;
+  justify-content: end;
+}
+/**************/
+#task-comment-add-modal {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  
+  width: 500px;
+  max-width: 90%;
+  max-height: 90vh;
+  padding: 25px 20px;
+
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  z-index: 1100;
+
+  font-family: 'Segoe UI', sans-serif;
+  color: #333;
+  overflow-y: auto;
+}
+
+#task-comment-add-modal h2 {
+  font-size: 22px;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #2c3e50;
+}
+
+#task-comment-add-modal label {
+  display: block;
+  font-weight: 500;
+  margin-top: 12px;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+#task-comment-add-modal input[type="text"],
+#task-comment-add-modal input[type="file"] {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+#comment-add-btn-area {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+#comment-add-btn-area button {
+  padding: 8px 14px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#comment-add-btn-area .btn-primary {
+  background-color: #446dff;
+  color: white;
+}
+
+#comment-add-btn-area .btn-primary:hover {
+  background-color: #3344dd;
+}
+
+#comment-add-btn-area .btn-secondary {
+  background-color: #ccc;
+  color: #333;
+}
+
+#comment-add-btn-area .btn-secondary:hover {
+  background-color: #bbb;
+}
+/**********************************/
+.file-disabled {
+  pointer-events: none;
+  opacity: 0.5;  /* 시각적 힌트 */
+}
+/********************************************/
+#ganttTaskModalModify{
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  max-width: 90%;
+  padding: 30px 25px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  border: none;
+  z-index: 1000;
+  font-family: 'Segoe UI', sans-serif;
+  color: #333;
+}
+
+#ganttTaskModalModify h2 {
+  font-size: 22px;
+  margin-bottom: 10px;
+  color: #2c3e50;
+  text-align: center;
+}
+
+#ganttTaskModalModify label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+#ganttTaskModalModify input[type="text"],
+#ganttTaskModalModify input[type="date"],
+#ganttTaskModalModify select,
+#ganttTaskModalModify textarea {
+  width: 100%;
+  padding: 5px 6px;
+  margin-bottom: 5px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+#ganttTaskModalModify textarea {
+  resize: vertical;
+  min-height: 40px;
+}
+
+#ganttTaskModalModify select {
+  cursor: pointer;
+}
+
+#ganttTaskModalModify button {
+  width: 100%;
+  padding: 10px;
+  font-size: 12px;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  margin-top: 5px;
+  transition: background-color 0.3s ease;
+}
+
+#ganttTaskModalModify .btn-primary {
+  background-color: #446dff;
+  color: white;
+}
+
+#ganttTaskModalModify .btn-primary:hover {
+  background-color: #3344dd;
+}
+
+#ganttTaskModalModify .btn-secondary {
+  background-color: #ccc;
+  color: #333;
+}
+
+#ganttTaskModalModify .btn-secondary:hover {
+  background-color: #bbb;
+}

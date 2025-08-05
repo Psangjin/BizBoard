@@ -97,6 +97,12 @@ body {
   transform: scale(1.4);
   cursor: pointer;
 }
+/*에디트추가*/
+.fa-user-pen-edit{
+	transform: scale(1.4);
+	color:red;
+}
+
 
 /* 오른쪽 아래 고정 */
 .fab-wrapper {
@@ -192,10 +198,13 @@ body {
 				<i class="fa-solid fa-calendar fa-xl" id="fa-calendar-icon" style="cursor: pointer;"></i>
 			</div>
 			<div class="body-side-menubar-items">
-				<i class="fa-solid fa-note-sticky fa-xl"></i>
+				<i class="fa-solid fa-note-sticky fa-xl" id="fa-note-icon" style="cursor: pointer;"></i>
 			</div>
 			<div class="body-side-menubar-items">
 				<i class="fa-solid fa-arrow-right-arrow-left fa-xl"></i>
+			</div>
+			<div class="body-side-menubar-items">
+				<i class="fa-solid fa-user-pen fa-xl"></i>
 			</div>
 		</div>
 		<div>
