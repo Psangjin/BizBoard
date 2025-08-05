@@ -9,88 +9,7 @@
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css"
 	crossorigin="anonymous" referrerpolicy="no-referrer" />
   <style>
-  * {
-	margin: 0;
-	padding: 0;
-	box-sizing: border-box;
-}
-
-body {
-	font-family: sans-serif;
-	background-color: #296aa2;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	min-height: 100vh;
-}
-
-/* 전체 감싸는 컨테이너 */
-.calendar-wrapper {
-	width: 98vw;
-	height: 90vh;
-	/* max-width : 1200px; */
-	background-color: #fff;
-	border-radius: 20px;
-	box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-	overflow: hidden;
-	display: flex;
-	flex-direction: column;
-}
-
-.header {
-	height: 10vh;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	padding: 0 30px;
-	background-color: #3c85da;
-}
-
-.header-menu-and-logo {
-	display: flex;
-	align-items: center;
-}
-
-.body {
-	display: flex;
-	background-color: white;
-	height: 80vh;
-}
-
-.body-side-menubar {
-	width: 8vw;
-	background-color: #3c85da;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	padding-top: 20px;
-	transition: all 0.3s ease;
-}
-
-.body-side-menubar.hidden {
-	transform: translateX(-100%);
-}
-
-.body-side-menubar.background-invisible {
-	background-color: #296aa2;
-}
-
-.body-side-menubar-items {
-	margin: 20px 0;
-}
-
-.body-side-menubar-items i {
-  transition: color 0.3s ease, background-color 0.3s ease, transform 0.3s ease;
-  padding: 5px;
-  border-radius: 8px;
-}
-
-.body-side-menubar-items i:hover {
-  color: #ffffff;
-  background-color: rgba(255, 204, 0, 0.1);
-  transform: scale(1.4);
-  cursor: pointer;
-}
+ 
 
 .body-container {
 	width: 90vw;
@@ -183,24 +102,6 @@ body {
 </div>
   <script>
   
-  
-  document.addEventListener('DOMContentLoaded', function() {
-
-		document.getElementById('toggleSidebar').addEventListener('click', function () {
-			  const sidebar = document.querySelector('.body-side-menubar');
-			  sidebar.classList.toggle('hidden');
-			});
-		document.getElementById('fa-project-icon').addEventListener('click', function() {
-			location.href = "/project/main";
-		});
-		
-		document.getElementById('fa-calendar-icon').addEventListener('click', function() {
-			location.href = "/project/schedule";
-		});
-
-		
-		
-	});
   const circle = document.getElementById('progress-circle');
   let text = document.getElementById('percentText');
   const radius = circle.r.baseVal.value;

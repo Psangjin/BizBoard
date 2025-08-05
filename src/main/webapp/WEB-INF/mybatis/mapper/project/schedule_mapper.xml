@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC
+		   "-//mybatis.org//DTD Mapper 3.0//EN" 
+		   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		   
+<mapper namespace="schedule_mapper">
+
+	<insert id="saveSchedule" parameterType="Schedule">
+		INSERT INTO schedule (
+      id, title, content, type, start_dt, end_dt, completed, color
+    ) VALUES (
+      schedule_seq.NEXTVAL,
+      #{title},
+      #{content},
+      #{type},
+      #{startDt},
+      #{endDt},
+      #{completed},
+      #{color}
+    )
+	</insert>
+	
+	<select id="findAllSchedules" resultType="Schedule">
+		SELECT * FROM schedule
+	</select>
+	
+	<delete id="deleteScheduleById" parameterType="long">
+		DELETE FROM schedule
+		WHERE id=#{id}
+	</delete>
+	
+	<update id="modifySchedule" parameterType="Schedule">
+		UPDATE schedule
+		SET id = #{id},
+			title = #{title},
+		    content = #{content},
+		    type = #{type},
+		    start_dt = #{startDt},
+		    end_dt = #{endDt},
+		    completed = #{completed},
+		    color = #{color}
+		WHERE id=#{id}
+	</update>
+	
+
+</mapper>

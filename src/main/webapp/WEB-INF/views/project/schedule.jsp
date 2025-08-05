@@ -40,15 +40,16 @@
 
 				<div class="body-left">
 					<!-- 외부 이벤트 등록용 DIV -->
-					<div id="external-events">
+					<div id="fc-external-events">
 						<p>
 							<strong>달력에 드래그하여 추가</strong>
 						</p>
-						<div class="fc-event cal-red-bg" data-title="기본일정1"
-							data-color="red">일정1</div>
-						<div class="fc-event cal-blue-bg" data-title="기본일정2"
-							data-color="blue">일정2</div>
+						<div class="fc-event" data-title="기본일정1" data-color="#888888"
+							style="background-color: #888888;">일정 추가</div>
+						
+
 					</div>
+					<div id="fc-event-trash">🗑️ 삭제</div>
 					
 					<div id="task-edit-panel" class="hidden-section" >
 					  <h3 id="task-edit-title"></h3>
@@ -58,13 +59,13 @@
 					</div>
 
 					<!-- 일정 상세 보기 박스 -->
-					<div id="event-details">
+					<div id="fc-event-details">
 						<h3>일정 상세</h3>
 						<p>
-							<strong>제목:</strong> <span id="event-title"></span>
+							<strong>제목:</strong> <span id="fc-event-title"></span>
 						</p>
 						<p>
-							<strong>설명:</strong> <span id="event-description"></span>
+							<strong>설명:</strong> <span id="fc-event-description"></span>
 						</p>
 					</div>
 					
@@ -107,13 +108,47 @@
 					</div>
 				</div>
 				<!-- 기존 요소들 사이에 모달창 추가 -->
-				<div id="eventModal">
+				<div id="fc-eventModal">
 					<h3>일정 추가</h3>
-					<label>제목: <input type="text" id="modal-title" /></label><br>
-					<br> <label>설명: <textarea id="modal-description" /></textarea></label> <br>
-					<br>
-					<button id="save-event">저장</button>
-					<button id="cancel-event">취소</button>
+					<input type="hidden" id="fc-modal-id" /> <!-- id전달 위한 hidden -->
+					<div id="fc-eventModal-inputDate">
+						<!-- 시작 일시 -->
+						<div class="fc-eventModal-inputDate-area">
+							<label>시작 일시</label> <input type="datetime-local" id="fc-event-start"
+								class="fc-custom-datetime"><br>
+						</div>
+						<!-- 종료 일시 -->
+						<div class="fc-eventModal-inputDate-area">
+							<label>종료 일시</label> <input type="datetime-local" id="fc-event-end"
+								class="fc-custom-datetime"><br>
+						</div>
+					</div>
+					<label> <input type="checkbox" id="fc-event-allday" name="type"
+						value="PW"> 프로젝트 작업 일정
+					</label><br> <label>제목: <input type="text" id="fc-modal-title" /></label><br>
+
+					<br> <label>설명: <textarea id="fc-modal-description"></textarea></label>
+					<div style="margin-top: 10px;">
+
+						<label><strong>색상 선택:</strong></label>
+						<div id="fc-color-options"
+							style="margin-top: 5px; display: flex; gap: 10px;">
+							<div class="fc-color-circle" data-color="#007bff"
+								style="background-color: #007bff;"></div>
+							<div class="fc-color-circle" data-color="#28a745"
+								style="background-color: #28a745;"></div>
+							<div class="fc-color-circle" data-color="#ffc107"
+								style="background-color: #ffc107;"></div>
+							<div class="fc-color-circle" data-color="#dc3545"
+								style="background-color: #dc3545;"></div>
+							<div class="fc-color-circle" data-color="#6f42c1"
+								style="background-color: #6f42c1;"></div>
+						</div>
+						<input type="hidden" id="fc-modal-color" value="#007bff" />
+					</div>
+					<br> <br>
+					<button id="fc-save-event">저장</button>
+					<button id="fc-cancel-event">취소</button>
 				</div>
 				
 				<!-- 모달 간트 작업 추가 -->
@@ -222,21 +257,17 @@
 
 
 		<!-- 모달 배경 -->
-				<div id="modalBackdrop"
+				<div id="fc-modalBackdrop"
 					style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 999;"></div>
-
 				<!-- 간트 모달 -->
-				<!-- 모달 배경 -->
-				
-				
-				
 				<!-- 배경 -->
 				<div id="ganttTaskBackdrop"></div>
 				
-			</div>
-		</div>
-	</div>
-	<script>
+
+</div>
+</div>
+</div>
+<script>
 	const commentList = [
 	    <c:forEach var="comment" items="${commentList}" varStatus="status">
 	      {
@@ -249,7 +280,6 @@
 	    </c:forEach>
 	];
 	</script>
-	<script src="/js/schedule.js"></script>
-	
+<script src="/js/schedule.js"></script>
 </body>
 </html>
