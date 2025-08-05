@@ -8,6 +8,13 @@ public class MainpageController {
 	
 	@RequestMapping("/")
 	public String mainPage() {
-		return "mainpage/mainpage";
+		return "mainpage/mainpage-logout";
 	}
+	
+	@RequestMapping("/mainpage")
+	public String mainPage_login() {
+		return "mainpage/mainpage-login";
+	}
+	
+	
 }

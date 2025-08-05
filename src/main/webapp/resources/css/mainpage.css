@@ -1,1 +1,145 @@
 @charset "UTF-8";
+
+.mainpage-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-right: 20px;
+	margin-bottom: 20px;
+}
+
+#mainpage-header-logo {
+	width: 200px;
+	cursor: pointer;
+	margin-left: 15px;
+}
+
+#mainpage-header-icon {
+	font-size: 35px;
+	color: #0c61aa;
+	cursor: pointer;
+	margin-right: 15px;
+}
+
+.mainpage-header-menu {
+	display: flex;
+	align-items: center;
+	gap: 60px;
+	font-size: 17px;
+}
+
+.mainpage-header-menu>p {
+	cursor: pointer;
+}
+
+.mainpage-container {
+	display: flex;
+	gap: 50px;
+	justify-content: center;
+}
+
+.mainpage-left {
+	display: flex;
+	flex-direction: column;
+	gap: 25px;
+}
+
+.mainpage-left .mainpage-contents-box {
+	width: 450px;
+	height: 280px;
+}
+
+.mainpage-right .mainpage-contents-box {
+	width: 600px;
+	height: 670px;
+}
+
+.mainpage-contents-box {
+	background-color: #9ab3c4;
+	border-radius: 10px;
+	padding: 20px;
+}
+
+.contents-text {
+	color: #0c61aa;
+	font-size: 25px;
+	font-weight: bold;
+	margin-bottom: 10px;
+	margin-left: 13px;
+}
+
+#mainpage-image{
+	width: 100%;
+	min-width: 1000px;
+	display: block;
+}
+
+.mainpage-start-btn{
+	width: 150px;
+	height: 55px;
+	border-radius: 50px;
+	border-style: none;
+	background-color: #0c61aa;
+	color: white;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	transition: background-color 0.3s ease;
+}
+
+.mainpage-start-btn:hover{
+	background-color: #1c78c9;
+}
+
+.mainpage-btn-text{
+	font-size: 18px;
+}
+
+.fa-arrow-right{
+	font-size: 13px;
+	transform: translateX(0);
+	transition: transform 0.3s ease-in-out;
+}
+
+.mainpage-start-btn:hover .fa-arrow-right {
+	transform: translateX(5px);
+}
+
+.mainpage-logout-container{
+	position: relative;
+	width: 100%;
+}
+
+/* 이미지 위에 버튼 */
+.mainpage-start-btn2{
+	position: absolute;
+	bottom: 190px;
+	left: 50px;
+}
+
+.mainpage-start-btn2:hover{
+	background-color: #1c78c9;
+}
+
+.mainpage-start-btn2:hover .fa-arrow-right {
+	transform: translateX(5px);
+}
+
+.mainpage-slogan {
+	position: absolute;
+	bottom: 275px;
+	left: 50px;
+}
+
+.mainpage-slogan-text1{
+	margin-bottom: 10px;
+	font-size: 36px;
+	font-weight: bold;
+}
+
+.mainpage-slogan-text2{
+	font-size: 21px;
+	margin-top: 10px;
+}
