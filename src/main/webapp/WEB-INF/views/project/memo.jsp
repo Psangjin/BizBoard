@@ -55,25 +55,27 @@
 					</select>
 				</div>
 				<div id="memo-area">
-					 <c:forEach var="shareMemo" items="${shareMemoList} varStatus="status">
-					 	   	 <c:if test="${status.index % 3 == 0}">
-								<div class="memo-row">
-							 </c:if>
-								<div class="memo-element">
-									<div class="memo-content">
-										<div class="delete-memo-btn-area">
-											<button class="delete-memo-btn btn btn-secondary">편집</button>
-										</div>
-									</div>
-									<div class="memo-info">
-										<h2>${shareMemo.title}</h2>
-										<p>${shareMemo.modifytime}</p>
-									</div>
-								</div>
-							 <c:if test="${status.index % 3 == 2 || status.last}">
-							 	</div>
-							 </c:if>
-					 </c:forEach>
+					 <c:forEach var="shareMemo" items="${shareMemoList}" varStatus="status">
+					    <c:if test="${status.index % 3 == 0}">
+					        <div class="memo-row">
+					    </c:if>
+					    
+					    <div class="memo-element">
+					        <div class="memo-content">
+					            <div class="delete-memo-btn-area">
+					                <button class="delete-memo-btn btn btn-secondary">편집</button>
+					            </div>
+					        </div>
+					        <div class="memo-info">
+					            <h2>${shareMemo.title}</h2>
+					            <p>${shareMemo.modifytime}</p>
+					        </div>
+					    </div>
+					    
+					    <c:if test="${status.index % 3 == 2 || status.last}">
+					        </div>
+					    </c:if>
+					</c:forEach>
 				</div>
 			</div>
 		</div>
