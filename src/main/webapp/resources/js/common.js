@@ -33,31 +33,44 @@ document.addEventListener('DOMContentLoaded', function() {
 	});
   }
 
-  // +메뉴(fab) 호버 효과
   const fabMain = document.querySelector('.fab-main');
-  const fabMenu = document.querySelector('.fab-menu');
-  if (fabMain && fabMenu) {
-    fabMain.addEventListener('mouseenter', () => {
-      fabMenu.style.opacity = '1';
-      fabMenu.style.pointerEvents = 'auto';
-      fabMenu.style.transform = 'translateY(0)';
+    const fabMenu = document.querySelector('.fab-menu');
+
+    let hideTimeout;
+
+    // + 버튼 클릭 시 메뉴 토글
+    fabMain.addEventListener('click', () => {
+      fabMenu.classList.toggle('show');
     });
 
-    fabMain.addEventListener('mouseleave', () => {
-      setTimeout(() => {
-        if (!fabMenu.matches(':hover')) {
-          fabMenu.style.opacity = '0';
-          fabMenu.style.pointerEvents = 'none';
-          fabMenu.style.transform = 'translateY(10px)';
-        }
-      }, 200);
-    });
-
+    // 메뉴에서 마우스 떠나면 일정 시간 후 닫힘
     fabMenu.addEventListener('mouseleave', () => {
-      fabMenu.style.opacity = '0';
-      fabMenu.style.pointerEvents = 'none';
-      fabMenu.style.transform = 'translateY(10px)';
+      hideTimeout = setTimeout(() => {
+        fabMenu.classList.remove('show');
+      }, 400);
     });
-  }
+
+    // 메뉴에 다시 들어오면 타이머 제거
+    fabMenu.addEventListener('mouseenter', () => {
+      clearTimeout(hideTimeout);
+    });
+	
+	const fabItems = document.querySelectorAll(".fab-item");
+
+	    fabItems.forEach(item => {
+	      const popup = item.querySelector(".fab-popup");
+
+	      item.addEventListener("mouseenter", () => {
+	        popup.style.opacity = "1";
+	        popup.style.transform = "translateX(-10px)";
+	        popup.style.pointerEvents = "auto";
+	      });
+
+	      item.addEventListener("mouseleave", () => {
+	        popup.style.opacity = "0";
+	        popup.style.transform = "translateX(0)";
+	        popup.style.pointerEvents = "none";
+	      });
+	    });
 
 });

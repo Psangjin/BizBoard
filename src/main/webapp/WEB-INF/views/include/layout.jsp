@@ -50,14 +50,41 @@
  	</div>
 </div> -->
 		<div class="fab-wrapper">
-			<button class="fab-main">＋</button>
-		  <div class="fab-menu">
-		  	<button class="fab-item">📁</button>
-		    <button class="fab-item">💬</button>
-		    <button class="fab-item">🔔</button>
-		    
-		  </div>
-		</div>
+  <button class="fab-main">＋</button>
+  <div class="fab-menu">
+    <div class="fab-item" data-popup="프로젝트 관련">
+      📁
+      <div class="fab-popup">
+        <strong>프로젝트</strong>
+        <ul>
+          <li>새 프로젝트</li>
+          <li>프로젝트 보기</li>
+        </ul>
+      </div>
+    </div>
+    <div class="fab-item" data-popup="채팅 알림">
+      💬
+      <div class="fab-popup">
+        <strong>채팅</strong>
+        <ul>
+          <li>메시지 보기</li>
+          <li>새 메시지</li>
+        </ul>
+      </div>
+    </div>
+    <div class="fab-item" data-popup="알림 목록">
+      🔔
+      <div class="fab-popup">
+        <strong>알림</strong>
+        <ul>
+          <li>읽지 않은 알림</li>
+          <li>전체 알림</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 </body>
 </html>
