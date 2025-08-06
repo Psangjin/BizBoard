@@ -143,3 +143,144 @@
 	font-size: 21px;
 	margin-top: 10px;
 }
+
+/* 메인페이지 기능소개 */
+.mainpage-func-introduce{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	margin-top: 25px;
+}
+
+#mainpage-func-ft{
+	font-size: 23px;
+	text-align: center;
+}
+
+#mainpage-func-intro{
+	font-size: 40px;
+	font-weight: bold;
+	margin-top: 20px;
+	text-align: center;
+}
+
+.mainpage-func-detail{
+	width: 1200px;
+	height: 600px;
+	display: flex;
+
+}
+
+.mainpage-func-division{
+	height:100%;
+	flex:1;
+	display: flex;
+	flex-direction: column;
+
+}
+
+.mainpage-func-division p{
+	font-size: 25px;
+	font-weight: 600;
+	color: #0c61aa;
+
+}
+
+.mainpage-func-st{
+	height:100%;
+	flex:5;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.mainpage-func-items1{
+	width:100%;
+	display: flex;
+	flex:1;
+	/* margin-bottom: 10px; */
+
+}
+
+.mainpage-func-items2{
+	width:100%;
+	display: flex;
+	flex:1;
+	/* margin-bottom: 10px; */
+}
+
+.mp-func-single{
+	height:100%;
+	display: flex;
+	flex-direction: column;
+	flex:1;
+	text-align: center;
+	justify-content: center; 
+	align-items: center;
+	padding: 10px 0;
+}
+
+.mp-func-team1{
+	height:100%;
+	display: flex;
+	flex-direction: column;
+	flex:2;
+	text-align: center;
+	justify-content: center; 
+	align-items: center;
+	padding: 10px 0;
+}
+
+.mp-func-team2{
+	height:100%;
+	display: flex;
+	flex-direction: column;
+	flex:1;
+	text-align: center;
+	justify-content: center; 
+	align-items: center;
+	padding: 10px 0;
+}
+
+.mp-func-text{
+	font-weight: 600;
+	font-size: 19px;
+	margin: 12px 0;
+}
+
+.mainpage-func-detail span{
+	font-size: 16px;
+	margin-bottom: 7px;
+}
+
+.mp-border{
+	border-style: none;
+	background-color: white;
+}
+
+.mp-func-custom{
+	background-color: #eff5f8e5;
+}
+
+.mp-func-icon{
+	width: 46px;
+}
+
+/* 메인페이지 푸터 */
+.mainpage-footer{
+	display: flex;
+	gap: 45px;
+	padding: 10px;
+}
+
+.seperate-line{
+	border-bottom: 2px solid rgba(124, 124, 124, 0.5);
+	margin-top: 50px;
+	margin-bottom: 20px;
+}
+
+.mainpage-footer span{
+	margin: 0 10px 10px 10px;
+	
+}
