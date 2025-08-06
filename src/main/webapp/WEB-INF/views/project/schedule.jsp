@@ -64,13 +64,14 @@
 
 					<!-- 일정 상세 보기 박스 -->
 					<div id="fc-event-details">
-						<h3>일정 상세</h3>
-						<p>
-							<strong>제목:</strong> <span id="fc-event-title"></span>
-						</p>
-						<p>
-							<strong>설명:</strong> <span id="fc-event-description"></span>
-						</p>
+						<div class="fc-details-header">
+						  <h3>일정 상세</h3>
+						  <button id="fc-details-close" class="fc-close-btn" aria-label="닫기">×</button>
+						</div>
+						  <div class="fc-details-content">
+						    <p><strong>제목:</strong> <span id="fc-event-title"></span></p>
+						    <p><strong>설명:</strong><br> <span id="fc-event-description"></span></p>
+						  </div>
 					</div>
 					
 					<!-- 상세정보 보여줄 div 추가 -->

@@ -543,6 +543,8 @@ document.getElementById("task-comment-add-cancel-btn").addEventListener("click",
 	  });
 	}
 
+	
+	
     let draggedEventInfo = null;
 	//캘린더에 일정 드래그시 가져올 정보
     new FullCalendar.Draggable(document.getElementById('fc-external-events'), {
@@ -617,7 +619,20 @@ document.getElementById("task-comment-add-cancel-btn").addEventListener("click",
 	  // 모달에 데이터 채우기
 	  document.getElementById('fc-modal-title').value = event.title || '';
 	  document.getElementById('fc-modal-description').value = event.extendedProps.description || '';
-	  document.getElementById('fc-modal-color').value = event.backgroundColor || '#007bff';
+	  // 현재 선택된 색상 class 제거
+	  document.querySelectorAll('.fc-color-circle').forEach(el => {
+	    el.classList.remove('selected');
+	  });
+
+	  // 현재 event의 색상
+	  const currentColor = event.backgroundColor;
+
+	  // 해당 색상에 selected class 추가
+	  const selectedColorEl = document.querySelector(`.fc-color-circle[data-color="${currentColor}"]`);
+	  if (selectedColorEl) {
+	    selectedColorEl.classList.add('selected');
+	  }
+	  
 	  document.getElementById('fc-event-allday').checked = event.allDay;
 	  
 	  // 시작일 설정 (datetime-local 포맷)
@@ -691,6 +706,7 @@ document.getElementById("task-comment-add-cancel-btn").addEventListener("click",
         document.getElementById('fc-modal-title').value = '';
         document.getElementById('fc-modal-description').value = '';
         document.getElementById('fc-modal-color').value = '#007bff';
+		document.getElementById('fc-event-end').value = null;
 
         document.querySelectorAll('.fc-color-circle').forEach(c => c.classList.remove('selected'));
         document.querySelector('.fc-color-circle[data-color="#007bff"]').classList.add('selected');
@@ -818,7 +834,7 @@ document.getElementById("task-comment-add-cancel-btn").addEventListener("click",
     	    data: JSON.stringify(scheduleData),
     	    success: function () {
     	      alert('저장 완료');
-    	      location.reload();
+    	      calendar.refetchEvents();
     	    },
     	    error: function () {
     	      alert('저장 실패');
@@ -849,7 +865,9 @@ document.getElementById("task-comment-add-cancel-btn").addEventListener("click",
     });
 	
 	/*-----*/
-	
+	document.getElementById('fc-details-close').addEventListener('click', function () {
+	  document.getElementById('fc-event-details').style.display = 'none';
+	});
 
 	document.getElementById('toggle-edit-mode').addEventListener('click', function () {
 	    isEditMode = !isEditMode;
