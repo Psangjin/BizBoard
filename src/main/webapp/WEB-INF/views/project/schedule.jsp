@@ -40,6 +40,7 @@
 
 				<div class="body-left">
 					<!-- 외부 이벤트 등록용 DIV -->
+					<button id="toggle-edit-mode" class="btn btn-outline-danger mb-2">편집 모드 켜기</button>
 					<div id="fc-external-events">
 						<p>
 							<strong>달력에 드래그하여 추가</strong>
@@ -49,7 +50,10 @@
 						
 
 					</div>
-					<div id="fc-event-trash">🗑️ 삭제</div>
+					<div id= "fc-trash-area">
+						<strong>이곳에 드래그하여 삭제</strong>
+						<div id="fc-event-trash">🗑️ 삭제</div>
+					</div>
 					
 					<div id="task-edit-panel" class="hidden-section" >
 					  <h3 id="task-edit-title"></h3>

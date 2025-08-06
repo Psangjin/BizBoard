@@ -14,7 +14,7 @@
 	min-width: 220px;
 }
 
-#fc-external-events {
+#fc-external-events, #fc-trash-area {
 	position: relative;
 	top: 10px;
 	width: 90%;
@@ -23,6 +23,8 @@
 	margin: 10px auto;
 	border-radius: 10px;
 	background-color: #f0f0f0;
+	
+	display:none;
 }
 
 .fc-event {
@@ -31,7 +33,11 @@
 	padding: 4px;
 	margin: 4px 0;
 	border-radius: 4px;
-	cursor: move;
+	cursor: pointer;
+}
+
+.fc-edit-mode .fc-event:active {
+  cursor: move;
 }
 #fc-event-trash {
 	width: 100px;
@@ -40,6 +46,7 @@
 	text-align: center;
 	line-height: 100px;
 	transition: all 0.3s ease;
+	margin:10px auto;
 }
 
 #fc-event-trash.hovered {
