@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC
+		   "-//mybatis.org//DTD Mapper 3.0//EN" 
+		   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		   
+<mapper namespace="project_mapper">
+
+	<insert id="createProject" parameterType="Project">
+		INSERT INTO t_project (
+      id, manager, title, content, start_dt, end_dt
+    ) VALUES (
+      project_seq.NEXTVAL,
+      #{manager},
+      #{title},
+      #{content},
+      #{startDt},
+      #{endDt}
+    )
+	</insert>
+	
+	<select id="findAllProjects" resultType="Project">
+		SELECT * FROM t_project
+	</select>
+
+</mapper>

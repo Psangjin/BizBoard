@@ -14,13 +14,13 @@
   <script src="/js/common.js"></script>
 </head>
 <body>
-<div class="calendar-wrapper">
+<div class="layout-wrapper">
 	<!-- 헤더 부분 -->
 	<div class="header">
 		<div class="header-menu-and-logo">
 			<i class="fa-solid fa-bars fa-2xl" id="toggleSidebar"
 				style="padding-right: 15px; cursor: pointer;"></i>
-			<img src="http://localhost:8080/image/BizBoard_Logo.png" alt="BizBoard_Logo" id="header-logo"/>
+			<img src="/image/BizBoard_Logo.png" alt="BizBoard_Logo" id="header-logo"/>
 		</div>
 		<h2>로그인</h2>
 	</div>
@@ -35,10 +35,13 @@
 				<i class="fa-solid fa-calendar fa-xl" id="fa-calendar-icon" style="cursor: pointer;"></i>
 			</div>
 			<div class="body-side-menubar-items">
-				<i class="fa-solid fa-note-sticky fa-xl"></i>
+				<i class="fa-solid fa-note-sticky fa-xl" id="fa-note-icon" style="cursor: pointer;"></i>
 			</div>
 			<div class="body-side-menubar-items">
 				<i class="fa-solid fa-arrow-right-arrow-left fa-xl"></i>
+			</div>
+			<div class="body-side-menubar-items">
+				<i class="fa-solid fa-user-pen fa-xl"></i>
 			</div>
 		</div>
 		<div>
@@ -47,14 +50,43 @@
  	</div>
 </div> -->
 		<div class="fab-wrapper">
-			<button class="fab-main">＋</button>
-		  <div class="fab-menu">
-		  	<button class="fab-item">📁</button>
-		    <button class="fab-item">💬</button>
-		    <button class="fab-item">🔔</button>
-		    
+  <button class="fab-main">＋</button>
+  <div class="fab-menu">
+    <div class="fab-item" data-popup="프로젝트 관련">
+      📁
+      <div class="fab-popup">
+	      <ul>
+	        <li class="project-list-btn">프로젝트 목록</li>
+	      </ul>
+	      <div class="popup-divider"></div>
+	      <div class="create-project-wrapper">
+		    <button class="create-project-btn open-new-project-modal-btn">＋ 새 프로젝트</button>
 		  </div>
-		</div>
+      </div>
+    </div>
+    <div class="fab-item" data-popup="채팅 알림">
+      💬
+      <div class="fab-popup">
+        <strong>채팅</strong>
+        <ul>
+          <li>메시지 보기</li>
+          <li>새 메시지</li>
+        </ul>
+      </div>
+    </div>
+    <div class="fab-item" data-popup="알림 목록">
+      🔔
+      <div class="fab-popup">
+        <strong>알림</strong>
+        <ul>
+          <li>읽지 않은 알림</li>
+          <li>전체 알림</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+<%@ include file="../include/createProjectModal.jsp"%>
 
 </body>
 </html>
