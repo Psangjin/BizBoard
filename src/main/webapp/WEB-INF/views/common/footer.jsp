@@ -7,6 +7,7 @@
 <title>Insert title here</title>
 </head>
 <body>
+	<div class="seperate-line"></div>
 	<div class="mainpage-footer">
 		<div class="mp-footer-left">
 			<img src="/image/BizBoard_Logo.png" alt="BizBoard_Logo"	id="mainpage-footer-logo"><br>

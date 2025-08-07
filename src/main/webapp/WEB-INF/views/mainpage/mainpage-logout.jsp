@@ -112,8 +112,6 @@
 		</div>
 	</div>
 	
-	<div class="seperate-line"></div>
-	
 	<%@ include file="/WEB-INF/views/common/footer.jsp" %>
 	
 </body>
