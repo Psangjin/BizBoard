@@ -5,9 +5,13 @@
 		   
 <mapper namespace="schedule_mapper">
 
+	<select id="findMaxScheduleId" resultType="int">
+	  SELECT NVL(MAX(ID), 0) FROM SCHEDULE
+	</select>
+
 	<insert id="saveSchedule" parameterType="Schedule">
 		INSERT INTO schedule (
-      id, title, content, type, start_dt, end_dt, completed, color
+      id, title, content, type, start_dt, end_dt, completed, color,project_id
     ) VALUES (
       schedule_seq.NEXTVAL,
       #{title},
@@ -16,12 +20,14 @@
       #{startDt},
       #{endDt},
       #{completed},
-      #{color}
+      #{color},
+      #{projectId}
     )
 	</insert>
 	
-	<select id="findAllSchedules" resultType="Schedule">
+	<select id="findSchedulesByProjectId" parameterType="Long" resultType="Schedule">
 		SELECT * FROM schedule
+		WHERE project_id=#{projectId}
 	</select>
 	
 	<delete id="deleteScheduleById" parameterType="long">

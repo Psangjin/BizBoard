@@ -25,6 +25,13 @@ document.addEventListener('DOMContentLoaded', function() {
       location.href = "/project/schedule";
     });
   }
+  // 메모 메뉴 아이콘 페이지 이동
+  const memoIcon = document.getElementById('fa-note-icon');
+   if (memoIcon) {
+     memoIcon.addEventListener('click', function() {
+       location.href = "/project/memo";
+     });
+   }
 
   // +메뉴(fab) 호버 효과
   const fabMain = document.querySelector('.fab-main');

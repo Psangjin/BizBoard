@@ -1,6 +1,7 @@
 package com.app.controller.project;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
@@ -14,7 +15,8 @@ public class ProjectController {
 	
 	
 	@GetMapping("/project/schedule")
-	public String projectSchedule() {
+	public String projectSchedule(Model model) {
+		  model.addAttribute("projectId", 0);  // ✅ 이게 핵심
 		return "project/schedule";
 	}
 	

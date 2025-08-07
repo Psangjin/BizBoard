@@ -13,7 +13,6 @@
 		
  	<typeAliases>	
 		<typeAlias type="com.app.dto.project.Schedule" alias="Schedule"/>
-		
 	</typeAliases>	 
 		
 		
