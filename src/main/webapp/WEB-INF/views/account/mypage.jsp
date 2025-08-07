@@ -36,6 +36,43 @@
 
 </head>
 <body>
+
+
+ <div class="content">
+        <h2>내 프로필</h2>
+
+        <form action="/account/mypage/update" method="post">
+            <div class="form-group">
+                <label>아이디</label>
+                <input type="text" name="id" value="${loginUser.id}" readonly />
+            </div>
+
+            <div class="form-group">
+                <label>이름</label>
+                <input type="text" name="name" value="${loginUser.name}" readonly />
+            </div>
+
+            <div class="form-group">
+                <label>이메일</label>
+                <input type="text" name="email" value="${loginUser.email}" readonly />
+            </div>
+
+            <div class="form-group">
+                <label>새 비밀번호</label>
+                <input type="password" name="pw" required />
+            </div>
+
+            <div class="form-group">
+                <label>비밀번호 확인</label>
+                <input type="password" name="pwCheck" required />
+            </div>
+
+            <button type="submit" class="btn-submit">수정하기</button>
+        </form>
+    </div>
+</div>
+
+
 	<h1>${id}님의 마이페이지</h1>
 	<br> 이메일: ${email}
 	<br> 회원 정보 / 활동 내역 표시
