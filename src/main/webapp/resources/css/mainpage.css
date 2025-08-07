@@ -153,6 +153,10 @@
 	margin-top: 25px;
 }
 
+.mainpage-func-title{
+	margin-bottom: 15px;
+}
+
 #mainpage-func-ft{
 	font-size: 23px;
 	text-align: center;
@@ -270,17 +274,55 @@
 /* 메인페이지 푸터 */
 .mainpage-footer{
 	display: flex;
-	gap: 45px;
+	gap: 40px;
 	padding: 10px;
+	margin-bottom: 20px;
 }
 
 .seperate-line{
 	border-bottom: 2px solid rgba(124, 124, 124, 0.5);
-	margin-top: 50px;
-	margin-bottom: 20px;
+	margin-top: 70px;
+	margin-bottom: 15px;
 }
 
 .mainpage-footer span{
-	margin: 0 10px 10px 10px;
-	
+	margin: 0 10px 10px 10px;	
+}
+
+.mp-footer-left{
+	margin-left: 30px;
+}
+
+.mp-footer-mid{
+	width: 300px;
+	margin-top: 60px;
+}
+
+#mp-mid-text{
+	font-weight: bold;
+}
+
+.mp-footer-right{
+	margin-top: 80px;
+}
+
+#mainpage-footer-logo{
+	width: 200px;
+	cursor: pointer;
+}
+
+.mp-footer-sns{
+	margin-top: 65px;
+	margin-left: 20px;
+	font-size: 23px;
+}
+
+.mp-footer-sns>span{
+	font-size: 16px;
+
+}
+
+.mp-footer-sns i {
+	cursor: pointer;
+	padding: 3px;
 }

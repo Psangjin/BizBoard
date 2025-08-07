@@ -13,13 +13,13 @@
 <body>
 
 	<div class="mainpage-header">
-		<img src="/image/BizBoard_Logo.png" alt="BizBoard_Logo" id="mainpage-header-logo">
+		<img src="/image/BizBoard_Logo.png" alt="BizBoard_Logo" id="mainpage-header-logo" onClick="location.href='/mainpage'">
 		<div class="mainpage-header-menu">
-			<p>서비스 소개</p>
-			<p>고객지원</p>
-			<p>마이페이지</p>
+			<p onClick="location.href='/service'">서비스 소개</p>
+			<p onClick="location.href='/support'">고객지원</p>
+			<p onClick="location.href='/mypage'">마이페이지</p>
 		</div>
-		<i class="fa-solid fa-arrow-right-from-bracket" id="mainpage-header-icon"></i>
+		<i class="fa-solid fa-arrow-right-from-bracket" id="mainpage-header-icon" onClick="location.href='/'"></i>
 	</div>
 
 	<div class='mainpage-container'>
