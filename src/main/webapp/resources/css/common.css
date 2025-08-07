@@ -216,7 +216,7 @@ body {
   right: 110%; /* 아이콘 왼쪽으로 띄우기 */
   top: 0;
   transform: translateY(-50%) translateX(15px);
-  background: linear-gradient(135deg, #1E90FF, #0D6FFF);
+  background: #ffffff;
   color: white;
   font-weight: 600;
   padding: 14px 22px;
@@ -237,13 +237,13 @@ body {
 .fab-popup::after {
   content: "";
   position: absolute;
-  top: 25%;
-  right: -12px;
+  top: 35px;
+  right: -14px;
+  z-index: -1000;
   transform: translateY(-50%);
   border-width: 8px;
   border-style: solid;
-  border-color: transparent transparent transparent #0D6FFF;
-  filter: drop-shadow(-2px 0 1px rgba(0,0,0,0.1));
+  border-color: transparent transparent transparent #fff;
 }
 
 
@@ -252,4 +252,64 @@ body {
   opacity: 1;
   pointer-events: auto;
   transform: translateY(-45%) translateX(0);
+}
+
+.fab-popup strong {
+  display: block;
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.fab-popup ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.fab-popup ul li.project-list-btn:hover {
+  background-color: #fff;
+}
+
+.fab-popup ul li {
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.fab-popup ul li:hover {
+  background-color: #f0f0f0;
+}
+
+/* 구분선 */
+.popup-divider {
+  border-top: 1px solid #e0e0e0;
+  margin: 10px 0;
+}
+
+/* 버튼 wrapper (분리감 있는 배경) */
+.create-project-wrapper {
+  text-align: center;
+  background-color: #f9f9f9;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+/* 새 프로젝트 버튼 */
+.create-project-btn {
+  background-color: #296aa2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;
+}
+
+.create-project-btn:hover {
+  background-color: #1e5685;
 }

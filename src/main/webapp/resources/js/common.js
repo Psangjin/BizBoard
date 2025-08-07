@@ -82,5 +82,26 @@ document.addEventListener('DOMContentLoaded', function() {
 		  });
 	    });
 		
+		$(document).ready(function () {
+		    $.ajax({
+		      url: '/project/list',
+		      method: 'GET',
+		      success: function (projects) {
+		        const $popupList = document.querySelector('.fab-item[data-popup="프로젝트 관련"] .fab-popup ul');
+		        
+
+		        // 목록 추가
+		        projects.forEach(function (project) {
+		          const li = document.createElement('li');
+		          li.textContent = project.title;
+		          li.setAttribute('data-id', project.id);
+		          $popupList.appendChild(li);
+		        });
+		      },
+		      error: function () {
+		        alert("프로젝트 목록을 불러오는 데 실패했습니다.");
+		      }
+		    });
+		  });
 
 });

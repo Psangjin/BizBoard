@@ -55,11 +55,13 @@
     <div class="fab-item" data-popup="프로젝트 관련">
       📁
       <div class="fab-popup">
-        <strong>프로젝트</strong>
-        <ul>
-          <li>새 프로젝트</li>
-          <li>프로젝트 보기</li>
-        </ul>
+	      <ul>
+	        <li class="project-list-btn">프로젝트 목록</li>
+	      </ul>
+	      <div class="popup-divider"></div>
+	      <div class="create-project-wrapper">
+		    <button class="create-project-btn open-new-project-modal-btn">＋ 새 프로젝트</button>
+		  </div>
       </div>
     </div>
     <div class="fab-item" data-popup="채팅 알림">
@@ -84,7 +86,7 @@
     </div>
   </div>
 </div>
-
+<%@ include file="../include/createProjectModal.jsp"%>
 
 </body>
 </html>
