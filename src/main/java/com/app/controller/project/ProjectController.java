@@ -27,4 +27,9 @@ public class ProjectController {
 	public String  projectMemo() {
 		return "project/memo";
 	}
+	
+	@GetMapping("/project/newProject")
+	public String  newProject() {
+		return "project/newProject";
+	}
 }
