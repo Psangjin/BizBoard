@@ -205,20 +205,6 @@
 		</dependency>
 
 
-		<!-- Spring Boot OAuth2 Client -->
-		<dependency>
-		    <groupId>org.springframework.boot</groupId>
-		    <artifactId>spring-boot-starter-oauth2-client</artifactId>
-		    <version>2.7.18</version>
-		</dependency>
-		
-		<!-- Spring Boot Web -->
-		<dependency>
-		    <groupId>org.springframework.boot</groupId>
-		    <artifactId>spring-boot-starter-web</artifactId>
-		    <version>2.7.18</version>
-		</dependency>
-
 
 
 		<!-- org.json (JSONObject 사용 시 필요) -->
