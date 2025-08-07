@@ -6,38 +6,19 @@
 	xmlns:context="http://www.springframework.org/schema/context"
 
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
-	http://www.springframework.org/schema/beans/spring-beans.xsd
-	http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
+http://www.springframework.org/schema/beans/spring-beans.xsd
+http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
              http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
               http://www.springframework.org/schema/context
              http://www.springframework.org/schema/context/spring-context.xsd">
 
-	<!-- ioc 컨테이너에 빈 등록 -->
-	<!-- roomDAO 빈 등록 -->
-
-	<!-- RoomDAO roomDAO = new RoomDAOImpl() -->
-	<!-- <bean id="roomDAO" class="com.app.dao.room.impl.RoomDAOImpl"> -->
-	<!-- </bean> -->
-
-	<!-- RoomService 등록 -->
-
-	<!-- RoomService roomService = new RoomServiceImpl() -->
-	<!-- <bean id="roomService" class="com.app.service.room.impl.RoomServiceImpl"> -->
-	<!-- 생성자를 통한 의존성 주입 -->
-	<!-- RoomService roomService = new RoomServiceImpl(roomDAO) -->
-	<!-- <constructor-arg ref="roomDAO"></constructor-arg> -->
-
-	<!-- setter 메소드를 통한 의존성 주입 -->
-	<!-- RoomService roomService = new RoomServiceImpl(); roomService.setRoomDAO(roomDAO); -->
-	<!-- <property name="roomDAO" ref="roomDAO"></property> -->
-	<!-- </bean> -->
 
 	<bean class="org.apache.commons.dbcp2.BasicDataSource"
 		id="data_source">
 		<property name="driverClassName"
 			value="oracle.jdbc.OracleDriver" />
 		<property name="url"
-			value="jdbc:oracle:thin:@localhost:1521:orcl" />
+			value="jdbc:oracle:thin:@192.168.0.114:1521:orcl" />
 		<property name="username" value="scott" />
 		<property name="password" value="tiger" />
 	</bean>
@@ -64,12 +45,12 @@
 	<context:component-scan
 		base-package="com.app.dao"></context:component-scan>
 
-	<!-- <bean id="sampleScheduler"
-		class="com.app.scheduler.DailySalesScheduler" />
-	<task:scheduler id="mainScheduler" pool-size="10" />
-	<task:executor id="mainTaskExecutor" pool-size="10" />
-	<task:annotation-driven
-		executor="mainTaskExecutor" scheduler="mainScheduler" /> -->
+<!-- 	<bean id="sampleScheduler" -->
+<!-- 		class="com.app.scheduler.DailySalesScheduler" /> -->
+<!-- 	<task:scheduler id="mainScheduler" pool-size="10" /> -->
+<!-- 	<task:executor id="mainTaskExecutor" pool-size="10" /> -->
+<!-- 	<task:annotation-driven -->
+<!-- 		executor="mainTaskExecutor" scheduler="mainScheduler" /> -->
 
 
 </beans>

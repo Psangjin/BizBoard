@@ -11,10 +11,10 @@
 	</settings>
 		
 		
-	<typeAliases>	
-		<!-- <typeAlias type="com.app.dto.room.Room" alias="Room"/> -->
+ 	<typeAliases>	
+		<typeAlias type="com.app.dto.project.Schedule" alias="Schedule"/>			
 		<typeAlias type="com.app.dto.user.User" alias="User"/>
-		
+		<typeAlias type="com.app.dto.project.Project" alias="Project"/>
 	</typeAliases>	
 		
 		
