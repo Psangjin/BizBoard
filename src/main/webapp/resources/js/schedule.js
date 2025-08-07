@@ -550,8 +550,6 @@ document.getElementById("task-comment-add-cancel-btn").addEventListener("click",
     new FullCalendar.Draggable(document.getElementById('fc-external-events'), {
       itemSelector: '.fc-event',
 	  eventData: function (eventEl) {
-	      // 편집 도구는 isEditTool을 true로 설정
-	      const isEditTool = eventEl.dataset.edit === "true";
 	      const title = eventEl.dataset.title;
 	      const color = eventEl.dataset.color;
 
@@ -559,9 +557,7 @@ document.getElementById("task-comment-add-cancel-btn").addEventListener("click",
 	        title: title,
 	        backgroundColor: color,
 	        borderColor: color,
-	        extendedProps: {
-	          isEditTool: isEditTool
-	        }
+	        
 	      };
       }
     });
@@ -701,6 +697,7 @@ document.getElementById("task-comment-add-cancel-btn").addEventListener("click",
         // 드롭한 날짜 시작날짜로 설정
         const droppedDate = info.event.startStr;
         setInputDate(droppedDate);
+		info.event.remove();
         
         //새로운 데이터 입력을 위한 다른 데이터 초기화
         document.getElementById('fc-modal-title').value = '';
