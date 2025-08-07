@@ -1,20 +1,70 @@
 @charset "UTF-8";
 
 .pricing-intro{
-	margin: 10px 0;
+	margin: 30px 0 20px 0;
 	text-align: center;
+}
+
+.pricing-intro span{
+	font-size: 34px;
+	font-weight: bold;
+}
+
+#pricing-usage-fee{
+	margin-top: 20px;
+	font-size: 18px;
+}
+
+#pricing-free-use{
+	font-size: 20px;
+	font-weight: 500;
+	color: #293fbb;
 }
 
 .pricing-info{
 	display: flex;
-	width: 900px;
-	height: 600px;
+	height: 550px;
+	gap: 40px;
 	align-items: center;
+	justify-content: center;
 }
 
 .pricing-border{
-	width: 300px;
-	height: 600px;
-	border: 1px solid black;
-	border-radius: 5px;
+	width: 250px;
+	height: 400px;
+	padding: 20px;
+	border: 2px solid #2e78b89a;
+	border-radius: 20px;
+} 
+
+.pricing-tier{
+	font-size: 25px;
+	font-weight: 500;
+}
+
+.pricing-price{
+	display: inline-block;
+	margin-top: 15px;
+	font-size: 30px;
+	font-weight: bold;
+	/* color: #104c80; */
+	
+}
+
+.pricing-note{
+	font-size: 15px;
+	margin-left: 3px;
+}
+
+.pricing-max-users{
+	display: inline-block;
+	margin-top: 10px;
+	font-size: 17px;
+}
+
+.pricing-seperate-line{
+	border-bottom: 2px solid rgb(230, 230, 230);
+	margin-top: 20px;
+	width: 255px;
+	height: 1px;
 }

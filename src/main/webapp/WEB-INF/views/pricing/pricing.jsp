@@ -16,28 +16,34 @@
 	<%@ include file="/WEB-INF/views/common/header.jsp" %>
 	
 	<div class="pricing-intro">
-		<p>| 이용요금 |</p>
-		<h1>효율적인 협업의 시작,<br> BizBoard로 팀워크를 설계하세요</h1>
-		<p>지금 바로 30일 무료 평가판으로 체험해보세요.</p>
+		<p id="pricing-usage-fee">| 이용요금 |</p>
+		<span>효율적인 협업의 시작,<br> BizBoard로 팀워크를 설계하세요</span>
+		<p id="pricing-free-use">사용자 수에 따라 합리적으로 — 기능은 모두 제공합니다.</p>
 	</div>
 	
 	<div class="pricing-info">
 		<div class="pricing-free pricing-border">
-			<p>무료</p>
-			<span>0원</span><br>
-			<span>최대 5인의 사용자</span>
+			<span class="pricing-tier">무료</span><br>
+			<span class="pricing-price">₩0</span>
+			<span class="pricing-note"> / 평생</span><br>
+			<span class="pricing-max-users">최대 5인까지</span>
+			<div class="pricing-seperate-line"></div>
 		</div>
 		
 		<div class="pricing-basic pricing-border">
-			<p>베이직</p>
-			<span>1,800원</span><span>/월별, 1인당</span><br>
-			<span>최대 10인의 사용자</span><br>
+			<span class="pricing-tier">베이직</span><br>
+			<span class="pricing-price">₩1,800</span>
+			<span class="pricing-note"> / 월, 1인당</span><br>
+			<span class="pricing-max-users">최대 10인까지</span><br>
+			<div class="pricing-seperate-line"></div>
 		</div>
 		
 		<div class="pricing-standard pricing-border">
-			<p>스탠다드</p>
-			<span>2,300원</span><span>/월별, 1인당</span><br>
-			<span>10인 이상의 사용자</span><br>
+			<span class="pricing-tier">스탠다드</span><br>
+			<span class="pricing-price">₩2,300</span>
+			<span class="pricing-note"> / 월, 1인당</span><br>
+			<span class="pricing-max-users">10인 이상</span><br>
+			<div class="pricing-seperate-line"></div>
 		</div>
 	</div>
 	
