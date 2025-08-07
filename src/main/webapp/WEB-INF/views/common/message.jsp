@@ -8,7 +8,8 @@
 <script>
     window.onload = function() {
         alert("${message}");
-        location.href = "${pageContext.request.contextPath}${redirectUrl}";
+        location.href = "${pageContext.request.contextPath}${redirecter}";
+
     }
 </script>
 </head>

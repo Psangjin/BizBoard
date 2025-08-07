@@ -13,7 +13,7 @@
 		
 	<typeAliases>	
 		<!-- <typeAlias type="com.app.dto.room.Room" alias="Room"/> -->
-		<typeAlias type="com.app.dto.User" alias="User"/>
+		<typeAlias type="com.app.dto.user.User" alias="User"/>
 		
 	</typeAliases>	
 		

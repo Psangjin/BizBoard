@@ -27,7 +27,7 @@
 
 /* 입력창 */
 .input-box {
-    width: 100%;
+    width: 90%;
     padding: 12px;
     margin-bottom: 12px;
     border: 1px solid #ccc;
@@ -37,8 +37,8 @@
 
 /* 버튼 */
 .btn {
-    width: 100%;
-    padding: 12px;
+    width: 95%;
+    padding: 10px;
     font-size: 16px;
     font-weight: bold;
     border: none;
@@ -46,7 +46,7 @@
     color: white;
     background-color: #6c63ff;
     cursor: pointer;
-    margin-bottom: 10px;
+    margin-bottom: 20px;    
 }
 
 .btn:hover {
@@ -62,6 +62,33 @@
     background-color: #766df5;
 }
 
+
+/* 소셜 로그인 버튼 */
+.btn-social {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 90%;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    text-decoration: none;
+    margin-left: 5px;
+    color: #333;
+}
+
+.btn-google {margin-top:20px; background-color: #fff; border: 1px solid #ccc; }
+.btn-kakao { background-color: #FEE500; color: #3C1E1E; }
+.btn-naver { background-color: #03C75A; color: white; }
+
+.btn-social img {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+}
+
 </style>
 </head>
 <body>
@@ -70,11 +97,32 @@
     <h2>로그인</h2>
     <form action="${ctx}/account/login" method="post">
         <input type="text" name="id" placeholder="아이디 입력" class="input-box">
-        <input type="password" name="password" placeholder="비밀번호 입력" class="input-box">
+        <input type="password" name="pw" placeholder="비밀번호 입력" class="input-box">
         <button type="submit" class="btn">로그인</button>
     </form>
     
-    <a href="${ctx}/account/signup" class="btn btn-secondary">회원가입</a>
+    계정이 없습니까? <a href="${ctx}/account/signup" class="btn btn-secondary">회원가입</a>
+    <br>
+    <c:if test="${not empty error}">
+        <div style="color:red; margin-top:15px;">${error}</div>
+    </c:if>
+    
+    
+    
+   <!-- 소셜 로그인 버튼 -->
+    <a href="${ctx}/oauth2/authorization/google" class="btn-social btn-google">
+        <img src="/image/google_icon.png" alt="Google"> Google로 로그인
+    </a>
+    <a href="${ctx}/oauth2/authorization/kakao" class="btn-social btn-kakao">
+        <img src="/image/kakao_icon.png" alt="Kakao"> Kakao로 로그인
+    </a>
+    <a href="${naverLoginUrl}" class="btn-social btn-naver">
+    <img src="/image/naver_icon.png" alt="Naver"> Naver로 로그인
+</a>
+
+    
+    
+    
 </div>
 
 

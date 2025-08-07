@@ -5,24 +5,39 @@
 
 <mapper namespace="user_mapper">
 
+    
     <!-- 회원가입 -->
     <insert id="insertUser" parameterType="User">
-        INSERT INTO users (id, pw, email, name)
-         VALUES (
-        		#{id},
-        		#{pw},
-        		#{email},
-        		#{name}
-        		)
+        INSERT INTO users (
+            id, pw, email, name
+        ) VALUES (
+            #{id},
+            #{pw},
+            #{email},
+            #{name}
+           
+        )
     </insert>
+    
+       
 
 
     <!-- 로그인 -->
     <select id="loginUser" parameterType="User" resultType="User">
         SELECT *
-        FROM users 
+        FROM users
         WHERE id = #{id}
         AND pw = #{pw}
+    </select>
+
+
+
+ 	<!-- SNS 로그인 시 회원 찾기 -->
+    <select id="findByProvider" parameterType="User" resultType="User">
+        SELECT *
+        FROM users
+        WHERE provider = #{provider}
+        AND provider_id = #{providerId}
     </select>
 
 
@@ -32,5 +47,14 @@
         FROM users
         WHERE id = #{id}
     </select>
+    
+    
+    <!-- 이메일 중복 체크 -->
+    <select id="findByEmail" parameterType="String" resultType="User">
+	    SELECT *
+	    FROM users
+	    WHERE email = #{email}
+	</select>
+	    
 
 </mapper>

@@ -21,7 +21,7 @@
 
 /* 제목 */
 .form-container h2 {
-    font-size: 24px;
+    font-size: 28px;
     margin-bottom: 20px;
 }
 
@@ -46,7 +46,7 @@
     color: white;
     background-color: #6c63ff;
     cursor: pointer;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 
 .btn:hover {
@@ -62,21 +62,118 @@
     background-color: #766df5;
 }
 
+.terms-container {
+	text-align: left;
+	
+	font-size: 13px; /* 약관 동의 폰트 */
+	margin-top: 20px;	
+}
+
+.terms-container label {
+	display: block;
+	margin-bottom: 8px;
+}
+
+/* 에러 메시지 */
+.error-text {
+    color: red;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
 </style>
+
+
 </head>
 <body>
 
 <div class="form-container">
     <h2>회원가입</h2>
+    
+      <!-- 서버에서 전달된 에러 메시지 -->
+    <c:if test="${not empty error}">
+        <p class="error-text">${error}</p>
+    </c:if>
+    
     <form action="${ctx}/account/signup" method="post">
-        <input type="text" name="id" placeholder="아이디 입력" class="input-box">
-        <input type="password" name="password" placeholder="비밀번호 입력" class="input-box">
-        <input type="text" name="name" placeholder="이름 입력" class="input-box">
-        <input type="email" name="email" placeholder="이메일 입력" class="input-box">
-        <button type="submit" class="btn">가입하기</button>
-    </form>
-    <a href="${ctx}/account/login" class="btn btn-secondary">로그인 페이지로</a>
-</div>
+        <input type="text" name="id" placeholder="아이디 입력"
+               class="input-box" value="${user.id}">
+        <input type="password" name="pw" placeholder="비밀번호 입력"
+               class="input-box">
+        <input type="text" name="name" placeholder="이름 입력"
+               class="input-box" value="${user.name}">
+        <input type="email" name="email" placeholder="이메일 입력"
+               class="input-box" value="${user.email}">
+
+    <!-- 약관 동의 -->
+    <div class="terms-container">
+        <label>
+            <input type="checkbox" id="agreeAll"> 아래 내용에 모두 동의합니다.
+        </label>
+	
+	   
+        <label>
+            <input type="checkbox" name="terms" class="terms-check"> [필수] 이용약관 동의
+            <a href="#" style="float:right; font-size:12px;">전체보기 &gt;</a>
+        </label>
+
+        <label>
+            <input type="checkbox" name="privacy" class="terms-check"> [필수] 개인정보 수집 및 이용 동의
+            <a href="#" style="float:right; font-size:12px;">전체보기 &gt;</a>
+        </label>
+
+        <label>
+            <input type="checkbox" name="age" class="terms-check"> [필수] 만 14세 이상입니다.<br> 
+            <span style="font-size:12px; color:#888;">(만 14세 미만은 가입이 불가능합니다.)</span>
+        </label>
+
+        <label>
+            <input type="checkbox" name="marketing"> [선택] 마케팅 정보 활용 및 광고성 정보 수신 동의
+            <a href="#" style="float:right; font-size:12px;">전체보기 &gt;</a>
+        </label>
+    </div>
+
+    <button type="submit" class="btn">가입하기</button>
+	</form>
+	
+	<a href="${ctx}/account/login" class="btn btn-secondary">로그인 페이지로</a>
+
+
+<script>
+function validateForm(e) {
+    const id = document.querySelector('input[name="id"]').value.trim();
+    const pw = document.querySelector('input[name="pw"]').value.trim(); 
+    const name = document.querySelector('input[name="name"]').value.trim();
+    const email = document.querySelector('input[name="email"]').value.trim();
+    const requiredChecks = document.querySelectorAll('.terms-check');
+
+    if (!id) { alert("아이디를 입력해주세요."); e.preventDefault(); return false; }
+    if (!pw) { alert("비밀번호를 입력해주세요."); e.preventDefault(); return false; }
+    if (!name) { alert("이름을 입력해주세요."); e.preventDefault(); return false; }
+    if (!email) { alert("이메일을 입력해주세요."); e.preventDefault(); return false; }
+
+    for (let cb of requiredChecks) {
+        if (!cb.checked) {
+            alert("필수 약관에 모두 동의해야 가입이 가능합니다.");
+            e.preventDefault();
+            return false;
+        }
+    }
+    return true;
+}
+
+
+
+<!-- 약관 전체선택 기능 -->
+document.getElementById('agreeAll').addEventListener('change', function() {
+    const isChecked = this.checked; // 수정됨
+    document.querySelectorAll('.terms-check').forEach(cb => cb.checked = isChecked);
+});
+</script>
+
+
+                      
+       
 
 
 </body>
