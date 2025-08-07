@@ -214,7 +214,7 @@ body {
 .fab-popup {
   position: absolute;
   right: 110%; /* 아이콘 왼쪽으로 띄우기 */
-  top: 50%;
+  top: 0;
   transform: translateY(-50%) translateX(15px);
   background: linear-gradient(135deg, #1E90FF, #0D6FFF);
   color: white;
@@ -237,7 +237,7 @@ body {
 .fab-popup::after {
   content: "";
   position: absolute;
-  top: 50%;
+  top: 25%;
   right: -12px;
   transform: translateY(-50%);
   border-width: 8px;
@@ -246,13 +246,6 @@ body {
   filter: drop-shadow(-2px 0 1px rgba(0,0,0,0.1));
 }
 
-/* 기본 상태: 숨김 */
-.fab-popup {
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(-45%) translateX(15px);
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
 
 /* 호버 시 팝업 표시 */
 .fab-item:hover .fab-popup {

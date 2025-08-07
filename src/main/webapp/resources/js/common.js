@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
     fabMenu.addEventListener('mouseleave', () => {
       hideTimeout = setTimeout(() => {
         fabMenu.classList.remove('show');
-      }, 400);
+      }, 600);
     });
 
     // 메뉴에 다시 들어오면 타이머 제거
@@ -59,18 +59,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
 	    fabItems.forEach(item => {
 	      const popup = item.querySelector(".fab-popup");
+		  let popupHideTimeout;
 
 	      item.addEventListener("mouseenter", () => {
+			clearTimeout(popupHideTimeout);
 	        popup.style.opacity = "1";
 	        popup.style.transform = "translateX(-10px)";
 	        popup.style.pointerEvents = "auto";
 	      });
 
-	      item.addEventListener("mouseleave", () => {
-	        popup.style.opacity = "0";
-	        popup.style.transform = "translateX(0)";
-	        popup.style.pointerEvents = "none";
-	      });
+		  item.addEventListener("mouseleave", () => {
+		        popupHideTimeout = setTimeout(() => {
+		          popup.style.opacity = "0";
+		          popup.style.transform = "translateX(0)";
+		          popup.style.pointerEvents = "none";
+		        }, 100); // <-- 약간의 딜레이를 줘서 popup 위로 이동할 시간을 확보
+		      });
+		  
+		  popup.addEventListener('mouseenter', ()=>{
+			clearTimeout(hideTimeout);
+			clearTimeout(popupHideTimeout);
+		  });
 	    });
+		
 
 });
