@@ -1,0 +1,20 @@
+@charset "UTF-8";
+
+.pricing-intro{
+	margin: 10px 0;
+	text-align: center;
+}
+
+.pricing-info{
+	display: flex;
+	width: 900px;
+	height: 600px;
+	align-items: center;
+}
+
+.pricing-border{
+	width: 300px;
+	height: 600px;
+	border: 1px solid black;
+	border-radius: 5px;
+}

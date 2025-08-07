@@ -16,4 +16,13 @@ public class MainpageController {
 		return "mainpage/mainpage-login";
 	}
 
+	@RequestMapping("/admin")
+	public String admin() {
+		return "admin/admin";
+	}
+	
+	@RequestMapping("/pricing")
+	public String pricing() {
+		return "pricing/pricing";
+	}
 }
