@@ -15,9 +15,5 @@ public class MainpageController {
 	public String mainPage_login() {
 		return "mainpage/mainpage-login";
 	}
-	
-	@RequestMapping("/service")
-	public String service() {
-		return "service/service";
-	}
+
 }
