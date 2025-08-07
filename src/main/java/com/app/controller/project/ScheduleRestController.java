@@ -16,14 +16,50 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.app.dto.project.Project;
 import com.app.dto.project.Schedule;
+import com.app.service.project.ProjectService;
 import com.app.service.project.ScheduleService;
 
 @RestController
 public class ScheduleRestController {
+	
 	@Autowired
 	private ScheduleService scheduleService;
 
+	@Autowired
+    private ProjectService projectService;
+	
+	
+	@PostMapping("/project/create")
+	public ResponseEntity<String> createProject(@RequestBody Project project) {
+        int result = projectService.createProject(project);
+        System.out.println("백");
+        System.out.println(project);
+        if (result > 0) {
+            return ResponseEntity.ok("프로젝트 생성 성공");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("프로젝트 생성 실패");
+        }
+    }
+	
+	@GetMapping("/project/list")
+	public List<Project> getAllProjects() {
+	    return projectService.findAllProjects();
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	@PostMapping("/project/schedule/save")
 	public ResponseEntity<?> save(@RequestBody Schedule schedule) {
 
@@ -77,13 +113,13 @@ public class ScheduleRestController {
 		return ResponseEntity.ok().build();
 	}
 
-	@PostMapping("/project/schedule/updateDate")
-	public ResponseEntity<?> updateScheduleDate(@RequestBody Schedule schedule) {
+	@PostMapping("/project/schedule/update")
+	public ResponseEntity<?> updateSchedule(@RequestBody Schedule schedule) {
 		try {
 			scheduleService.modifySchedule(schedule);
 			return ResponseEntity.ok().build();
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("일정 날짜 업데이트 실패: " + e.getMessage());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("일정 업데이트 실패: " + e.getMessage());
 		}
 	}
 

@@ -17,4 +17,19 @@ public class ProjectController {
 	public String projectSchedule() {
 		return "project/schedule";
 	}
+	
+	@GetMapping("/project/gantt")
+	public String projectGantt() {
+		return "project/gantt";
+	}
+	
+	@GetMapping("/project/memo")
+	public String  projectMemo() {
+		return "project/memo";
+	}
+	
+	@GetMapping("/project/newProject")
+	public String  newProject() {
+		return "project/newProject";
+	}
 }

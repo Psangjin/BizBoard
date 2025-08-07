@@ -1,0 +1,145 @@
+@charset "UTF-8";
+
+.body-container {
+	width: 90vw;
+	height: 100%;
+	flex: 1;
+	padding: 10px;
+	box-sizing: border-box;
+}
+
+.project-main-top, .project-main-mid, .project-main-bot {
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+	gap: 10px;
+}
+
+.project-main-top {
+	height: 25%;
+}
+
+.project-main-mid {
+	height: 40%;
+}
+
+.project-main-bot {
+	height: 35%;
+}
+
+.progress-container, .project-main-innerbox {
+	flex: 1;
+	border: 1px solid #ccc;
+	border-radius: 10px;
+	background: #fff;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+	box-sizing: border-box;
+	padding: 15px;
+	margin: 5px;
+}
+
+.project-info-container {
+	position: relative;
+	flex: 1;
+	margin: 5px;
+	border: 1px solid #ccc;
+	border-radius: 10px;
+	background: #fff;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+	box-sizing: border-box;
+	padding: 15px;
+}
+
+/* 프로젝트 정보 */
+.project-info-container h1 {
+	margin: 0 0 10px;
+	font-size: 1.5rem;
+}
+
+.project-info-container h3 {
+	margin: 5px 0;
+	font-size: 1rem;
+	color: #555;
+}
+
+.project-dday {
+	float: right;
+	margin-right: 10px;
+	font-size: 0.9rem;
+	background: orange;
+	padding: 4px 8px;
+	border-radius: 6px;
+	font-weight: bold;
+	color: white;
+}
+
+.project-info-container::after {
+	content: "";
+	display: table;
+	clear: both;
+}
+
+/* 진행도 박스 */
+.progress-container {
+	display: flex;
+	align-items: center;
+	justify-content: space-around;
+}
+
+.progress-display svg {
+	max-width: 160px;
+}
+
+.bg {
+	fill: none;
+	stroke: #eee;
+	stroke-width: 24;
+}
+
+.progress {
+	fill: none;
+	stroke: #4caf50;
+	stroke-width: 24;
+	stroke-linecap: round;
+	transform: rotate(-90deg);
+	transform-origin: center;
+	transition: stroke-dashoffset 1s ease-in-out;
+}
+
+.center-text {
+	font-size: 24px;
+	fill: #333;
+	dominant-baseline: middle;
+	text-anchor: middle;
+	font-weight: bold;
+}
+
+.progress-container>div:last-child {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.buttons {
+	margin-top: 10px;
+}
+
+.buttons button {
+	padding: 8px 14px;
+	margin: 0 5px;
+	font-size: 14px;
+	border: none;
+	border-radius: 6px;
+	background-color: #007bff;
+	color: white;
+	cursor: pointer;
+}
+
+.buttons button:hover {
+	background-color: #0056b3;
+}
+
+/* 공지사항 */
+.project-main-notice {
+	flex: 3;
+}
