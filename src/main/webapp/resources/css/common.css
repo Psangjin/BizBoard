@@ -75,89 +75,241 @@ body {
 }
 
 .body-side-menubar-items {
-	margin: 20px 0;
+  margin: 12px 0;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 12px;
+  transition: background-color 0.3s ease;
+  color: #2c3e50;
 }
 
-.body-side-menubar-items i {
-	transition: color 0.3s ease, background-color 0.3s ease, transform 0.3s
-		ease;
-	padding: 5px;
-	border-radius: 8px;
+.body-side-menubar-items:hover {
+  background-color: #4daeff;
+  color: white;
+  cursor: pointer;
+  transform: scale(1.3);
+  box-shadow: 0 4px 15px rgba(77, 174, 255, 0.6);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.body-side-menubar-items i:hover {
-	color: #ffffff;
-	background-color: rgba(255, 204, 0, 0.1);
-	transform: scale(1.4);
-	cursor: pointer;
-}
-
-/* 오른쪽 아래 고정 */
 .fab-wrapper {
-	position: fixed;
-	bottom: 24px;
-	right: 24px;
-	z-index: 1000;
-	display: flex;
-	flex-direction: column-reverse;
-	align-items: flex-end;
-	font-family: 'Segoe UI', sans-serif;
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;  /* 중앙 정렬로 변경 */
+  gap: 12px;
 }
 
-/* + 버튼 스타일 */
 .fab-main {
-	width: 60px;
-	height: 60px;
-	border-radius: 50%;
-	background-color: #4DAEFF;
-	color: white;
-	font-size: 36px;
-	border: none;
-	cursor: pointer;
-	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-	margin: 10px auto;
-	transition: background-color 0.3s, transform 0.2s;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4DAEFF, #1E90FF);
+  color: white;
+  font-size: 38px;
+  border: none;
+  cursor: pointer;
+  box-shadow:
+    0 6px 16px rgba(0, 0, 0, 0.2),
+    0 0 12px rgba(77, 174, 255, 0.7);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .fab-main:hover {
-	background-color: #3498db;
-	transform: scale(1.05);
+  background: linear-gradient(135deg, #1E90FF, #0D6FFF);
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.3),
+    0 0 18px rgba(30, 144, 255, 0.9);
 }
 
-/* 메뉴 컨테이너 초기 상태(숨김) */
 .fab-menu {
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-	padding: 10px;
-	border-radius: 10px;
-	margin-bottom: 12px;
-	background-color: lightblue;
-	opacity: 0;
-	transform: translateY(10px);
-	pointer-events: none; /* 클릭 불가 */
-	transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: absolute;
+  bottom: 72px;
+  right: 0;
+  z-index: 999;
+  align-items: center;
+  pointer-events: none; /* 기본 비활성화 */
 }
 
-/* JS에서 .fab-menu의 opacity, pointer-events, transform 조절 */
+/* 메뉴 전체 show 시 pointer-events 활성화 */
+.fab-menu.show {
+  pointer-events: auto;
+}
 
-/* 메뉴 버튼 */
+/* fab-item 기본 상태: 투명하고 살짝 아래로 내려감 */
 .fab-item {
-	width: 60px;
-	height: 60px;
-	border-radius: 50%;
-	background-color: #ffffff;
-	border: 1px solid #e0e0e0;
-	color: #333;
-	font-size: 16px;
-	cursor: pointer;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-	transition: background-color 0.2s;
-	display: flex;
-	justify-content: center;
-	align-items: center;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: none;
+  /* 기존 스타일 유지 */
+  position: relative;
+  cursor: pointer;
+  background-color: #f1f7ff;
+  color: #1E90FF;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(30, 144, 255, 0.25);
+  font-size: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
+/* fab-menu에 show가 붙은 상태에서 fab-item들이 애니메이션 */
+.fab-menu.show .fab-item {
+  animation: fadeInUp 0.4s forwards;
+}
+
+/* 각 아이템마다 지연시간 다르게 설정 (예: 3개 아이템) */
+.fab-menu.show .fab-item:nth-child(1) {
+  animation-delay: 0.24s;
+}
+.fab-menu.show .fab-item:nth-child(2) {
+  animation-delay: 0.12s;
+}
+.fab-menu.show .fab-item:nth-child(3) {
+  animation-delay: 0s;
+}
+
+/* 애니메이션 정의 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 호버 상태는 기존대로 유지 */
 .fab-item:hover {
-	background-color: #f9f9f9;
+  background-color: #1E90FF;
+  color: white;
+  box-shadow: 0 6px 20px rgba(30, 144, 255, 0.6);
+  transform: scale(1.15);
+}
+
+/* 팝업 박스 스타일 개선 */
+.fab-popup {
+  position: absolute;
+  right: 110%; /* 아이콘 왼쪽으로 띄우기 */
+  top: 0;
+  transform: translateY(-50%) translateX(15px);
+  background: #ffffff;
+  color: white;
+  font-weight: 600;
+  padding: 14px 22px;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(14, 76, 185, 0.7);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  user-select: none;
+  z-index: 1000;
+  font-size: 1rem;
+  letter-spacing: 0.03em;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+/* 팝업 화살표 개선 */
+.fab-popup::after {
+  content: "";
+  position: absolute;
+  top: 35px;
+  right: -14px;
+  z-index: -1000;
+  transform: translateY(-50%);
+  border-width: 8px;
+  border-style: solid;
+  border-color: transparent transparent transparent #fff;
+}
+
+
+/* 호버 시 팝업 표시 */
+.fab-item:hover .fab-popup {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(-45%) translateX(0);
+}
+
+.fab-popup strong {
+  display: block;
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.fab-popup ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.fab-popup ul li.project-list-btn:hover {
+  background-color: #fff;
+}
+
+.fab-popup ul li {
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.fab-popup ul li:hover {
+  background-color: #f0f0f0;
+}
+
+/* 구분선 */
+.popup-divider {
+  border-top: 1px solid #e0e0e0;
+  margin: 10px 0;
+}
+
+/* 버튼 wrapper (분리감 있는 배경) */
+.create-project-wrapper {
+  text-align: center;
+  background-color: #f9f9f9;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+/* 새 프로젝트 버튼 */
+.create-project-btn {
+  background-color: #296aa2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;
+}
+
+.create-project-btn:hover {
+  background-color: #1e5685;
 }

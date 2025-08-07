@@ -42,6 +42,7 @@
 
 				<div class="body-left">
 					<!-- 외부 이벤트 등록용 DIV -->
+					<button id="toggle-edit-mode" class="btn btn-outline-danger mb-2">편집 모드 켜기</button>
 					<div id="fc-external-events">
 						<p>
 							<strong>달력에 드래그하여 추가</strong>
@@ -51,7 +52,10 @@
 						
 
 					</div>
-					<div id="fc-event-trash">🗑️ 삭제</div>
+					<div id= "fc-trash-area">
+						<strong>이곳에 드래그하여 삭제</strong>
+						<div id="fc-event-trash">🗑️ 삭제</div>
+					</div>
 					
 					<div id="task-edit-panel" class="hidden-section" >
 					  <h3 id="task-edit-title"></h3>
@@ -62,13 +66,14 @@
 
 					<!-- 일정 상세 보기 박스 -->
 					<div id="fc-event-details">
-						<h3>일정 상세</h3>
-						<p>
-							<strong>제목:</strong> <span id="fc-event-title"></span>
-						</p>
-						<p>
-							<strong>설명:</strong> <span id="fc-event-description"></span>
-						</p>
+						<div class="fc-details-header">
+						  <h3>일정 상세</h3>
+						  <button id="fc-details-close" class="fc-close-btn" aria-label="닫기">×</button>
+						</div>
+						  <div class="fc-details-content">
+						    <p><strong>제목:</strong> <span id="fc-event-title"></span></p>
+						    <p><strong>설명:</strong><br> <span id="fc-event-description"></span></p>
+						  </div>
 					</div>
 					
 					<!-- 상세정보 보여줄 div 추가 -->

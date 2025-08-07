@@ -17,11 +17,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.app.dto.project.Project;
 import com.app.dto.project.Schedule;
+import com.app.service.project.ProjectService;
 import com.app.service.project.ScheduleService;
 
 @RestController
 public class ScheduleRestController {
+	
 	@Autowired
 	private ScheduleService scheduleService;
 	
@@ -32,6 +35,39 @@ public class ScheduleRestController {
 	}
 
 
+	@Autowired
+    private ProjectService projectService;
+	
+	
+	@PostMapping("/project/create")
+	public ResponseEntity<String> createProject(@RequestBody Project project) {
+        int result = projectService.createProject(project);
+        System.out.println("백");
+        System.out.println(project);
+        if (result > 0) {
+            return ResponseEntity.ok("프로젝트 생성 성공");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("프로젝트 생성 실패");
+        }
+    }
+	
+	@GetMapping("/project/list")
+	public List<Project> getAllProjects() {
+	    return projectService.findAllProjects();
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	@PostMapping("/project/schedule/save")
 	public ResponseEntity<?> save(@RequestBody Schedule schedule) {
 

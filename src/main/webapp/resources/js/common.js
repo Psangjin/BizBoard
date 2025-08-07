@@ -25,39 +25,83 @@ document.addEventListener('DOMContentLoaded', function() {
       location.href = "/project/schedule";
     });
   }
-  // 메모 메뉴 아이콘 페이지 이동
-  const memoIcon = document.getElementById('fa-note-icon');
-   if (memoIcon) {
-     memoIcon.addEventListener('click', function() {
-       location.href = "/project/memo";
-     });
-   }
-
-  // +메뉴(fab) 호버 효과
-  const fabMain = document.querySelector('.fab-main');
-  const fabMenu = document.querySelector('.fab-menu');
-  if (fabMain && fabMenu) {
-    fabMain.addEventListener('mouseenter', () => {
-      fabMenu.style.opacity = '1';
-      fabMenu.style.pointerEvents = 'auto';
-      fabMenu.style.transform = 'translateY(0)';
-    });
-
-    fabMain.addEventListener('mouseleave', () => {
-      setTimeout(() => {
-        if (!fabMenu.matches(':hover')) {
-          fabMenu.style.opacity = '0';
-          fabMenu.style.pointerEvents = 'none';
-          fabMenu.style.transform = 'translateY(10px)';
-        }
-      }, 200);
-    });
-
-    fabMenu.addEventListener('mouseleave', () => {
-      fabMenu.style.opacity = '0';
-      fabMenu.style.pointerEvents = 'none';
-      fabMenu.style.transform = 'translateY(10px)';
-    });
+  
+  const noteIcon = document.getElementById('fa-note-icon')
+  if (noteIcon) {
+	noteIcon.addEventListener('click', function () {
+	  location.href = "/project/memo";
+	});
   }
+
+  const fabMain = document.querySelector('.fab-main');
+    const fabMenu = document.querySelector('.fab-menu');
+
+    let hideTimeout;
+
+    // + 버튼 클릭 시 메뉴 토글
+    fabMain.addEventListener('click', () => {
+      fabMenu.classList.toggle('show');
+    });
+
+    // 메뉴에서 마우스 떠나면 일정 시간 후 닫힘
+    fabMenu.addEventListener('mouseleave', () => {
+      hideTimeout = setTimeout(() => {
+        fabMenu.classList.remove('show');
+      }, 600);
+    });
+
+    // 메뉴에 다시 들어오면 타이머 제거
+    fabMenu.addEventListener('mouseenter', () => {
+      clearTimeout(hideTimeout);
+    });
+	
+	const fabItems = document.querySelectorAll(".fab-item");
+
+	    fabItems.forEach(item => {
+	      const popup = item.querySelector(".fab-popup");
+		  let popupHideTimeout;
+
+	      item.addEventListener("mouseenter", () => {
+			clearTimeout(popupHideTimeout);
+	        popup.style.opacity = "1";
+	        popup.style.transform = "translateX(-10px)";
+	        popup.style.pointerEvents = "auto";
+	      });
+
+		  item.addEventListener("mouseleave", () => {
+		        popupHideTimeout = setTimeout(() => {
+		          popup.style.opacity = "0";
+		          popup.style.transform = "translateX(0)";
+		          popup.style.pointerEvents = "none";
+		        }, 100); // <-- 약간의 딜레이를 줘서 popup 위로 이동할 시간을 확보
+		      });
+		  
+		  popup.addEventListener('mouseenter', ()=>{
+			clearTimeout(hideTimeout);
+			clearTimeout(popupHideTimeout);
+		  });
+	    });
+		
+		$(document).ready(function () {
+		    $.ajax({
+		      url: '/project/list',
+		      method: 'GET',
+		      success: function (projects) {
+		        const $popupList = document.querySelector('.fab-item[data-popup="프로젝트 관련"] .fab-popup ul');
+		        
+
+		        // 목록 추가
+		        projects.forEach(function (project) {
+		          const li = document.createElement('li');
+		          li.textContent = project.title;
+		          li.setAttribute('data-id', project.id);
+		          $popupList.appendChild(li);
+		        });
+		      },
+		      error: function () {
+		        alert("프로젝트 목록을 불러오는 데 실패했습니다.");
+		      }
+		    });
+		  });
 
 });

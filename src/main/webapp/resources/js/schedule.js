@@ -33,6 +33,7 @@ document.addEventListener('DOMContentLoaded', function () {
   ];*/
   let ganttInstance = null;
   let showingCalendar = true;
+  let isEditMode = false; // 편집 모드 상태 저장
 
 // 간트 스크립트 시작 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // Gantt Toggle
@@ -675,13 +676,13 @@ document.querySelector('#task-edit-panel .btn-danger').addEventListener('click',
 	  });
 	}
 
+	
+	
     let draggedEventInfo = null;
 	//캘린더에 일정 드래그시 가져올 정보
     new FullCalendar.Draggable(document.getElementById('fc-external-events'), {
       itemSelector: '.fc-event',
 	  eventData: function (eventEl) {
-	      // 편집 도구는 isEditTool을 true로 설정
-	      const isEditTool = eventEl.dataset.edit === "true";
 	      const title = eventEl.dataset.title;
 	      const color = eventEl.dataset.color;
 
@@ -689,9 +690,7 @@ document.querySelector('#task-edit-panel .btn-danger').addEventListener('click',
 	        title: title,
 	        backgroundColor: color,
 	        borderColor: color,
-	        extendedProps: {
-	          isEditTool: isEditTool
-	        }
+	        
 	      };
       }
     });
@@ -749,7 +748,20 @@ document.querySelector('#task-edit-panel .btn-danger').addEventListener('click',
 	  // 모달에 데이터 채우기
 	  document.getElementById('fc-modal-title').value = event.title || '';
 	  document.getElementById('fc-modal-description').value = event.extendedProps.description || '';
-	  document.getElementById('fc-modal-color').value = event.backgroundColor || '#007bff';
+	  // 현재 선택된 색상 class 제거
+	  document.querySelectorAll('.fc-color-circle').forEach(el => {
+	    el.classList.remove('selected');
+	  });
+
+	  // 현재 event의 색상
+	  const currentColor = event.backgroundColor;
+
+	  // 해당 색상에 selected class 추가
+	  const selectedColorEl = document.querySelector(`.fc-color-circle[data-color="${currentColor}"]`);
+	  if (selectedColorEl) {
+	    selectedColorEl.classList.add('selected');
+	  }
+	  
 	  document.getElementById('fc-event-allday').checked = event.allDay;
 	  
 	  // 시작일 설정 (datetime-local 포맷)
@@ -803,8 +815,12 @@ document.querySelector('#task-edit-panel .btn-danger').addEventListener('click',
         center: 'title',
         right: 'dayGridMonth,dayGridWeek,timeGridDay'
       },
-      droppable: true,
-      editable: true, // 편집 가능 여부
+      // 편집 가능 여부
+      droppable: false,
+      editable: false, // 편집 가능 여부
+	  selectable: false,
+	  eventStartEditable: false,
+      eventDurationEditable: false,
       events: `/project/schedule/events?projectId=${projectId}`, //초기 설정 일정
       eventDisplay: 'block',
       
@@ -815,11 +831,13 @@ document.querySelector('#task-edit-panel .btn-danger').addEventListener('click',
         // 드롭한 날짜 시작날짜로 설정
         const droppedDate = info.event.startStr;
         setInputDate(droppedDate);
+		info.event.remove();
         
         //새로운 데이터 입력을 위한 다른 데이터 초기화
         document.getElementById('fc-modal-title').value = '';
         document.getElementById('fc-modal-description').value = '';
         document.getElementById('fc-modal-color').value = '#007bff';
+		document.getElementById('fc-event-end').value = null;
 
         document.querySelectorAll('.fc-color-circle').forEach(c => c.classList.remove('selected'));
         document.querySelector('.fc-color-circle[data-color="#007bff"]').classList.add('selected');
@@ -838,6 +856,8 @@ document.querySelector('#task-edit-panel .btn-danger').addEventListener('click',
         document.getElementById('fc-event-description').textContent = description;
         document.getElementById('fc-event-details').style.display = 'block';
 		document.getElementById('fc-modal-id').value = id;
+		
+		if(!isEditMode) return;
 		
 		openEditModal(event);
       },
@@ -947,7 +967,7 @@ document.querySelector('#task-edit-panel .btn-danger').addEventListener('click',
     	    data: JSON.stringify(scheduleData),
     	    success: function () {
     	      alert('저장 완료');
-    	      location.reload();
+    	      calendar.refetchEvents();
     	    },
     	    error: function () {
     	      alert('저장 실패');
@@ -976,4 +996,36 @@ document.querySelector('#task-edit-panel .btn-danger').addEventListener('click',
         document.getElementById('fc-modal-color').value = this.dataset.color;
       });
     });
+	
+	/*-----*/
+	document.getElementById('fc-details-close').addEventListener('click', function () {
+	  document.getElementById('fc-event-details').style.display = 'none';
+	});
+
+	document.getElementById('toggle-edit-mode').addEventListener('click', function () {
+	    isEditMode = !isEditMode;
+
+	    // 버튼 텍스트와 스타일 변경
+	    this.textContent = isEditMode ? '편집 모드 끄기' : '편집 모드 켜기';
+	    this.classList.toggle('btn-outline-danger', !isEditMode);
+	    this.classList.toggle('btn-success', isEditMode);
+
+	    // 캘린더 편집 가능 여부 설정
+	    calendar.setOption('editable', isEditMode);       // 드래그, 리사이징
+	    calendar.setOption('selectable', isEditMode);     // 날짜 선택 가능 여부
+		calendar.setOption('droppable', isEditMode);
+	    calendar.setOption('eventStartEditable', isEditMode);
+	    calendar.setOption('eventDurationEditable', isEditMode);
+	    
+	    // 외부 이벤트 드래그 허용 여부
+	    calendar.setOption('droppable', isEditMode);
+
+	    // 삭제 div 표시 여부 (ex. 휴지통)
+		// 외부 이벤트와 휴지통 표시 전환
+		    document.getElementById('fc-external-events').style.display = isEditMode ? 'block' : 'none';
+			document.getElementById('fc-trash-area').style.display = isEditMode ? 'block' : 'none';
+			
+			document.body.classList.toggle('fc-edit-mode', isEditMode);
+	});
+
   });
