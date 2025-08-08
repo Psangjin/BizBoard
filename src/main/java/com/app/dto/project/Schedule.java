@@ -2,6 +2,8 @@ package com.app.dto.project;
 
 import java.sql.Timestamp;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Data;
 
 @Data
@@ -15,4 +17,5 @@ public class Schedule {
 	private String completed; // 'Y' 또는 'N'
 	private String color;
 	
+	private Long projectId;
 }

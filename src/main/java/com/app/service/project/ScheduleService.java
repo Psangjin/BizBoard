@@ -8,9 +8,11 @@ public interface ScheduleService {
 
 	int saveSchedule(Schedule schedule);
 	
-	List<Schedule> findAllSchedules();
+	List<Schedule> findSchedulesByProjectId(Long projectId);
 	
 	int deleteScheduleById(Long id);
 	
 	int modifySchedule(Schedule schedule);
+
+	int  findMaxScheduleId();
 }
