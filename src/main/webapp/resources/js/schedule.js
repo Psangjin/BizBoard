@@ -1,7 +1,16 @@
 document.addEventListener('DOMContentLoaded', function () {
 	renderComments();  // ⬅ 이걸 꼭 추가
+	
+	const projectId = document.getElementById("project-id")?.value;
+	  if (projectId) {
+	    fetchTasksAndRenderGantt();  // ✅ 초기 로딩 시 호출
+	  }
+	  console.log(projectId);
+	  
   let selectedTask = null;
-  let tasks = [
+  let selectedSchedule = null;  // ✅ 전역 선언 추가
+
+/*  let tasks = [
     {
       description: '설명',
       member: ['김동욱'],
@@ -22,53 +31,67 @@ document.addEventListener('DOMContentLoaded', function () {
       progress: 20,
       dependencies: 'Task 1'
     }
-  ];
+  ];*/
   let ganttInstance = null;
   let showingCalendar = true;
   let isEditMode = false; // 편집 모드 상태 저장
 
 // 간트 스크립트 시작 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // Gantt Toggle
-  document.querySelector('.fa-arrow-right-arrow-left').addEventListener('click', function () {
-	const eventdetails = document.getElementById('fc-event-details');
-    const calendarEl = document.getElementById('calendar');
-    const ganttWrapper = document.getElementById('gantt');
-    const dragevent = document.getElementById('fc-external-events');
-    const taskdetailpanel = document.getElementById('task-detail-panel');
-    const taskeditpanel = document.getElementById('task-edit-panel');
-    document.getElementById('task-edit-title').textContent="";
-    document.getElementById('detail-title').textContent="";
+// Gantt Toggle
+document.querySelector('.fa-arrow-right-arrow-left').addEventListener('click', function () {
+  const eventtrash = document.getElementById('fc-trash-area');
+  const eventdetails = document.getElementById('fc-event-details');
+  const calendarEl = document.getElementById('calendar');
+  const ganttWrapper = document.getElementById('gantt');
+  const dragevent = document.getElementById('fc-external-events');
+  const taskdetailpanel = document.getElementById('task-detail-panel');
+  const taskeditpanel = document.getElementById('task-edit-panel');
+  document.getElementById('task-edit-title').textContent = "";
+  document.getElementById('detail-title').textContent = "";
 
-    if (showingCalendar) {
-      if(eventdetails.style.display!=="none")eventdetails.style.display="none";
-      dragevent.classList.add('hidden-section');
-      calendarEl.classList.add('hidden-section');
-      ganttWrapper.classList.remove('hidden-section');
-      if(document.querySelector(".fa-user-pen").classList.contains("fa-user-pen-edit")){
-	    	document.getElementById("task-edit-panel").classList.remove("hidden-section");
-	    }
-		taskdetailpanel.classList.remove('hidden-section');
-      if (!ganttInstance) {
-        ganttInstance = new Gantt("#gantt-target", tasks, {
-          bar_height: 80,
-          padding: 20,
-          view_mode: 'Week',
-          on_click: function(task){
-        	  showGanttTaskDetail(task);
-        	  showGanttTaskEdit(task);
-          }
-        });
-      }
-    } else {
-      dragevent.classList.remove('hidden-section');
-      calendarEl.classList.remove('hidden-section');
-      ganttWrapper.classList.add('hidden-section');
-   	  taskdetailpanel.style.display = "none";
-      taskeditpanel.classList.add('hidden-section');
+  if (showingCalendar) {
+    // ✅ Gantt 화면으로 전환 중
+	eventtrash.classList.add('hidden-section');
+    if (eventdetails.style.display !== "none") eventdetails.style.display = "none";
+    dragevent.classList.add('hidden-section');
+    calendarEl.classList.add('hidden-section');
+    ganttWrapper.classList.remove('hidden-section');
+    taskdetailpanel.classList.remove('hidden-section');
+
+    // ✅ 편집 모드가 활성화되어 있으면 편집 패널 보여주기
+    if (document.querySelector("#toggle-edit-mode").classList.contains("btn-success")) {
+      taskeditpanel.classList.remove('hidden-section');
     }
 
-    showingCalendar = !showingCalendar;
-  });
+    // ✅ Gantt 인스턴스 없으면 생성
+    if (!ganttInstance) {
+      ganttInstance = new Gantt("#gantt-target", tasks, {
+        bar_height: 80,
+        padding: 20,
+        view_mode: 'Week',
+        on_click: function (task) {
+          showGanttTaskDetail(task);
+          showGanttTaskEdit(task);
+        }
+      });
+    }
+
+    // ✅ 항상 새로 그리기
+    fetchTasksAndRenderGantt();
+
+  } else {
+    // ✅ Calendar 화면으로 전환 중
+    dragevent.classList.remove('hidden-section');
+	eventtrash.classList.remove('hidden-section');
+    calendarEl.classList.remove('hidden-section');
+    ganttWrapper.classList.add('hidden-section');
+    taskdetailpanel.style.display = "none";
+    taskeditpanel.classList.add('hidden-section');
+  }
+
+  showingCalendar = !showingCalendar;
+});
+
 
   // Gantt View Mode 버튼
   function setActiveGanttButton(mode) {
@@ -238,104 +261,225 @@ document.getElementById("task-comment-add-cancel-btn").addEventListener("click",
  document.getElementById("close-task-edit-panel-btn").addEventListener("click", function () {
 	 document.getElementById("task-edit-panel").classList.add('hidden-section');
 });
- document.querySelector(".fa-user-pen").addEventListener("click", function () {
-	 document.querySelector(".fa-user-pen").classList.toggle('fa-user-pen-edit');
-	 if(document.querySelector(".fa-user-pen").classList.contains("fa-user-pen-edit")&&!showingCalendar){
-	    	document.getElementById("task-edit-panel").classList.remove("hidden-section");
-	  }
-	 else{
-		 document.getElementById("task-edit-panel").classList.add("hidden-section");
-	 }
-});
+
  
-//작업 삭제 버튼 클릭 처리
- document.querySelector('#task-edit-panel .btn-danger').addEventListener('click', function () {
-   if (!selectedTask) return;
+// 스케줄 삭제 버튼 클릭 처리 (Gantt에서 삭제)
+document.querySelector('#task-edit-panel .btn-danger').addEventListener('click', function () {
+  if (!selectedSchedule) return;
 
-   const confirmed = confirm("정말로 삭제하시겠습니까?");
-   if (!confirmed) return;
+  const confirmed = confirm("정말로 삭제하시겠습니까?");
+  if (!confirmed) return;
 
-   // tasks 배열에서 삭제
-   tasks = tasks.filter(task => task.id !== selectedTask.id);
+  const scheduleId = selectedSchedule.id;
 
-   // Gantt 다시 렌더링
-   ganttInstance.refresh(tasks);
+  // ✅ 서버에 삭제 요청
+  fetch('/project/schedule/delete', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ id: scheduleId })
+  })
+    .then(res => {
+      if (res.ok) {
+        alert('스케줄 삭제 완료');
 
-   // 패널 닫기
-   document.getElementById("task-edit-panel").classList.add('hidden-section');
-   document.getElementById("task-detail-panel").style.display = "none";
+        // UI 패널 정리
+        document.getElementById("task-edit-panel").classList.add('hidden-section');
+        document.getElementById("task-detail-panel").style.display = "none";
+        selectedTask = null;
+        selectedSchedule = null;
 
-   // 선택된 작업 초기화
-   selectedTask = null;
- });
+        location.reload();  // ⬅ 새로고침해서 Gantt, Calendar 동기화
+      } else {
+        alert('삭제 실패');
+      }
+    })
+    .catch(error => {
+      console.error("삭제 오류:", error);
+      alert("서버 오류 발생");
+    });
+});
+
 
  document.getElementById("save-task").addEventListener("click", function () {
-    const name = document.getElementById("task-name").value.trim();
-    const start = document.getElementById("task-start").value;
-    const end = document.getElementById("task-end").value;
-    const description = document.getElementById("task-description").value;
-    const selected = Array.from(document.getElementById("form-select").selectedOptions).map(opt => opt.value);
+   const name = document.getElementById("task-name").value.trim();
+   const start = document.getElementById("task-start").value;
+   const end = document.getElementById("task-end").value;
+   const description = document.getElementById("task-description").value;
+   const selected = Array.from(document.getElementById("form-select").selectedOptions).map(opt => opt.value);
 
-    if (!name || !start || !end) {
-      alert("모든 필드를 입력해주세요.");
-      return;
-    }
+   if (!name || !start || !end) {
+     alert("모든 필드를 입력해주세요.");
+     return;
+   }
 
-    const newTask = {
-      description,
-      member: selected,
-      id: 'Task ' + (tasks.length + 1),
-      name,
-      start,
-      end,
-      progress: 0,
-      dependencies: ""
-    };
+   const projectId = document.getElementById("project-id")?.value;
 
-    tasks.push(newTask);
-    ganttInstance?.refresh(tasks);
-    closeGanttModal();
-  });
+   // ✅ 1. 스케줄 ID 조회 후 저장
+   fetch("/project/schedule/max-id")
+     .then(res => res.json())
+     .then(maxId => {
+       const newId = maxId + 1;
+
+       const newSchedule = {
+         id: newId,  // ✅ 직접 부여
+         title: name,
+         content: description,
+         type: 'PW',
+         startDt: start,
+         endDt: end,
+         color: '#3788d8',
+         allDay: true,
+         projectId: projectId
+       };
+
+       return fetch("/project/schedule/save", {
+         method: "POST",
+         headers: { "Content-Type": "application/json" },
+         body: JSON.stringify(newSchedule)
+       });
+     })
+     .then(res => {
+       if (res.ok) {
+         alert("작업 저장 완료");
+         location.reload();
+       } else {
+         alert("서버 저장 실패");
+       }
+     })
+     .catch(error => {
+       console.error("저장 오류:", error);
+       alert("서버 오류 발생");
+     });
+
+   closeGanttModal();
+ });
+
+
+//수정-새로고침 안함
  document.getElementById("save-task-modify").addEventListener("click", function () {
-	  if (!selectedTask) return;
+   if (!selectedSchedule) return;
 
-	  const name = document.getElementById("task-name-modify").value.trim();
-	  const start = document.getElementById("task-start-modify").value;
-	  const end = document.getElementById("task-end-modify").value;
-	  const description = document.getElementById("task-description-modify").value;
-	  const selected = Array.from(document.getElementById("form-select-modify").selectedOptions).map(opt => opt.value);
+   const name = document.getElementById("task-name-modify").value.trim();
+   const start = document.getElementById("task-start-modify").value;
+   const end = document.getElementById("task-end-modify").value;
+   const description = document.getElementById("task-description-modify").value;
+   const selected = Array.from(document.getElementById("form-select-modify").selectedOptions).map(opt => opt.value);
 
-	  if (!name || !start || !end) {
-	    alert("모든 필드를 입력해주세요.");
-	    return;
-	  }
+   if (!name || !start || !end) {
+     alert("모든 필드를 입력해주세요.");
+     return;
+   }
 
-	  selectedTask.name = name;
-	  selectedTask.start = start;
-	  selectedTask.end = end;
-	  selectedTask.description = description;
-	  selectedTask.member = selected;
+   const projectId = document.getElementById("project-id")?.value;
 
-	  // 간트차트 갱신
-	  ganttInstance.refresh(tasks);
-	  
-	  
-	  document.getElementById("task-edit-title").textContent = name;
-	  
+   const updatedSchedule = {
+     id: selectedSchedule.id,
+     title: name,
+     content: description,
+     startDt: start,
+     endDt: end,
+     type: 'PW',
+     color: '#3788d8',
+     allDay: true,
+     projectId: Number(projectId),
+     // 💡 필요시 멤버도 저장하려면 여기에 추가
+     // member: selected
+   };
 
-	  // 디테일 패널도 갱신
-	  document.getElementById("detail-title").textContent = name;
-	  document.getElementById("detail-description").textContent = description;
-	  document.getElementById("detail-member").textContent = selected.join(', ');
-	  document.getElementById("detail-start").textContent = start;
-	  document.getElementById("detail-end").textContent = end;
+   console.log("보낼 JSON", JSON.stringify(updatedSchedule));
 
-	  closeGanttModalModify();
-	});
+   fetch("/project/schedule/update", {
+     method: "POST",
+     headers: { "Content-Type": "application/json" },
+     body: JSON.stringify(updatedSchedule)
+   })
+     .then(res => {
+       if (res.ok) {
+         alert("스케줄 수정 완료");
+
+         // ✅ UI 정리
+         closeGanttModalModify();
+         //document.getElementById("task-edit-panel").classList.add("hidden-section");
+		 //document.getElementById("task-edit-title").textContent = updatedSchedule.title;
+         document.getElementById("task-detail-panel").style.display = "none";
+
+         selectedSchedule = null;
+         selectedTask = null;
+
+         // ✅ Gantt 새로고침
+         fetchTasksAndRenderGantt();
+		 document.getElementById("task-edit-title").textContent = updatedSchedule.title;
+       } else {
+         alert("스케줄 수정 실패");
+       }
+     })
+     .catch(error => {
+       console.error("스케줄 수정 오류:", error);
+       alert("서버 오류 발생");
+     });
+ });
+
+
 
 
 
   document.getElementById("cancel-task").addEventListener("click", closeGanttModal);
+  
+  ////////////////////////////////// 간트렌더링
+  function fetchTasksAndRenderGantt() {
+    const projectId = document.getElementById("project-id")?.value;
+    if (!projectId) return;
+
+    fetch(`/project/schedule/gantt?projectId=${projectId}`)
+      .then(res => res.json())
+      .then(data => {
+        const schedules = data
+          .map(schedule => {
+            const start = schedule.start?.substring(0, 10);
+            const end = schedule.end?.substring(0, 10);
+
+            if (!start || !end) return null;
+
+            return {
+              id: schedule.id,
+              name: schedule.name,
+              start: start,
+              end: end,
+              progress: schedule.progress || 0,
+              dependencies: schedule.dependencies || '',
+              description: schedule.description || ''
+            };
+          })
+          .filter(item => item !== null);
+
+        // ✅ 기존 인스턴스 제거 + 초기화
+        if (ganttInstance) {
+          document.querySelector("#gantt-target").innerHTML = '';
+          ganttInstance = null;
+        }
+
+        // ✅ 새로운 Gantt 인스턴스 생성
+        ganttInstance = new Gantt("#gantt-target", schedules, {
+          view_mode: 'Week',
+          date_format: 'YYYY-MM-DD',
+          bar_height: 80,
+          padding: 20,
+          on_click: function (task) {
+            selectedSchedule = task;
+            showGanttTaskDetail(task);
+            showGanttTaskEdit(task);
+          }
+        });
+      })
+      .catch(error => {
+        console.error("⛔ Gantt 데이터 로딩 실패:", error);
+      });
+  }
+
+
+
 
   function closeGanttModal() {
     document.getElementById("ganttTaskModal").style.display = "none";
@@ -359,10 +503,10 @@ document.getElementById("task-comment-add-cancel-btn").addEventListener("click",
     selectedTask = task;
     document.getElementById("task-edit-title").textContent = task.name;
     document.getElementById("detail-description").textContent = task.description;
-    document.getElementById("detail-member").textContent = task.member?.join(', ') || '';
+    //document.getElementById("detail-member").textContent = task.member?.join(', ') || '';
     document.getElementById("detail-start").textContent = task.start;
     document.getElementById("detail-end").textContent = task.end;
-    document.getElementById("detail-progress").textContent = task.progress;
+    //document.getElementById("detail-progress").textContent = task.progress;
     document.getElementById("task-detail-panel").style.display = "block";
   }
   function showGanttTaskEdit(task) {
@@ -682,12 +826,13 @@ document.getElementById("task-comment-add-cancel-btn").addEventListener("click",
         center: 'title',
         right: 'dayGridMonth,dayGridWeek,timeGridDay'
       },
+      // 편집 가능 여부
       droppable: false,
       editable: false, // 편집 가능 여부
 	  selectable: false,
 	  eventStartEditable: false,
       eventDurationEditable: false,
-      events: '/project/schedule/events', //초기 설정 일정
+      events: `/project/schedule/events?projectId=${projectId}`, //초기 설정 일정
       eventDisplay: 'block',
       
 	  //캘린더에 일정 드래그앤 드롭시
@@ -821,7 +966,9 @@ document.getElementById("task-comment-add-cancel-btn").addEventListener("click",
         startDt: startDt,
         endDt: endDt,
         color: color,
-        allDay: allDay
+        allDay: allDay,
+		
+		projectId: projectId
       };
       
       $.ajax({
@@ -890,6 +1037,25 @@ document.getElementById("task-comment-add-cancel-btn").addEventListener("click",
 			document.getElementById('fc-trash-area').style.display = isEditMode ? 'block' : 'none';
 			
 			document.body.classList.toggle('fc-edit-mode', isEditMode);
+			
+
+			
+			// 👉 Gantt가 보이는 상태라면 패널 표시/숨김
+			const taskeditpanel = document.getElementById('task-edit-panel');
+			const taskdetailpanel = document.getElementById('task-detail-panel');
+			const isGanttVisible = !document.getElementById("gantt").classList.contains("hidden-section");
+
+			if (this.classList.contains("btn-success")) {
+			  if (isGanttVisible) {
+			    taskeditpanel.classList.remove('hidden-section');
+			    taskdetailpanel.classList.remove('hidden-section');
+				
+			  }
+			} else {
+			  taskeditpanel.classList.add('hidden-section');
+			  
+			}
+
 	});
 
   });

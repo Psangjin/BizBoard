@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.dto.project.Project;
@@ -26,6 +27,13 @@ public class ScheduleRestController {
 	
 	@Autowired
 	private ScheduleService scheduleService;
+	
+	@GetMapping("/project/schedule/max-id")
+	public ResponseEntity<Integer> findMaxScheduleId() {
+	    Integer maxId = scheduleService.findMaxScheduleId();
+	    return ResponseEntity.ok(maxId != null ? maxId : 0); // 아무 것도 없으면 0
+	}
+
 
 	@Autowired
     private ProjectService projectService;
@@ -67,44 +75,68 @@ public class ScheduleRestController {
 
 		return ResponseEntity.ok().build();
 	}
+	@GetMapping("/project/schedule/gantt")
+	public List<Map<String, Object>> getGanttData(@RequestParam("projectId") Long projectId) {
+	    List<Schedule> list = scheduleService.findSchedulesByProjectId(projectId);
+
+	    return list.stream().map(s -> {
+	        Map<String, Object> map = new HashMap<>();
+	        map.put("id", s.getId());
+	        map.put("name", s.getTitle());
+	        
+	        if (s.getStartDt() != null) {
+	            map.put("start", s.getStartDt().toLocalDateTime().toLocalDate().toString());  // "YYYY-MM-DD"
+	        }
+	        if (s.getEndDt() != null) {
+	            map.put("end", s.getEndDt().toLocalDateTime().toLocalDate().toString());
+	        }
+
+	        map.put("progress", 0);  // 필요시 DB에서 가져오기
+	        map.put("dependencies", "");  // 필요시 설정
+	        map.put("description", s.getContent());
+
+	        return map;
+	    }).filter(m -> m.containsKey("start") && m.containsKey("end"))
+	      .collect(Collectors.toList());
+	}
 
 	@GetMapping("/project/schedule/events")
-	public List<Map<String, Object>> getEvents() {
-		List<Schedule> list = scheduleService.findAllSchedules();
-		return list.stream().map(s -> {
-			Map<String, Object> map = new HashMap<>();
-			map.put("id", s.getId());
-			map.put("title", s.getTitle());
+	public List<Map<String, Object>> getEvents(@RequestParam("projectId") Long projectId) {
+	    List<Schedule> list = scheduleService.findSchedulesByProjectId(projectId);
+	    System.out.println(list.get(0).getStartDt());
+	    System.out.println(list.get(0).getEndDt());
+	    return list.stream().map(s -> {
+	        Map<String, Object> map = new HashMap<>();
+	        map.put("id", s.getId());
+	        map.put("title", s.getTitle());
 
-			// allDay 체크
-			boolean allDay = "PW".equals(s.getType()); // project work(작업) 이면 all day
+	        boolean allDay = "PW".equals(s.getType());
 
-			if (allDay) {
-				// 시간 제거한 날짜만 전달
-				map.put("start", s.getStartDt().toLocalDateTime().toLocalDate().toString());
+	        if (allDay) {
+	            map.put("start", s.getStartDt().toLocalDateTime().toLocalDate().toString());
+	            if (s.getEndDt() != null) {
+	                map.put("end", s.getEndDt().toLocalDateTime().toLocalDate().toString());
+	            }
+	        } else {
+	            map.put("start", s.getStartDt());
+	            map.put("end", s.getEndDt());
+	        }
 
-				if (s.getEndDt() != null) {
-					map.put("end", s.getEndDt().toLocalDateTime().toLocalDate().toString());
-				}
-			} else {
-				map.put("start", s.getStartDt());
-				map.put("end", s.getEndDt());
-			}
+	        map.put("backgroundColor", s.getColor());
+	        map.put("borderColor", s.getColor());
 
-			map.put("backgroundColor", s.getColor());
-			map.put("borderColor", s.getColor());
+	        Map<String, Object> ext = new HashMap<>();
+	        ext.put("description", s.getContent());
+	        ext.put("type", s.getType());
+	        ext.put("completed", s.getCompleted());
+	        map.put("extendedProps", ext);
 
-			Map<String, Object> ext = new HashMap<>();
-			ext.put("description", s.getContent());
-			ext.put("type", s.getType());
-			ext.put("completed", s.getCompleted());
-			map.put("extendedProps", ext);
+	        map.put("allDay", allDay);
 
-			map.put("allDay", allDay);
-
-			return map;
-		}).collect(Collectors.toList());
+	        return map;
+	    }).collect(Collectors.toList());
 	}
+
 
 	@PostMapping("/project/schedule/delete")
 	public ResponseEntity<?> deleteSchedule(@RequestBody Map<String, Object> payload) {

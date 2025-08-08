@@ -24,9 +24,9 @@ public class ScheduleDAOImpl implements ScheduleDAO{
 	}
 
 	@Override
-	public List<Schedule> findAllSchedules() {
+	public List<Schedule> findSchedulesByProjectId(Long projectId) {
 		
-		List<Schedule> allSchedules = sqlSessionTemplate.selectList("schedule_mapper.findAllSchedules");
+		List<Schedule> allSchedules = sqlSessionTemplate.selectList("schedule_mapper.findSchedulesByProjectId",projectId);
 		
 		return allSchedules;
 	}
@@ -44,6 +44,12 @@ public class ScheduleDAOImpl implements ScheduleDAO{
 		
 		int result = sqlSessionTemplate.update("schedule_mapper.modifySchedule", schedule);
 		
+		return result;
+	}
+
+	@Override
+	public int findMaxScheduleId() {
+		 int result = sqlSessionTemplate.selectOne("schedule_mapper.findMaxScheduleId");
 		return result;
 	}
 

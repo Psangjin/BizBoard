@@ -34,6 +34,8 @@
 	
 	 <%@ include file="../include/layout.jsp" %>	<!-- layout.jsp에서 형식 그대로 가져오기(마지막에 div3개 닫기) -->
 	
+		<input type="hidden" id="project-id" value="${projectId}" />
+	
 			<!-- 바디 페이지 -->
 			<div class="body-container">
 				<!-- 캘린더 요소 클릭시 뜨는 박스 -->
@@ -165,11 +167,12 @@
 				  <label>설명: <textarea id="task-description" /></textarea></label><br><br>
 				  <label for="form-select">멤버:</label>
 				<select id="form-select" multiple aria-label="멤버 선택">
-					<option selected>김동욱</option>
-					<option>한승준</option>
-					<option>이하은</option>
-					<option>석준형</option>
-					<option>박상진</option>
+					<c:forEach var="member" items="${projectMemberList}">
+					    <option value="${member.name}"
+					      <c:if test="${member.name == member.admin}">selected</c:if>>
+					      ${member.name}
+					    </option>
+					</c:forEach>
 				</select><br><br>
 				  <label>시작일: <input type="date" id="task-start" /></label><br><br>
 				  <label>종료일: <input type="date" id="task-end" /></label><br><br>
@@ -186,11 +189,14 @@
 				  <label>설명: <textarea id="task-description-modify" /></textarea></label><br><br>
 				  <label for="form-select-modify">멤버:</label>
 				<select id="form-select-modify" multiple aria-label="멤버 선택">
-					<option selected>김동욱</option>
-					<option>한승준</option>
-					<option>이하은</option>
-					<option>석준형</option>
-					<option>박상진</option>
+					<c:forEach var="member" items="${projectMemberList}">
+						<c:forEach var="taskMember" items="${taskMemberList}">
+						    <option value="${member.name}"
+						      <c:if test="${member.name == taskMember.name}">selected</c:if>>
+						      ${member.name}
+						    </option>
+					    </c:forEach>
+					</c:forEach>
 				</select><br><br>
 				  <label>시작일: <input type="date" id="task-start-modify" /></label><br><br>
 				  <label>종료일: <input type="date" id="task-end-modify" /></label><br><br>
@@ -236,11 +242,14 @@
 						<label
 						for="form-select-detail">멤버:</label> <select
 						id="form-select-detail" multiple aria-label="멤버 선택">
-						<option selected>김동욱</option>
-						<option>한승준</option>
-						<option>이하은</option>
-						<option>석준형</option>
-						<option>박상진</option>
+						<c:forEach var="member" items="${projectMemberList}">
+							<c:forEach var="taskMember" items="${taskMemberList}">
+							    <option value="${member.name}"
+							      <c:if test="${member.name == taskMember.name}">selected</c:if>>
+							      ${member.name}
+							    </option>
+						    </c:forEach>
+					    </c:forEach>
 					</select><br>
 				</div>
 				<div id="ganttDetailRight">
@@ -273,6 +282,9 @@
 </div>
 </div>
 <script>
+const projectId = document.getElementById("project-id").value;
+
+
 	const commentList = [
 	    <c:forEach var="comment" items="${commentList}" varStatus="status">
 	      {

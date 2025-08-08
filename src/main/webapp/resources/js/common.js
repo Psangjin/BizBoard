@@ -32,7 +32,12 @@ document.addEventListener('DOMContentLoaded', function() {
 	  location.href = "/project/memo";
 	});
   }
-
+  const userIcon = document.getElementById('fa-user-pen')
+  if (userIcon) {
+  userIcon.addEventListener('click', function () {
+    location.href = "/project/user";
+  });
+  }
   const fabMain = document.querySelector('.fab-main');
     const fabMenu = document.querySelector('.fab-menu');
 

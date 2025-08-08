@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="memo_mapper">
+	<insert id="insertMemo" parameterType="Memo">
+		INSERT INTO MEMO (ID, PROJECT_ID, TITLE, CONTENT, MODIFYTIME, WRITTER)
+		VALUES (MEMO_SEQ.NEXTVAL, #{projectId}, #{title}, #{content},
+		SYSTIMESTAMP, #{writter})
+	</insert>
+
+	<update id="updateMemo" parameterType="Memo">
+		UPDATE MEMO
+		SET TITLE = #{title},
+		CONTENT = #{content},
+		MODIFYTIME = SYSTIMESTAMP
+		WHERE ID = #{id}
+	</update>
+
+	<delete id="deleteMemo" parameterType="long">
+		DELETE FROM MEMO WHERE ID = #{id}
+	</delete>
+
+	<select id="getMemosByProjectId" resultType="Memo" parameterType="long">
+		SELECT * FROM MEMO WHERE PROJECT_ID = #{projectId} ORDER BY MODIFYTIME
+		DESC
+	</select>
+
+</mapper>

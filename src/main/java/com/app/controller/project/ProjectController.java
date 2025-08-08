@@ -1,7 +1,12 @@
 package com.app.controller.project;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import com.app.dto.user.User;
 
 @Controller
 public class ProjectController {
@@ -14,7 +19,8 @@ public class ProjectController {
 	
 	
 	@GetMapping("/project/schedule")
-	public String projectSchedule() {
+	public String projectSchedule(Model model) {
+		  model.addAttribute("projectId", 1);  // ✅ 이게 핵심
 		return "project/schedule";
 	}
 	
@@ -24,7 +30,9 @@ public class ProjectController {
 	}
 	
 	@GetMapping("/project/memo")
-	public String  projectMemo() {
+	public String  projectMemo(Model model) {
+		 model.addAttribute("projectId", 0);  // ✅ 이게 핵심
+		 model.addAttribute("loginUser", "id1");  // ✅ 이게 핵심
 		return "project/memo";
 	}
 	

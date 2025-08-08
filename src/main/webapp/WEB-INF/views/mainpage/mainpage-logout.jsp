@@ -25,7 +25,7 @@
 				<span>더 나은	소통과 정돈된 팀워크를 경험해보세요.</span>
 			</div>
 		</div>
-		<button type="button" class="mainpage-start-btn mainpage-start-btn2" onClick="location.href='/mainpage'">
+		<button type="button" class="mainpage-start-btn mainpage-start-btn2" onClick="location.href='/account/login'">
 			<span class="mainpage-btn-text">시작하기</span> 
 			<span class="mainpage-btn-text"><i class="fa-solid fa-arrow-right"></i></span>
 		</button>
