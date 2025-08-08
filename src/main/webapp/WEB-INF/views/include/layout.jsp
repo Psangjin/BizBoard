@@ -14,6 +14,9 @@
   <script src="/js/common.js"></script>
 </head>
 <body>
+<input type="hidden" id="project-id" value="${sessionScope.project.id}">
+<%-- <input type="hidden" id="login-user" value="${loginUser}"> --%>
+
 <div class="layout-wrapper">
 	<!-- 헤더 부분 -->
 	<div class="header">
@@ -22,7 +25,7 @@
 				style="padding-right: 15px; cursor: pointer;"></i>
 			<img src="/image/BizBoard_Logo.png" alt="BizBoard_Logo" id="header-logo"/>
 		</div>
-		<h2>로그인</h2>
+		<h2>${sessionScope.loginUser.name != null ? sessionScope.loginUser.name : ''}</h2>
 	</div>
 	<!-- 바디 부분 -->
 	<div class="body">
@@ -54,10 +57,13 @@
   <div class="fab-menu">
     <div class="fab-item" data-popup="프로젝트 관련">
       📁
-      <div class="fab-popup">
-	      <ul>
-	        <li class="project-list-btn">프로젝트 목록</li>
+      <div class="fab-popup fab-project-popup">
+      		<h3 class="project-list-btn">프로젝트 목록</h3>
+      	<div class="fab-popup-project-list">
+      	  <ul>
 	      </ul>
+      	</div>
+	      
 	      <div class="popup-divider"></div>
 	      <div class="create-project-wrapper">
 		    <button class="create-project-btn open-new-project-modal-btn">＋ 새 프로젝트</button>
@@ -87,6 +93,5 @@
   </div>
 </div>
 <%@ include file="../include/createProjectModal.jsp"%>
-
 </body>
 </html>

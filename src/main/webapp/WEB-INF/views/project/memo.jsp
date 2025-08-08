@@ -303,7 +303,7 @@
 </style>
 </head>
 <body>
-	<input type="hidden" id="memo-project-id" value="${projectId}">
+	<input type="hidden" id="memo-project-id" value="${sessionScope.project.id}">
 	<input type="hidden" id="memo-login-user" value="${loginUser}">
 	
 	 <%@ include file="../include/layout.jsp" %>	<!-- layout.jsp에서 형식 그대로 가져오기(마지막에 div3개 닫기) -->
@@ -311,7 +311,7 @@
 			<div id="memo-body-container">
 				<div id="title-area">
 					<!--  선택한 프로젝트 이름 -->
-					<h1>${selectProject.name}</h1>
+					<h1>${sessionScope.project.title}</h1>
 				</div>
 				<div id="memo-btn-area">
 					<button id="add-memo-btn" class="btn btn-primary">새 메모</button>
@@ -436,7 +436,7 @@
 	
 	let memoList=[];
 	document.addEventListener("DOMContentLoaded", function () {
-		  const projectId = document.getElementById("memo-project-id")?.value;
+		  const projectId = '${sessionScope.project.id}';
 		  if (projectId) {
 		    fetchMemos(projectId);  // ✅ 메모 불러오기
 		  }
@@ -643,6 +643,7 @@
 		
 		/////////////////메모CRUD
 		function fetchMemos(projectId) {
+console.log(projectId);
 		  fetch(`/memo/list?projectId=${projectId}`)
 		    .then(res => res.json())
 		    .then(data => {
@@ -663,7 +664,7 @@
     return;
   }
 
-  const projectId = document.getElementById("memo-project-id").value;
+  const projectId = '${sessionScope.project.id}'
   const newMemo = {
     projectId: projectId,
     title: title,

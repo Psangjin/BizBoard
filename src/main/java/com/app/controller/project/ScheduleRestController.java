@@ -1,6 +1,7 @@
 package com.app.controller.project;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashMap;
@@ -135,6 +136,30 @@ public class ScheduleRestController {
 
 	        return map;
 	    }).collect(Collectors.toList());
+	}
+	
+	@GetMapping("/project/schedule/today")
+	public List<Map<String, Object>> getTodayEvents(@RequestParam("projectId") Long projectId) {
+	    LocalDate today = LocalDate.now();
+
+	    List<Schedule> list = scheduleService.findSchedulesByProjectId(projectId);
+
+	    return list.stream()
+	            .filter(s -> {
+	                LocalDate start = s.getStartDt().toLocalDateTime().toLocalDate();
+	                LocalDate end = (s.getEndDt() != null) 
+	                        ? s.getEndDt().toLocalDateTime().toLocalDate()
+	                        : start; // end가 없으면 시작일과 동일
+	                // 오늘이 start~end 범위 안에 있으면 포함
+	                return !today.isBefore(start) && !today.isAfter(end);
+	            })
+	            .map(s -> {
+	                Map<String, Object> map = new HashMap<>();
+	                map.put("id", s.getId());
+	                map.put("title", s.getTitle());
+	                return map;
+	            })
+	            .collect(Collectors.toList());
 	}
 
 

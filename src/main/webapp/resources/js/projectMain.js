@@ -20,3 +20,5 @@ function changeProgress(change) {
 }
 
 setProgress(currentPercent);
+
+		
