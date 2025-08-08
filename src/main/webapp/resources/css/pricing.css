@@ -1,8 +1,9 @@
 @charset "UTF-8";
 
 .pricing-intro{
-	margin: 30px 0 20px 0;
+	margin: 50px 0 25px 0;
 	text-align: center;
+
 }
 
 .pricing-intro span{
@@ -22,8 +23,9 @@
 }
 
 .pricing-info{
+	margin-top: 40px;
 	display: flex;
-	height: 550px;
+	height: 450px;
 	gap: 40px;
 	align-items: center;
 	justify-content: center;
@@ -35,7 +37,16 @@
 	padding: 20px;
 	border: 2px solid #2e78b89a;
 	border-radius: 20px;
-} 
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.pricing-border:hover {
+    transform: scale(1.03);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    z-index: 10;
+}
+
 
 .pricing-tier{
 	font-size: 25px;
@@ -64,7 +75,33 @@
 
 .pricing-seperate-line{
 	border-bottom: 2px solid rgb(230, 230, 230);
-	margin-top: 20px;
+	margin: 20px 0;
 	width: 255px;
 	height: 1px;
+}
+
+.pricing-description {
+	margin-top: 10px;
+	font-size: 14px;
+	color: #505050;
+}
+
+.pricing-features {
+	margin-top: 10px;
+	padding-left: 8px;
+	font-size: 15px;
+	color: #202020;
+}
+
+.pricing-features li {
+	list-style: none;
+	margin-bottom: 7px;
+}
+
+#pricing-notice{
+	margin-top: 10px;
+	color: #202020;
+	font-size: 15px;
+	text-align: right;
+	margin-right: 140px;
 }
