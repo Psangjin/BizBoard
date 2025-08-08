@@ -14,6 +14,9 @@
   <script src="/js/common.js"></script>
 </head>
 <body>
+<input type="hidden" id="project-id" value="${sessionScope.project.id}">
+<%-- <input type="hidden" id="login-user" value="${loginUser}"> --%>
+
 <div class="layout-wrapper">
 	<!-- 헤더 부분 -->
 	<div class="header">
@@ -90,6 +93,5 @@
   </div>
 </div>
 <%@ include file="../include/createProjectModal.jsp"%>
-
 </body>
 </html>

@@ -2,6 +2,8 @@
  * 
  */
 document.addEventListener('DOMContentLoaded', function() {
+	let projectId = document.getElementById('project-id').value;
+	
   // 레이아웃 사이드바 토글
   const toggleSidebarBtn = document.getElementById('toggleSidebar');
   if (toggleSidebarBtn) {
@@ -15,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const projectIcon = document.getElementById('fa-project-icon');
   if (projectIcon) {
     projectIcon.addEventListener('click', function() {
-      location.href = "/project/main";
+    location.href = `/project/main/${projectId}`;
     });
   }
 
@@ -103,7 +105,20 @@ document.addEventListener('DOMContentLoaded', function() {
 				  // 클릭 시 해당 프로젝트 페이지로 이동
 		  		    li.addEventListener('click', () => {
 		  		      // 예: /project/detail/{projectId} 같은 URL로 이동
-		  		      location.href = `/project/main/${project.id}`;
+					  $.ajax({
+					      url: '/project/setSession',
+					      method: 'POST',
+					      data: JSON.stringify(project),
+						  contentType: 'application/json',
+					      success: function () {
+					        // 저장이 끝나면 페이지 이동
+					        location.href = `/project/main/${project.id}`;
+					      },
+					      error: function () {
+					        alert('프로젝트 세션 저장에 실패했습니다.');
+					      }
+					    });
+					  
 		  		    });
 		          $popupList.appendChild(li);
 		        });

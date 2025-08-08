@@ -81,8 +81,9 @@ public class ProjectController {
 	}
 	
 	@GetMapping("/project/memo")
-	public String  projectMemo(Model model) {
-		 model.addAttribute("projectId", 0);  // ✅ 이게 핵심
+	public String  projectMemo(HttpSession session ,Model model) {
+		Project project = (Project)session.getAttribute("project");
+		 model.addAttribute("projectId", project.getId());  // ✅ 이게 핵심
 		 model.addAttribute("loginUser", "id1");  // ✅ 이게 핵심
 		return "project/memo";
 	}

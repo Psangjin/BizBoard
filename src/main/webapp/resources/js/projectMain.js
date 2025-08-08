@@ -1,7 +1,7 @@
 /**
  * 
  */
-document.addEventListener('DOMContentLoaded', function () {
+
 const circle = document.getElementById('progress-circle');
 let text = document.getElementById('percentText');
 const radius = circle.r.baseVal.value;
@@ -22,4 +22,3 @@ function changeProgress(change) {
 setProgress(currentPercent);
 
 		
-	});
