@@ -247,7 +247,7 @@ body {
 .fab-popup::after {
   content: "";
   position: absolute;
-  top: 35px;
+  bottom:80px;
   right: -14px;
   z-index: -1000;
   transform: translateY(-50%);
@@ -256,6 +256,11 @@ body {
   border-color: transparent transparent transparent #fff;
 }
 
+.fab-project-popup {
+	top:-370px;
+	width: 300px;
+	height:500px;
+}
 
 /* 호버 시 팝업 표시 */
 .fab-item:hover .fab-popup {
@@ -277,8 +282,12 @@ body {
   margin: 0;
 }
 
-.fab-popup ul li.project-list-btn:hover {
+.fab-popup .project-list-btn {
   background-color: #fff;
+  color:#333;
+  border-bottom: 1px solid #e0e0e0;
+  margin: 10px 0;
+  cursor:default;
 }
 
 .fab-popup ul li {
@@ -288,6 +297,11 @@ body {
   color: #333;
   cursor: pointer;
   transition: background-color 0.2s ease;
+}
+
+.fab-popup .fab-popup-project-list {
+  min-height: 370px;
+  overflow-y: auto;
 }
 
 .fab-popup ul li:hover {

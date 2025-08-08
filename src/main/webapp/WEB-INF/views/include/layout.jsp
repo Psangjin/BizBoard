@@ -54,10 +54,13 @@
   <div class="fab-menu">
     <div class="fab-item" data-popup="프로젝트 관련">
       📁
-      <div class="fab-popup">
-	      <ul>
-	        <li class="project-list-btn">프로젝트 목록</li>
+      <div class="fab-popup fab-project-popup">
+      		<h3 class="project-list-btn">프로젝트 목록</h3>
+      	<div class="fab-popup-project-list">
+      	  <ul>
 	      </ul>
+      	</div>
+	      
 	      <div class="popup-divider"></div>
 	      <div class="create-project-wrapper">
 		    <button class="create-project-btn open-new-project-modal-btn">＋ 새 프로젝트</button>

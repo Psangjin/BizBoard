@@ -9,4 +9,6 @@ public interface ProjectService {
 	int createProject(Project project);
 	
 	List<Project> findAllProjects();
+	
+	Project findProjectById(Long projectId);
 }

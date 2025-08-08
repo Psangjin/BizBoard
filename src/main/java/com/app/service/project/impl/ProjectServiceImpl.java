@@ -30,5 +30,13 @@ public class ProjectServiceImpl implements ProjectService {
 		
 		return allProjects;
 	}
+
+	@Override
+	public Project findProjectById(Long projectId) {
+		
+		Project project = projectDAO.findProjectById(projectId);
+		
+		return project;
+	}
 	
 }

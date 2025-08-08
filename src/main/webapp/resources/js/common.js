@@ -100,6 +100,11 @@ document.addEventListener('DOMContentLoaded', function() {
 		          const li = document.createElement('li');
 		          li.textContent = project.title;
 		          li.setAttribute('data-id', project.id);
+				  // 클릭 시 해당 프로젝트 페이지로 이동
+		  		    li.addEventListener('click', () => {
+		  		      // 예: /project/detail/{projectId} 같은 URL로 이동
+		  		      location.href = `/project/main/${project.id}`;
+		  		    });
 		          $popupList.appendChild(li);
 		        });
 		      },

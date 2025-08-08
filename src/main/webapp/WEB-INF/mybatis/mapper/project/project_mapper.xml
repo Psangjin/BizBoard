@@ -21,5 +21,10 @@
 	<select id="findAllProjects" resultType="Project">
 		SELECT * FROM t_project
 	</select>
+	
+	<select id="findProjectById" resultType="Project" parameterType="Long">
+		SELECT * FROM t_project
+		where id = #{projectId}
+	</select>
 
 </mapper>
