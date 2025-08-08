@@ -1,6 +1,15 @@
 @charset "UTF-8";
 
-.mainpage-header {
+.mainpage-login-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-right: 20px;
+	margin-bottom: 20px;
+	border-bottom: 2px solid #ebebeba4;
+}
+
+.mainpage-logout-header {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;

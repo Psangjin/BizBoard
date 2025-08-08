@@ -7,7 +7,7 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<div class="mainpage-header">
+	<div class="mainpage-logout-header">
 		<img src="/image/BizBoard_Logo.png" alt="BizBoard_Logo"	id="mainpage-header-logo" onClick="location.href='/'">
 		<div class="mainpage-header-menu">
 			<p onClick="scrollToIntroduce()">서비스 소개</a>

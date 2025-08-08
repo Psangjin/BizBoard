@@ -13,10 +13,8 @@
 <link rel="stylesheet" href="/css/pricing.css">
 <body>
 
-	<%@ include file="/WEB-INF/views/common/header.jsp" %>
-	
 	<div class="pricing-intro">
-		<p id="pricing-usage-fee">| 이용요금 |</p>
+		<p id="pricing-usage-fee">Pricing</p>
 		<span>효율적인 협업의 시작,<br> BizBoard로 팀워크를 설계하세요</span>
 		<p id="pricing-free-use">사용자 수에 따라 합리적으로 — 기능은 모두 제공합니다.</p>
 	</div>
@@ -70,8 +68,6 @@
 	</div>
 	
 	<p id="pricing-notice">* 위 금액은 1인 기준 월간 사용 요금이며, VAT(부가세)가 별도 부과됩니다.</p>
-	
-	<%@ include file="/WEB-INF/views/common/footer.jsp" %>
 
 </body>
 </html>

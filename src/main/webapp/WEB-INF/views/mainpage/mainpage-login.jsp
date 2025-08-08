@@ -12,15 +12,7 @@
 <link rel="stylesheet" href="/css/mainpage.css">
 <body>
 
-	<div class="mainpage-header">
-		<img src="/image/BizBoard_Logo.png" alt="BizBoard_Logo" id="mainpage-header-logo" onClick="location.href='/'">
-		<div class="mainpage-header-menu">
-			<p onClick="location.href='/service'">서비스 소개</p>
-			<p onClick="location.href='/support'">고객지원</p>
-			<p onClick="location.href='/mypage'">마이페이지</p>
-		</div>
-		<i class="fa-solid fa-arrow-right-from-bracket" id="mainpage-header-icon" onClick="location.href='/account/logout'"></i>
-	</div>
+	<%@ include file="/WEB-INF/views/common/login-header.jsp" %>
 
 	<div class='mainpage-container'>
 		<div class='mainpage-left'>
@@ -39,6 +31,7 @@
 			<div class='mainpage-contents-box'></div>
 		</div>
 	</div>
-
+	
+	<%@ include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
 </html>
