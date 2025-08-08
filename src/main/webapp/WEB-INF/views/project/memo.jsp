@@ -46,7 +46,7 @@
 }
 .memo-row{
 	width: 100%;
-	height: 25vh;
+	/* height: 25vh; */				/*유동적으로*/
 	margin-bottom: 30px;
 	display: flex;
 	justify-content: flex-start;
@@ -55,19 +55,19 @@
 }
 .memo-element{
 	width: 25%;
-	height: 100%;
+	/* height: 100%; */			
  	background-color: white;
 	margin-left: 1%;
 	margin-right: 1%;
 }
 .memo-content{
 	width: 100%;
-	height: 60%;
+	height: 15vh;					/*고정*/
 	background-color: yellow;
+	overflow: hidden;
 }
 .memo-info{
-	width: 100%;
-	height: 40%;
+	width: 100%;				/* 다 담기도록*/
 }
 .memo-info h6, .memo-info p{
 	text-align: center;
@@ -303,6 +303,9 @@
 </style>
 </head>
 <body>
+	<input type="hidden" id="memo-project-id" value="${projectId}">
+	<input type="hidden" id="memo-login-user" value="${loginUser}">
+	
 	 <%@ include file="../include/layout.jsp" %>	<!-- layout.jsp에서 형식 그대로 가져오기(마지막에 div3개 닫기) -->
 			<!-- 바디 페이지 -->
 			<div id="memo-body-container">
@@ -427,11 +430,20 @@
 		</div>
 	</div>
 	<script>
-	 //const loginUser = ${loginUser};
-	 const loginUser = "아이디";
+	 const loginUser = "${loginUser}";
+	 //const loginUser = "아이디";
 	let currentMemoIndex = null;
 	
-	  const memoList = [
+	let memoList=[];
+	document.addEventListener("DOMContentLoaded", function () {
+		  const projectId = document.getElementById("memo-project-id")?.value;
+		  if (projectId) {
+		    fetchMemos(projectId);  // ✅ 메모 불러오기
+		  }
+		});
+
+	
+	 /*  const memoList = [
 	    <c:forEach var="shareMemo" items="${shareMemoList}" varStatus="status">
 	      {
 	        title: "${shareMemo.title}",
@@ -440,7 +452,7 @@
 	        writter: "${shareMemo.writter}"
 	      }<c:if test="${!status.last}">,</c:if>
 	    </c:forEach>
-	  ];
+	  ]; */
 	</script>
 	<script>
 	function renderMemos() {
@@ -628,91 +640,133 @@
 		  document.execCommand('fontSize', false, size);
 		}
 
+		
+		/////////////////메모CRUD
+		function fetchMemos(projectId) {
+		  fetch(`/memo/list?projectId=${projectId}`)
+		    .then(res => res.json())
+		    .then(data => {
+		      memoList.length = 0;
+		      memoList.push(...data);
+		      renderMemos();
+		    });
+		}
+
 
 		/////////////////////////////////메모 저장
 		document.getElementById("save-add-memo-btn").addEventListener("click", function () {
   const title = document.getElementById("add-memo-title").value.trim();
   const content = document.getElementById("add-memo-editor").innerHTML.trim();
+
   if (!title || !content) {
     alert("제목과 내용을 입력해주세요.");
     return;
   }
 
-  const now = new Date();
-  const formattedDate = now.toISOString().split("T")[0];
-
-  // 👉 배열에 push
-  memoList.push({
+  const projectId = document.getElementById("memo-project-id").value;
+  const newMemo = {
+    projectId: projectId,
     title: title,
     content: content,
-    modifytime: formattedDate,
     writter: loginUser
-  });
+  };
 
-  renderMemos();  // 👈 리스트 렌더링 함수 호출
+  console.log("📤 저장 요청 보냄:", newMemo);  // ✅ 전송 전 로그
 
-  // 모달 닫기 & 초기화
-  resetAddMemoModal();
-  document.getElementById("addMemoModal").style.display = "none";
-  document.getElementById("memoBackdrop").style.display = "none";
+  fetch("/memo/create", {
+    method: "POST",
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(newMemo)
+  })
+    .then(res => {
+      console.log("📥 서버 응답 상태:", res.status);  // ✅ 응답 상태 확인 (200, 500 등)
+      if (!res.ok) {
+        throw new Error("메모 저장 실패");
+      }
+      return res.text();  // 응답 body를 문자열로 받음
+    })
+    .then(text => {
+      console.log("📥 응답 본문:", text); // ✅ 응답 메시지 로그
+      fetchMemos(projectId); // 메모 다시 불러오기
+      resetAddMemoModal();
+      document.getElementById("addMemoModal").style.display = "none";
+      document.getElementById("memoBackdrop").style.display = "none";
+    })
+    .catch(err => {
+      console.error("❌ 저장 중 에러 발생:", err);  // ✅ 실패 시 에러 로그
+      alert("메모 저장에 실패했습니다.");
+    });
 });
 
+
+
 	////////////////변경 (서버에 저장하려면 AJAX 필요)
-		document.getElementById("save-memo-btn").addEventListener("click", function () {
-			  if (currentMemoIndex === null) {
-			    alert("수정할 메모를 찾을 수 없습니다.");
-			    return;
-			  }
+	document.getElementById("save-memo-btn").addEventListener("click", function () {
+  const memo = memoList[currentMemoIndex];
+  const newTitle = document.querySelector('input[name="memo-title"]').value.trim();
+  const newContent = document.getElementById("memo-editor").innerHTML.trim();
 
-			  const newTitle = document.querySelector('input[name="memo-title"]').value.trim();
-			  const newContent = document.getElementById("memo-editor").innerHTML.trim();
+  if (!newTitle || !newContent) {
+    alert("제목과 내용을 입력해주세요.");
+    return;
+  }
 
-			  if (!newTitle || !newContent) {
-			    alert("제목과 내용을 입력해주세요.");
-			    return;
-			  }
+  const updatedMemo = {
+    id: memo.id,
+    title: newTitle,
+    content: newContent
+  };
 
-			  // 수정 시간 업데이트
-			  const now = new Date();
-			  const formattedDate = now.toISOString().split("T")[0];
+  fetch("/memo/update", {
+    method: "POST",
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(updatedMemo)
+  }).then(() => {
+    fetchMemos(memo.projectId); // 최신화
+    document.getElementById("memoModal").style.display = "none";
+    document.getElementById("memoBackdrop").style.display = "none";
+    currentMemoIndex = null;
+  });
+});
 
-			  // 배열 수정
-			  memoList[currentMemoIndex].title = newTitle;
-			  memoList[currentMemoIndex].content = newContent;
-			  memoList[currentMemoIndex].modifytime = formattedDate;
-			  memoList[currentMemoIndex].writter = loginUser;
-
-			  // 렌더링 다시
-			  renderMemos();
-
-			  // 모달 닫기
-			  document.getElementById("memoModal").style.display = "none";
-			  document.getElementById("memoBackdrop").style.display = "none";
-
-			  currentMemoIndex = null; // 초기화
-			});
 	//삭제
-		document.getElementById("delete-memo-btn").addEventListener("click", function () {
-			  if (currentMemoIndex === null) {
-			    alert("삭제할 메모를 찾을 수 없습니다.");
-			    return;
-			  }
+document.getElementById("delete-memo-btn").addEventListener("click", function () {
+  const memo = memoList[currentMemoIndex];
 
-			  const confirmDelete = confirm("정말 삭제하시겠습니까?");
-			  if (!confirmDelete) return;
+  if (!memo || !memo.id) {
+    alert("삭제할 메모를 찾을 수 없습니다.");
+    return;
+  }
 
-			  // 배열에서 삭제
-			  memoList.splice(currentMemoIndex, 1);
+  if (!confirm("정말 삭제하시겠습니까?")) return;
 
-			  // 렌더링 다시
-			  renderMemos();
+  fetch("/memo/delete", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ id: memo.id })  // ✅ POST로 ID 전송
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`❌ 삭제 실패: HTTP ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(data => {
+      console.log("✅ 삭제 응답:", data);
+      alert("삭제되었습니다.");
+      fetchMemos(memo.projectId);  // 목록 다시 불러오기
+      document.getElementById("memoModal").style.display = "none";
+      document.getElementById("memoBackdrop").style.display = "none";
+      currentMemoIndex = null;
+    })
+    .catch(error => {
+      console.error("❌ 삭제 중 오류:", error);
+      alert("메모 삭제에 실패했습니다.");
+    });
+});
 
-			  // 모달 닫기
-			  document.getElementById("memoModal").style.display = "none";
-			  document.getElementById("memoBackdrop").style.display = "none";
-
-			  currentMemoIndex = null; // 초기화
-			});
 
 		
 

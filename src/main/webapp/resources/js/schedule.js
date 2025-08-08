@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	  if (projectId) {
 	    fetchTasksAndRenderGantt();  // ✅ 초기 로딩 시 호출
 	  }
+	  console.log(projectId);
 	  
   let selectedTask = null;
   let selectedSchedule = null;  // ✅ 전역 선언 추가
@@ -36,52 +37,61 @@ document.addEventListener('DOMContentLoaded', function () {
   let isEditMode = false; // 편집 모드 상태 저장
 
 // 간트 스크립트 시작 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // Gantt Toggle
-  document.querySelector('.fa-arrow-right-arrow-left').addEventListener('click', function () {
-	const eventtrash = document.getElementById('fc-event-trash');
-	const eventdetails = document.getElementById('fc-event-details');
-    const calendarEl = document.getElementById('calendar');
-    const ganttWrapper = document.getElementById('gantt');
-    const dragevent = document.getElementById('fc-external-events');
-    const taskdetailpanel = document.getElementById('task-detail-panel');
-    const taskeditpanel = document.getElementById('task-edit-panel');
-    document.getElementById('task-edit-title').textContent="";
-    document.getElementById('detail-title').textContent="";
+// Gantt Toggle
+document.querySelector('.fa-arrow-right-arrow-left').addEventListener('click', function () {
+  const eventtrash = document.getElementById('fc-trash-area');
+  const eventdetails = document.getElementById('fc-event-details');
+  const calendarEl = document.getElementById('calendar');
+  const ganttWrapper = document.getElementById('gantt');
+  const dragevent = document.getElementById('fc-external-events');
+  const taskdetailpanel = document.getElementById('task-detail-panel');
+  const taskeditpanel = document.getElementById('task-edit-panel');
+  document.getElementById('task-edit-title').textContent = "";
+  document.getElementById('detail-title').textContent = "";
 
-    if (showingCalendar) {
-	  eventtrash.style.display = "none";
-      if(eventdetails.style.display!=="none")eventdetails.style.display="none";
-      dragevent.classList.add('hidden-section');
-      calendarEl.classList.add('hidden-section');
-      ganttWrapper.classList.remove('hidden-section');
-      if(document.querySelector(".fa-user-pen").classList.contains("fa-user-pen-edit")){
-	    	document.getElementById("task-edit-panel").classList.remove("hidden-section");
-	    }
-		taskdetailpanel.classList.remove('hidden-section');
-      if (!ganttInstance) {
-        ganttInstance = new Gantt("#gantt-target", tasks, {
-          bar_height: 80,
-          padding: 20,
-          view_mode: 'Week',
-          on_click: function(task){
-        	  showGanttTaskDetail(task);
-        	  showGanttTaskEdit(task);
-          }
-        });
-      }
-	  // ✅ 항상 새로 불러오게 변경
-	  fetchTasksAndRenderGantt(); 
-    } else {
-	  eventtrash.style.display = "block";
-      dragevent.classList.remove('hidden-section');
-      calendarEl.classList.remove('hidden-section');
-      ganttWrapper.classList.add('hidden-section');
-   	  taskdetailpanel.style.display = "none";
-      taskeditpanel.classList.add('hidden-section');
+  if (showingCalendar) {
+    // ✅ Gantt 화면으로 전환 중
+	eventtrash.classList.add('hidden-section');
+    if (eventdetails.style.display !== "none") eventdetails.style.display = "none";
+    dragevent.classList.add('hidden-section');
+    calendarEl.classList.add('hidden-section');
+    ganttWrapper.classList.remove('hidden-section');
+    taskdetailpanel.classList.remove('hidden-section');
+
+    // ✅ 편집 모드가 활성화되어 있으면 편집 패널 보여주기
+    if (document.querySelector("#toggle-edit-mode").classList.contains("btn-success")) {
+      taskeditpanel.classList.remove('hidden-section');
     }
 
-    showingCalendar = !showingCalendar;
-  });
+    // ✅ Gantt 인스턴스 없으면 생성
+    if (!ganttInstance) {
+      ganttInstance = new Gantt("#gantt-target", tasks, {
+        bar_height: 80,
+        padding: 20,
+        view_mode: 'Week',
+        on_click: function (task) {
+          showGanttTaskDetail(task);
+          showGanttTaskEdit(task);
+        }
+      });
+    }
+
+    // ✅ 항상 새로 그리기
+    fetchTasksAndRenderGantt();
+
+  } else {
+    // ✅ Calendar 화면으로 전환 중
+    dragevent.classList.remove('hidden-section');
+	eventtrash.classList.remove('hidden-section');
+    calendarEl.classList.remove('hidden-section');
+    ganttWrapper.classList.add('hidden-section');
+    taskdetailpanel.style.display = "none";
+    taskeditpanel.classList.add('hidden-section');
+  }
+
+  showingCalendar = !showingCalendar;
+});
+
 
   // Gantt View Mode 버튼
   function setActiveGanttButton(mode) {
@@ -251,15 +261,7 @@ document.getElementById("task-comment-add-cancel-btn").addEventListener("click",
  document.getElementById("close-task-edit-panel-btn").addEventListener("click", function () {
 	 document.getElementById("task-edit-panel").classList.add('hidden-section');
 });
- document.querySelector(".fa-user-pen").addEventListener("click", function () {
-	 document.querySelector(".fa-user-pen").classList.toggle('fa-user-pen-edit');
-	 if(document.querySelector(".fa-user-pen").classList.contains("fa-user-pen-edit")&&!showingCalendar){
-	    	document.getElementById("task-edit-panel").classList.remove("hidden-section");
-	  }
-	 else{
-		 document.getElementById("task-edit-panel").classList.add("hidden-section");
-	 }
-});
+
  
 // 스케줄 삭제 버튼 클릭 처리 (Gantt에서 삭제)
 document.querySelector('#task-edit-panel .btn-danger').addEventListener('click', function () {
@@ -355,9 +357,9 @@ document.querySelector('#task-edit-panel .btn-danger').addEventListener('click',
  });
 
 
-
+//수정-새로고침 안함
  document.getElementById("save-task-modify").addEventListener("click", function () {
-   if (!selectedSchedule) return;  // ✅ 스케줄 객체 기준
+   if (!selectedSchedule) return;
 
    const name = document.getElementById("task-name-modify").value.trim();
    const start = document.getElementById("task-start-modify").value;
@@ -372,7 +374,6 @@ document.querySelector('#task-edit-panel .btn-danger').addEventListener('click',
 
    const projectId = document.getElementById("project-id")?.value;
 
-   // ✅ 수정할 스케줄 객체
    const updatedSchedule = {
      id: selectedSchedule.id,
      title: name,
@@ -383,13 +384,12 @@ document.querySelector('#task-edit-panel .btn-danger').addEventListener('click',
      color: '#3788d8',
      allDay: true,
      projectId: Number(projectId),
-
-   
+     // 💡 필요시 멤버도 저장하려면 여기에 추가
+     // member: selected
    };
 
    console.log("보낼 JSON", JSON.stringify(updatedSchedule));
 
-   // ✅ Schedule 저장(수정)
    fetch("/project/schedule/update", {
      method: "POST",
      headers: { "Content-Type": "application/json" },
@@ -398,7 +398,19 @@ document.querySelector('#task-edit-panel .btn-danger').addEventListener('click',
      .then(res => {
        if (res.ok) {
          alert("스케줄 수정 완료");
-         location.reload(); // 또는 리렌더링 함수 호출
+
+         // ✅ UI 정리
+         closeGanttModalModify();
+         //document.getElementById("task-edit-panel").classList.add("hidden-section");
+		 //document.getElementById("task-edit-title").textContent = updatedSchedule.title;
+         document.getElementById("task-detail-panel").style.display = "none";
+
+         selectedSchedule = null;
+         selectedTask = null;
+
+         // ✅ Gantt 새로고침
+         fetchTasksAndRenderGantt();
+		 document.getElementById("task-edit-title").textContent = updatedSchedule.title;
        } else {
          alert("스케줄 수정 실패");
        }
@@ -407,9 +419,8 @@ document.querySelector('#task-edit-panel .btn-danger').addEventListener('click',
        console.error("스케줄 수정 오류:", error);
        alert("서버 오류 발생");
      });
-
-   closeGanttModalModify();
  });
+
 
 
 
@@ -1026,6 +1037,25 @@ document.querySelector('#task-edit-panel .btn-danger').addEventListener('click',
 			document.getElementById('fc-trash-area').style.display = isEditMode ? 'block' : 'none';
 			
 			document.body.classList.toggle('fc-edit-mode', isEditMode);
+			
+
+			
+			// 👉 Gantt가 보이는 상태라면 패널 표시/숨김
+			const taskeditpanel = document.getElementById('task-edit-panel');
+			const taskdetailpanel = document.getElementById('task-detail-panel');
+			const isGanttVisible = !document.getElementById("gantt").classList.contains("hidden-section");
+
+			if (this.classList.contains("btn-success")) {
+			  if (isGanttVisible) {
+			    taskeditpanel.classList.remove('hidden-section');
+			    taskdetailpanel.classList.remove('hidden-section');
+				
+			  }
+			} else {
+			  taskeditpanel.classList.add('hidden-section');
+			  
+			}
+
 	});
 
   });

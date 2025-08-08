@@ -34,7 +34,7 @@
 	
 	 <%@ include file="../include/layout.jsp" %>	<!-- layout.jsp에서 형식 그대로 가져오기(마지막에 div3개 닫기) -->
 	
-		<input type="hidden" id="project-id" value="0" />
+		<input type="hidden" id="project-id" value="${projectId}" />
 	
 			<!-- 바디 페이지 -->
 			<div class="body-container">
