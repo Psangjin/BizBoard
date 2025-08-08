@@ -22,6 +22,11 @@
 #memo-body-container{
 	width: 93vw;
 	height: 88vh;
+	padding: 10px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
 }
 #title-area{
 	width: 100%;
@@ -31,43 +36,66 @@
 	align-items: center;
 }
 #memo-btn-area{
-	width: 97%;
-	height: 5vh;
+	width: 1020px;
+	height: 4vh;
 	display: flex;
 	justify-content: space-between;
-	margin-left: 2%;
-	margin-right: 1%;
+	margin: 0 40px 10px 0;
 }
 #memo-area{
-	width: 100%;
+	width: 1100px;
 	height: 73vh;
-	background-color: beige;
 	overflow: auto;
+	margin-left: 20px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
+	justify-content: flex-start;
 }
 .memo-row{
 	width: 100%;
 	/* height: 25vh; */				/*유동적으로*/
-	margin-bottom: 30px;
+	margin-bottom: 22px;
 	display: flex;
-	justify-content: flex-start;
-	gap: 10%;
+	align-items: center;
+	gap: 20px;
 	padding-left: 10px;
 }
+
 .memo-element{
-	width: 25%;
-	/* height: 100%; */			
+	width: 240px;
+	height: 300px;			
  	background-color: white;
-	margin-left: 1%;
-	margin-right: 1%;
+	/* margin-left: 1%;
+	margin-right: 1%; */
+	margin-top: 10px;
+	border: 1px solid #ccccccc0;
+	border-radius: 15px;
+	box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
+.memo-element:hover{
+	transform: scale(1.02);
+}
+
 .memo-content{
 	width: 100%;
-	height: 15vh;					/*고정*/
-	background-color: yellow;
+	height: 20vh;					/*고정*/
+	/* background-color: rgb(255, 255, 209); */
+	background-color: #EDE7F6;
+	/* background-color: #fff3df; */
 	overflow: hidden;
+	border-radius: 15px 15px 0 0;
 }
 .memo-info{
 	width: 100%;				/* 다 담기도록*/
+}
+
+.memo-info h6{
+	margin: 10px 0 13px 0;
+}
+
+.memo-info p{
+	margin-bottom: 5px;
 }
 .memo-info h6, .memo-info p{
 	text-align: center;
@@ -299,6 +327,22 @@
   display: block;
 }
 
+.btn-secondary{
+	background-color: white;
+	color: black;
+	border: none;
+}
+
+.btn-warning{
+	background-color: white;
+	border: none;
+}
+
+.btn-save{
+	background-color: white;
+	border: none;
+	color: black;
+}
 
 </style>
 </head>
@@ -380,7 +424,7 @@
 				</div>
 				 <div id="memo-editor" contenteditable="false" class="editable" data-placeholder="여기에 메모를 입력하세요..."></div>
 				  <div id="memo-save-btn-area">
-				  	<button id="save-memo-btn" class="btn btn-primary">저장</button>
+				  	<button id="save-memo-btn" class="btn btn-primary btn-save">저장</button>
 				  </div>
 				</div>
 				
@@ -421,7 +465,7 @@
 				</div>
 				 <div id="add-memo-editor" contenteditable="true"  class="editable" data-placeholder="여기에 메모를 입력하세요..."></div>
 				  <div id="add-memo-save-btn-area">
-				  	<button id="save-add-memo-btn" class="btn btn-primary">저장</button>
+				  	<button id="save-add-memo-btn" class="btn btn-primary btn-save">저장</button>
 				  </div>
 				</div>
 				 <!-- 배경 -->
@@ -467,7 +511,7 @@
 		    console.log("렌더링할 메모:", memo);
 
 		    // 3개씩 묶기
-		    if (index % 3 === 0) {
+		    if (index % 4 === 0) {
 		      row = document.createElement("div");
 		      row.className = "memo-row";
 		      memoArea.appendChild(row);
