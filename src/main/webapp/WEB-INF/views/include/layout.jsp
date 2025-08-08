@@ -22,7 +22,7 @@
 				style="padding-right: 15px; cursor: pointer;"></i>
 			<img src="/image/BizBoard_Logo.png" alt="BizBoard_Logo" id="header-logo"/>
 		</div>
-		<h2>로그인</h2>
+		<h2>${loginUser.name}</h2>
 	</div>
 	<!-- 바디 부분 -->
 	<div class="body">
