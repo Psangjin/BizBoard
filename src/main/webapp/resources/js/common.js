@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	  location.href = "/project/memo";
 	});
   }
-  const userIcon = document.getElementById('fa-user-pen')
+  const userIcon = document.getElementById('fa-user-pen-icon')
   if (userIcon) {
   userIcon.addEventListener('click', function () {
     location.href = "/project/user";

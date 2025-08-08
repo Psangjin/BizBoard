@@ -16,6 +16,7 @@
 		<typeAlias type="com.app.dto.user.User" alias="User"/>
 		<typeAlias type="com.app.dto.project.Project" alias="Project"/>
 		<typeAlias type="com.app.dto.project.Memo" alias="Memo"/>
+		<typeAlias type="com.app.dto.project.ProjectMember" alias="ProjectMember"/>
 	</typeAliases>	
 		
 		

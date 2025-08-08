@@ -41,7 +41,7 @@
 				<i class="fa-solid fa-arrow-right-arrow-left fa-xl"></i>
 			</div>
 			<div class="body-side-menubar-items">
-				<i class="fa-solid fa-user-pen fa-xl"></i>
+				<i class="fa-solid fa-user-pen fa-xl" id="fa-user-pen-icon"></i>
 			</div>
 		</div>
 		<div>
