@@ -8,5 +8,6 @@ public interface UserService {
 	public void signup(User user);						// 일반 회원가입					
 	public User getUser(String id); 					// ID로 사용자 조회
 	public User findByEmail(String email);  			// 이메일로 사용자 조회
+	public int updateUserPassword(User user);			// 마이페이지 비밀번호 변경
 }
 

@@ -39,5 +39,10 @@ public class UserDAOImpl implements UserDAO {
         return sqlSession.selectOne("user_mapper.findByEmail", email);
     }
     
+    @Override
+    public int updateUserPassword(User user) {
+        return sqlSession.update("user_mapper.updateUserPassword", user);
+    }
+
    
 }

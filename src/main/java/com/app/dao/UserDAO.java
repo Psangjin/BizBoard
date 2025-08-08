@@ -19,6 +19,9 @@ public interface UserDAO {
     // 이메일 중복 체크
      User findByEmail(String email);
 
+    // 마이페이지 비밀번호 변경
+	 int updateUserPassword(User user);
+
    
 
 }

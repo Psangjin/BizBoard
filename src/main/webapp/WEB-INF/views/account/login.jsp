@@ -90,8 +90,22 @@
 }
 
 </style>
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css"
+	crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="/css/mainpage.css">
 </head>
 <body>
+
+<div class="mainpage-header">
+		<img src="/image/BizBoard_Logo.png" alt="BizBoard_Logo"	id="mainpage-header-logo" onClick="location.href='/'">
+		<div class="mainpage-header-menu">
+			<p onClick="scrollToIntroduce()">서비스 소개</a>
+			<p onClick="location.href='/support'">고객지원</p>
+			
+		</div>
+	</div>
+	
 
 <div class="form-container">
     <h2>로그인</h2>
@@ -101,7 +115,7 @@
         <button type="submit" class="btn">로그인</button>
     </form>
     
-    계정이 없습니까? <a href="${ctx}/account/signup" class="btn btn-secondary">회원가입</a>
+    아직 계정이 없으신가요?  <a href="${ctx}/account/signup" class="btn btn-secondary">회원가입</a>
     <br>
     <c:if test="${not empty error}">
         <div style="color:red; margin-top:15px;">${error}</div>

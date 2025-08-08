@@ -3,6 +3,7 @@ package com.app.controller;
 
 
 
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,17 +18,22 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.app.dto.project.Project;
 import com.app.dto.user.User;
-
 import com.app.service.UserService;
+import com.app.service.project.ProjectService;
+
 
 @Controller
-@RequestMapping("/account")
+@RequestMapping("/account") 
 public class AccountController {
 	
 	@Autowired
 	UserService userService;
 	
+	@Autowired
+	ProjectService projectService;
+		
 	//login
 	@GetMapping("/login")
 	public String login(Model model) {	    
@@ -42,7 +48,7 @@ public class AccountController {
 		
 		if(loginUser != null) {
 			session.setAttribute("loginUser", loginUser);
-			return "redirect:/account/mypage";
+			return "redirect:/mainpage";
 		} else {
 			 System.out.println("[로그인 실패] ID: " + user.getId()); // 디버깅용
 		        model.addAttribute("error", "아이디 또는 비밀번호가 올바르지 않습니다.");
@@ -63,7 +69,7 @@ public class AccountController {
 	public String logoutAction(HttpSession session, Model model) {
 		session.invalidate();
 		model.addAttribute("message", "로그아웃되었습니다.");
-		model.addAttribute("redirecter", "/account/login");
+		model.addAttribute("redirecter", "/");
 		return "common/message";
 	}
 
@@ -114,12 +120,16 @@ public class AccountController {
 	    
 	    try {
 	        userService.signup(user);	   
-	        request.setAttribute("message", "회원가입 성공!");
-	        request.setAttribute("redirectUrl", "/account/login");
-	        return "redirect:/account/login";
+	        request.setAttribute("message", " ❕ 회원가입 성공 ❕   ▫▫ 로그인 해주세요 ▫▫");
+	        request.setAttribute("redirecter", "/account/login");
+	        return "common/message";
 	        
-	    } catch (Exception e) {
-	        model.addAttribute("error", "회원가입 처리 중 오류가 발생했습니다.");	       
+	    } catch (RuntimeException e) {
+	        if ("duplicate_id_or_email".equals(e.getMessage())) {
+	            model.addAttribute("error", "❌ 이미 사용 중인 아이디 또는 이메일입니다.");
+	        } else {
+	            model.addAttribute("error", "❌ 회원가입 중 오류가 발생했습니다.");
+	        }
 	        return "account/signup";
 	    }
 	}
@@ -135,13 +145,64 @@ public class AccountController {
 	@GetMapping("/mypage")
 	public String mypage(HttpSession session, Model model) {
 		User loginUser = (User)session.getAttribute("loginUser");
+		
 		if (loginUser == null) {
 			return "redirect:/account/login";
+		
 		} else {
-		model.addAttribute("id", loginUser.getName());
-		model.addAttribute("email",loginUser.getEmail());
-		return "account/mypage";
+			
+			String userId = loginUser.getId();
+			List<Project> myProjects = projectService.getMyProjects(userId);
+		    List<Project> participatedProjects = projectService.getParticipatedProjects(userId);
+
+
+			
+			model.addAttribute("id", loginUser.getId()); //id
+			model.addAttribute("name", loginUser.getName()); //name
+			model.addAttribute("email", loginUser.getEmail()); //email
+			model.addAttribute("loginUser", loginUser); // 비밀번호 수정용
+			model.addAttribute("myProjects", myProjects); // 마이 프로젝트
+			model.addAttribute("participatedProjects", participatedProjects); // 프로젝트 참여 
+			return "account/mypage";
+			}
 		}
+	
+	// 비밀번호 수정
+		@PostMapping("/mypage/update")
+		public String updatePassword(@RequestParam String pw,
+		                             @RequestParam String pwCheck,
+		                             HttpSession session, Model model) {
+		    User loginUser = (User) session.getAttribute("loginUser");
+
+		    if (loginUser == null) {
+	            return "redirect:/account/login";
+	        }
+		    
+		    if (pw == null || !pw.equals(pwCheck)) {
+		        model.addAttribute("msg", "비밀번호가 일치하지 않습니다.");
+		        model.addAttribute("loginUser", loginUser);
+		        model.addAttribute("id", loginUser.getId());
+		        model.addAttribute("name", loginUser.getName());
+		        model.addAttribute("email", loginUser.getEmail());
+		        return "account/mypage";
+		    }
+
+		    loginUser.setPw(pw);
+		    userService.updateUserPassword(loginUser); // 비밀번호만 업데이트
+
+		    
+		    // 
+		    User updatedUser = userService.getUser(loginUser.getId()); // 최신 정보 조회
+		    session.setAttribute("loginUser", updatedUser);
+		    
+		    model.addAttribute("msg", "비밀번호가 성공적으로 변경되었습니다.");
+		    model.addAttribute("loginUser", updatedUser);
+		    model.addAttribute("id", updatedUser.getId());
+		    model.addAttribute("name", updatedUser.getName());
+		    model.addAttribute("email", updatedUser.getEmail());
+		    return "account/mypage";
+		}
+		
 	}
 	
 	
@@ -157,4 +218,4 @@ public class AccountController {
 	
 	
 	
-}
+

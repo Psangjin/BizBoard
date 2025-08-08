@@ -31,9 +31,19 @@ public class UserServiceImpl implements UserService {
 	 @Override
 	 public void signup(User user) {
 	     System.out.println("회원가입 시도: " + user);
-	     userDAO.insertUser(user);
+
+	     try {
+	         userDAO.insertUser(user); // 실제 DB insert
+	     } catch (Exception e) {
+	         String msg = e.getMessage().toLowerCase();
+
+	         if ((msg.contains("unique") || msg.contains("duplicate")) && msg.contains("id")) {
+	             throw new RuntimeException("duplicate_id");
+	         } else {
+	             throw new RuntimeException("signup_failed");
+	         }
+	     }
 	 }
- 	  
 	  
   
 	  @Override
@@ -47,6 +57,12 @@ public class UserServiceImpl implements UserService {
 	        return userDAO.findByEmail(email);
 	    }
 	    
+	  
+	  @Override
+	  public int updateUserPassword(User user) {
+	      return userDAO.updateUserPassword(user);
+	  }
+
 	  
 	    
 	}

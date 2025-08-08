@@ -17,7 +17,7 @@
 		<div class="mainpage-header-menu">
 			<p onClick="location.href='/service'">서비스 소개</p>
 			<p onClick="location.href='/support'">고객지원</p>
-			<p onClick="location.href='/mypage'">마이페이지</p>
+			<p onClick="location.href='/account/mypage'">마이페이지</p>
 		</div>
 		<i class="fa-solid fa-arrow-right-from-bracket" id="mainpage-header-icon" onClick="location.href='/'"></i>
 	</div>
