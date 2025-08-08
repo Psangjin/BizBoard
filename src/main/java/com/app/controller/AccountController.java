@@ -56,14 +56,14 @@ public class AccountController {
 	@GetMapping("/logout")
 	public String logout(HttpSession session) {
 		session.invalidate();
-		return "redirect:/account/login";
+		return "redirect:/";
 	}
 	
 	@PostMapping("/logout")
 	public String logoutAction(HttpSession session, Model model) {
 		session.invalidate();
 		model.addAttribute("message", "로그아웃되었습니다.");
-		model.addAttribute("redirecter", "/account/login");
+		model.addAttribute("redirecter", "/");
 		return "common/message";
 	}
 

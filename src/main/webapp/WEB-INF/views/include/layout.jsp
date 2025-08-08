@@ -22,7 +22,7 @@
 				style="padding-right: 15px; cursor: pointer;"></i>
 			<img src="/image/BizBoard_Logo.png" alt="BizBoard_Logo" id="header-logo"/>
 		</div>
-		<h2>${loginUser.name}</h2>
+		<h2>${sessionScope.loginUser.name != null ? sessionScope.loginUser.name : ''}</h2>
 	</div>
 	<!-- 바디 부분 -->
 	<div class="body">
