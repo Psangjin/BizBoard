@@ -24,14 +24,14 @@ document.addEventListener('DOMContentLoaded', function() {
   const calendarIcon = document.getElementById('fa-calendar-icon');
   if (calendarIcon) {
     calendarIcon.addEventListener('click', function() {
-      location.href = "/project/schedule";
+      location.href = `/project/schedule/${projectId}`;
     });
   }
   
   const noteIcon = document.getElementById('fa-note-icon')
   if (noteIcon) {
 	noteIcon.addEventListener('click', function () {
-	  location.href = "/project/memo";
+	  location.href = `/project/memo/${projectId}`;
 	});
   }
   const userIcon = document.getElementById('fa-user-pen-icon')

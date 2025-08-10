@@ -29,32 +29,32 @@
 		<!-- 상단: 프로젝트 정보 + 진행도 -->
 		<div class="project-main-top">
 			<div class="project-info-container">
-				<span class="project-dday">마감일까지 : D-${daysLeft}</span>
-				<h1>${project.title}</h1>
-				<h3>PM : ${project.manager}</h3>
-				<h3>${project.content}</h3>
+					<span class="project-dday">마감일까지 : D-${daysLeft}</span>
+					<h1>${project.title}</h1>
+					<h3>PM : ${project.manager}</h3>
+					<h3>${project.content}</h3>
 			</div>
-
-		<div class="progress-container">
-			<div class="progress-display">
-				<svg width="160" height="160">
-					<circle class="bg" r="60" cx="80" cy="80" />
-					<circle class="progress" id="progress-circle" r="60" cx="80" cy="80"
-						stroke-dasharray="377" stroke-dashoffset="377" />
-					<text id="percentText" class="center-text" x="80" y="80">0%</text>
-				</svg>
-			</div>
-			<div>
-				<h1>4 / 21</h1>
-				<h3>총 21가지 작업 중</h3>
-				<h4>4가지 작업 완료</h4>
-				<div class="buttons">
-					<button onclick="changeProgress(-10)">-10%</button>
-					<button onclick="changeProgress(10)">+10%</button>
+			<div class="progress-container">
+				<div class="progress-display">
+					<svg width="160" height="160">
+						<circle class="bg" r="60" cx="80" cy="80" />
+						<circle class="progress" id="progress-circle" r="60" cx="80" cy="80"
+							stroke-dasharray="377" stroke-dashoffset="377" />
+						<text id="percentText" class="center-text" x="80" y="80">0%</text>
+					</svg>
 				</div>
-			</div>
+				<div>
+					<h1>4 / 21</h1>
+					<h3>총 21가지 작업 중</h3>
+					<h4>4가지 작업 완료</h4>
+					<div class="buttons">
+						<button onclick="changeProgress(-10)">-10%</button>
+						<button onclick="changeProgress(10)">+10%</button>
+					</div>
+				</div>
+			 </div>
 		</div>
-
+		
 		<!-- 중간: 오늘 할 일 + 내가 할 일 -->
 		<div class="project-main-mid">
 			<div class="project-task-today project-main-innerbox">
@@ -78,8 +78,7 @@
 				<h3>프로젝트에서 내가 할 일 목록들</h3>
 			</div>
 		</div>
-
-
+		
 	<!-- 하단: 공지사항 + 팀원 목록 -->
 	<div class="project-main-bot">
 		<div class="project-main-notice project-main-innerbox">
@@ -96,9 +95,10 @@
 			</button>
 		</div>
 	</div>
-
 </div>
-
+</div>
+</div>
+</div>
 <!-- 팀원 관리 모달 -->
 <div class="modal fade" id="memberManageModal" tabindex="-1" aria-hidden="true">
 	<div class="modal-dialog modal-lg modal-dialog-scrollable">

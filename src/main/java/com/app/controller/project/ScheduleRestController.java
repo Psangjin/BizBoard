@@ -80,26 +80,37 @@ public class ScheduleRestController {
 	public List<Map<String, Object>> getGanttData(@RequestParam("projectId") Long projectId) {
 	    List<Schedule> list = scheduleService.findSchedulesByProjectId(projectId);
 
-	    return list.stream().map(s -> {
-	        Map<String, Object> map = new HashMap<>();
-	        map.put("id", s.getId());
-	        map.put("name", s.getTitle());
-	        
-	        if (s.getStartDt() != null) {
-	            map.put("start", s.getStartDt().toLocalDateTime().toLocalDate().toString());  // "YYYY-MM-DD"
-	        }
-	        if (s.getEndDt() != null) {
-	            map.put("end", s.getEndDt().toLocalDateTime().toLocalDate().toString());
-	        }
+	    return list.stream()
+	        // ✅ 타입이 PW인 것만
+	        .filter(s -> "PW".equalsIgnoreCase(s.getType()))
+	        .map(s -> {
+	            Map<String, Object> map = new HashMap<>();
+	            map.put("id", s.getId());
+	            map.put("name", s.getTitle());
 
-	        map.put("progress", 0);  // 필요시 DB에서 가져오기
-	        map.put("dependencies", "");  // 필요시 설정
-	        map.put("description", s.getContent());
+	            String start = s.getStartDt() != null
+	                ? s.getStartDt().toLocalDateTime().toLocalDate().toString()
+	                : null;
 
-	        return map;
-	    }).filter(m -> m.containsKey("start") && m.containsKey("end"))
-	      .collect(Collectors.toList());
+	            String end = s.getEndDt() != null
+	                ? s.getEndDt().toLocalDateTime().toLocalDate().toString()
+	                : start; // end 없으면 start로
+
+	            if (start != null) {
+	                map.put("start", start);
+	                map.put("end", end);
+	            }
+
+	            map.put("progress", 0);
+	            map.put("dependencies", "");
+	            map.put("description", s.getContent());
+	            return map;
+	        })
+	        .filter(m -> m.containsKey("start"))
+	        .collect(Collectors.toList());
 	}
+
+
 
 	@GetMapping("/project/schedule/events")
 	public List<Map<String, Object>> getEvents(@RequestParam("projectId") Long projectId) {

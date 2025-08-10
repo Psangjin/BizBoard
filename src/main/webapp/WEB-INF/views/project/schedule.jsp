@@ -167,13 +167,12 @@
 				  <label>설명: <textarea id="task-description" /></textarea></label><br><br>
 				  <label for="form-select">멤버:</label>
 				<select id="form-select" multiple aria-label="멤버 선택">
-					<c:forEach var="member" items="${projectMemberList}">
-					    <option value="${member.name}"
-					      <c:if test="${member.name == member.admin}">selected</c:if>>
-					      ${member.name}
-					    </option>
-					</c:forEach>
-				</select><br><br>
+				  <c:forEach var="member" items="${projectMemberList}">
+				    <!-- value는 userId, selected는 서버에서 주지 않음 -->
+				    <option value="${member.userId}">${member.name}</option>
+				  </c:forEach>
+				</select>
+				<br><br>
 				  <label>시작일: <input type="date" id="task-start" /></label><br><br>
 				  <label>종료일: <input type="date" id="task-end" /></label><br><br>
 				  
@@ -187,18 +186,21 @@
 				
 				  <label>작업명: <input type="text" id="task-name-modify" /></label><br><br>
 				  <label>설명: <textarea id="task-description-modify" /></textarea></label><br><br>
+				  <label for="state-select-modify">상태:</label>
+				  <select
+						id="state-select-modify">
+						<option>진행</option>
+						<option>완료</option>
+				  </select><br><br> 
 				  <label for="form-select-modify">멤버:</label>
-				<select id="form-select-modify" multiple aria-label="멤버 선택">
-					<c:forEach var="member" items="${projectMemberList}">
-						<c:forEach var="taskMember" items="${taskMemberList}">
-						    <option value="${member.name}"
-						      <c:if test="${member.name == taskMember.name}">selected</c:if>>
-						      ${member.name}
-						    </option>
-					    </c:forEach>
-					</c:forEach>
-				</select><br><br>
-				  <label>시작일: <input type="date" id="task-start-modify" /></label><br><br>
+				 <select id="form-select-modify" multiple>
+				  <c:forEach var="member" items="${projectMemberList}">
+				    <!-- value는 userId, text는 name -->
+				    <option value="${member.userId}">${member.name}</option>
+				  </c:forEach>
+				 </select>
+
+			<label>시작일: <input type="date" id="task-start-modify" /></label><br><br>
 				  <label>종료일: <input type="date" id="task-end-modify" /></label><br><br>
 				  
 				  <button id="save-task-modify" class="btn btn-primary">저장</button>
@@ -228,29 +230,21 @@
 			<div id="ganttDetailContainer">
 				<div id="ganttDetailLeft">
 					<label>작업명: <input type="text" id="task-name-detail" /></label><br>
-					<label for="state-select-detail">상태:</label> <select
-						id="state-select-detail">
-						<option selected>진행</option>
-						<option>완료</option>
-					</select><br> <br> <label>설명: <textarea
+					<label>설명: <textarea
 							id="task-description-detail" /></textarea></label><br>
-							<label>시작일:
+					<label>상태</label>
+					<p>상태상태</p>
+					<label>시작일:
 						<input type="date" id="task-start-detail" />
 					</label><br>
 					<label>종료일: <input type="date"
 						id="task-end-detail" /></label><br>
-						<label
-						for="form-select-detail">멤버:</label> <select
-						id="form-select-detail" multiple aria-label="멤버 선택">
-						<c:forEach var="member" items="${projectMemberList}">
-							<c:forEach var="taskMember" items="${taskMemberList}">
-							    <option value="${member.name}"
-							      <c:if test="${member.name == taskMember.name}">selected</c:if>>
-							      ${member.name}
-							    </option>
-						    </c:forEach>
-					    </c:forEach>
-					</select><br>
+						<label for="form-select-detail">멤버:</label>
+						<select id="form-select-detail" class="form-select" multiple size="8">
+						  <c:forEach var="m" items="${projectMemberList}">
+						    <option value="${m.userId}" data-name="${m.name}">${m.name}</option>
+						  </c:forEach>
+						</select>
 				</div>
 				<div id="ganttDetailRight">
 					<select id="comment-orderby">
@@ -282,7 +276,13 @@
 </div>
 </div>
 <script>
-const projectId = document.getElementById("project-id").value;
+/*  window.projectId =
+	  document.getElementById('project-id')?.value
+	  || (location.pathname.match(/\/project\/(?:schedule|main)\/(\d+)/)?.[1] ?? ''); */
+	//console.log('projectId:', projectId);
+
+//console.log('project-id 엘리먼트:', document.getElementById('project-id'));
+//console.log('projectId 값:', projectId);
 
 
 	const commentList = [

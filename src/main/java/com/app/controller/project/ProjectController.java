@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import com.app.dto.project.Project;
+import com.app.dto.project.ProjectMember;
 import com.app.dto.project.Schedule;
 import com.app.dto.user.User;
+import com.app.service.project.ProjectMemberService;
 import com.app.service.project.ProjectService;
 import com.app.service.project.ScheduleService;
 
@@ -25,6 +27,9 @@ public class ProjectController {
 
 	@Autowired
 	ProjectService projectService;
+	
+	@Autowired
+	ProjectMemberService projectMemberService;
 	
 	@Autowired
 	ScheduleService scheduleService;
@@ -37,6 +42,7 @@ public class ProjectController {
 		}
 			
 		model.addAttribute("project", project);
+
 		
 		LocalDate endDate = project.getEndDt().toInstant()
                 .atZone(ZoneId.systemDefault())
@@ -60,6 +66,11 @@ public class ProjectController {
             .collect(Collectors.toList());
 
         model.addAttribute("todaySchedules", todaySchedules);
+        
+        // ✅ 멤버 리스트 내려주기 (JSP에서 ${projectMemberList}로 사용)
+        List<ProjectMember> members = projectMemberService.getMembers(projectId);
+        model.addAttribute("projectMemberList", members);
+        
 		return "project/projectMain";
 		
 		
@@ -69,9 +80,12 @@ public class ProjectController {
 	}
 	
 	
-	@GetMapping("/project/schedule")
-	public String projectSchedule(Model model) {
-		  model.addAttribute("projectId", 1);  // ✅ 이게 핵심
+	@GetMapping("/project/schedule/{projectId}")
+	public String projectSchedule(@PathVariable Long projectId,Model model) {
+		  model.addAttribute("projectId", projectId);  // ✅ 이게 핵심
+		// ✅ 멤버 리스트 내려주기 (JSP에서 ${projectMemberList}로 사용)
+	        List<ProjectMember> members = projectMemberService.getMembers(projectId);
+	        model.addAttribute("projectMemberList", members);
 		return "project/schedule";
 	}
 	
@@ -80,8 +94,8 @@ public class ProjectController {
 		return "project/gantt";
 	}
 	
-	@GetMapping("/project/memo")
-	public String  projectMemo(HttpSession session ,Model model) {
+	@GetMapping("/project/memo/{projectId}")
+	public String  projectMemo(@PathVariable Long projectId,HttpSession session ,Model model) {
 		Project project = (Project)session.getAttribute("project");
 		 model.addAttribute("projectId", project.getId());  // ✅ 이게 핵심
 		 model.addAttribute("loginUser", "id1");  // ✅ 이게 핵심

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="taskMember_mapper">
+
+	<select id="findUserIdsByTaskId" parameterType="long" resultType="string">
+	    SELECT TRIM(user_id) AS user_id
+	    FROM TASKMEMBER
+	    WHERE schedule_id = #{scheduleId}
+	    ORDER BY user_id
+	 </select>
+  <!-- 단일 파라미터(Long)로 받지 말고 map으로 통일 -->
+  <!-- 삭제 -->
+  <delete id="deleteByScheduleId" parameterType="map">
+    DELETE FROM TASKMEMBER
+    WHERE SCHEDULE_ID = #{scheduleId}
+  </delete>
+
+  <!-- 배치 insert: ID 시퀀스가 필요하면 여기서 넣음 -->
+  <insert id="insertTaskMemberBatch" parameterType="map">
+    INSERT INTO TASKMEMBER (ID, SCHEDULE_ID, USER_ID, NAME)
+    VALUES
+    <foreach collection="list" item="item" separator=",">
+      (SEQ_TASK_MEMBER.NEXTVAL, #{scheduleId}, #{item.userId}, #{item.name})
+    </foreach>
+  </insert>
+
+  <!-- 조회 -->
+  <select id="findByScheduleId" resultType="com.app.dto.project.TaskMember" parameterType="map">
+    SELECT ID, SCHEDULE_ID, USER_ID, NAME
+    FROM TASKMEMBER
+    WHERE SCHEDULE_ID = #{scheduleId}
+  </select>
+
+</mapper>

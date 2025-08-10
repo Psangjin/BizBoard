@@ -1,3 +1,11 @@
+// ✅ 공통 POST JSON 헬퍼
+function postJson(url, payload) {
+  return fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+}
 document.addEventListener('DOMContentLoaded', function () {
 	renderComments();  // ⬅ 이걸 꼭 추가
 	
@@ -65,13 +73,15 @@ document.querySelector('.fa-arrow-right-arrow-left').addEventListener('click', f
 
     // ✅ Gantt 인스턴스 없으면 생성
     if (!ganttInstance) {
-      ganttInstance = new Gantt("#gantt-target", tasks, {
+      ganttInstance = new Gantt("#gantt-target", [], {
         bar_height: 80,
         padding: 20,
         view_mode: 'Week',
         on_click: function (task) {
+			selectedSchedule = { id: getScheduleIdFromTask(task) }; // ✅ 통일
           showGanttTaskDetail(task);
           showGanttTaskEdit(task);
+		  onTaskChange(task);//추가
         }
       });
     }
@@ -126,33 +136,54 @@ document.querySelector('.fa-arrow-right-arrow-left').addEventListener('click', f
     document.getElementById("form-select").selectedIndex = -1;
   });
 
-  document.getElementById("open-modify-task").addEventListener("click", function () {
+  document.getElementById("open-modify-task").addEventListener("click", async function () {
     if (!selectedTask) return;
+
     document.getElementById("ganttTaskModalModify").style.display = "block";
     document.getElementById("ganttTaskBackdrop").style.display = "block";
-    document.getElementById("task-name-modify").value = selectedTask.name;
-    document.getElementById("task-description-modify").value = selectedTask.description;
-    document.getElementById("task-start-modify").value = selectedTask.start;
-    document.getElementById("task-end-modify").value = selectedTask.end;
-    const mem = document.getElementById("form-select-modify");
-    for (const option of mem.options) {
-      option.selected = selectedTask.member.includes(option.value);
-    }
-  });/////////
+    document.getElementById("task-name-modify").value = selectedTask.name || '';
+    document.getElementById("task-description-modify").value = selectedTask.description || '';
+    document.getElementById("task-start-modify").value = selectedTask.start || '';
+    document.getElementById("task-end-modify").value = selectedTask.end || '';
+
+    const scheduleId = getScheduleIdFromTask(selectedTask);
+    if (!scheduleId) return;
+
+    const sel = document.getElementById("form-select-modify");
+    await ensureProjectMemberOptions(sel, projectId,scheduleId);         // 옵션: value=userId(문자열)
+    const members = await loadTaskMembers(scheduleId);        // [{userId, name}]
+    applyMemberSelection(sel, members);
+    renderDetailMemberNames(members, '#form-select-modify');
+  });////
+
+
   
-  document.getElementById("open-ganttDetail").addEventListener("click", function () {
-	    if (!selectedTask) return;
-	    document.getElementById("ganttDetail").style.display = "block";
-	    document.getElementById("ganttTaskBackdrop").style.display = "block";
-	    document.getElementById("task-name-detail").value = selectedTask.name;
-	    document.getElementById("task-description-detail").value = selectedTask.description;
-	    document.getElementById("task-start-detail").value = selectedTask.start;
-	    document.getElementById("task-end-detail").value = selectedTask.end;
-	    const mem = document.getElementById("form-select-detail");
-	    for (const option of mem.options) {
-	      option.selected = selectedTask.member.includes(option.value);
-	    }
+  document.getElementById("open-ganttDetail").addEventListener("click", async function () {
+    if (!selectedTask) return;
+
+    document.getElementById("ganttDetail").style.display = "block";
+    document.getElementById("ganttTaskBackdrop").style.display = "block";
+    document.getElementById("task-name-detail").value = selectedTask.name;
+    document.getElementById("task-description-detail").value = selectedTask.description || '';
+    document.getElementById("task-start-detail").value = selectedTask.start;
+    document.getElementById("task-end-detail").value = selectedTask.end;
+
+    const selDetail = document.getElementById("form-select-detail");
+    await ensureProjectMemberOptions(selDetail, projectId);      // ✅ 프로젝트 멤버 옵션 채우기
+
+    const members = await loadTaskMembers(
+      (window.selectedSchedule && window.selectedSchedule.id) ??
+      (selectedTask && selectedTask.scheduleId) ??
+      selectedTask.id
+    );                                                           // ✅ 스케줄 멤버 가져오기
+
+    applyMemberSelection(selDetail, members);                    // ✅ 선택 반영
+    selDetail.disabled = true;                                   // 읽기전용이면 disable
+
+    // 이름 표시(오른쪽 텍스트 영역 등)
+    renderDetailMemberNames(members, '#form-select-detail');     // ✅ 이름 매핑 기반 출력
   });
+
   
 //모든 편집 버튼에 이벤트 연결
 document.querySelectorAll('.comment-edit-btn').forEach(function (editBtn) {
@@ -263,163 +294,186 @@ document.getElementById("task-comment-add-cancel-btn").addEventListener("click",
 });
 
  
-// 스케줄 삭제 버튼 클릭 처리 (Gantt에서 삭제)
-document.querySelector('#task-edit-panel .btn-danger').addEventListener('click', function () {
-  if (!selectedSchedule) return;
+// (A) Gantt 편집 패널의 "삭제" 버튼: 멤버 -> 스케줄 순서로 삭제
+ // ===========================
+ const ganttDeleteBtn = document.querySelector('#task-edit-panel .btn-danger');
+ if (ganttDeleteBtn) {
+   ganttDeleteBtn.addEventListener('click', async function () {
+     if (!selectedSchedule) return;
+     if (!confirm("정말로 삭제하시겠습니까?")) return;
 
-  const confirmed = confirm("정말로 삭제하시겠습니까?");
-  if (!confirmed) return;
+     const scheduleId = selectedSchedule.id;
 
-  const scheduleId = selectedSchedule.id;
+     try {
+       // 1) 연관 TaskMember 전부 제거 (replace API로 비우기)
+       const repRes = await postJson('/task-member/project/schedule/members/replace', {
+         scheduleId: scheduleId,
+         members: []      // 전부 비우기
+       });
+       if (!repRes.ok) throw new Error('멤버 삭제(치환) 실패');
 
-  // ✅ 서버에 삭제 요청
-  fetch('/project/schedule/delete', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ id: scheduleId })
-  })
-    .then(res => {
-      if (res.ok) {
-        alert('스케줄 삭제 완료');
+       // 2) 스케줄 삭제
+       const delRes = await postJson('/project/schedule/delete', { id: scheduleId });
+       if (!delRes.ok) throw new Error('스케줄 삭제 실패');
 
-        // UI 패널 정리
-        document.getElementById("task-edit-panel").classList.add('hidden-section');
-        document.getElementById("task-detail-panel").style.display = "none";
-        selectedTask = null;
-        selectedSchedule = null;
+       alert('스케줄 및 연관 멤버 삭제 완료');
 
-        location.reload();  // ⬅ 새로고침해서 Gantt, Calendar 동기화
-      } else {
-        alert('삭제 실패');
-      }
-    })
-    .catch(error => {
-      console.error("삭제 오류:", error);
-      alert("서버 오류 발생");
-    });
-});
+       // UI 정리
+       document.getElementById("task-edit-panel")?.classList.add('hidden-section');
+       document.getElementById("task-detail-panel")?.style && (document.getElementById("task-detail-panel").style.display = "none");
+       selectedTask = null;
+       selectedSchedule = null;
 
+       // 새로고침 또는 재렌더
+       location.reload(); // 또는 fetchTasksAndRenderGantt();
+     } catch (e) {
+       console.error(e);
+       alert('삭제 중 오류가 발생했습니다.');
+     }
+   });
+ }
 
- document.getElementById("save-task").addEventListener("click", function () {
+ document.getElementById("save-task").addEventListener("click", async function () {
    const name = document.getElementById("task-name").value.trim();
    const start = document.getElementById("task-start").value;
    const end = document.getElementById("task-end").value;
    const description = document.getElementById("task-description").value;
-   const selected = Array.from(document.getElementById("form-select").selectedOptions).map(opt => opt.value);
 
    if (!name || !start || !end) {
      alert("모든 필드를 입력해주세요.");
      return;
    }
 
-   const projectId = document.getElementById("project-id")?.value;
+   try {
+     // 1) 새 scheduleId 만들기
+     const maxId = await (await fetch("/project/schedule/max-id")).json();
+     const newId = maxId + 1;
 
-   // ✅ 1. 스케줄 ID 조회 후 저장
-   fetch("/project/schedule/max-id")
-     .then(res => res.json())
-     .then(maxId => {
-       const newId = maxId + 1;
-
-       const newSchedule = {
-         id: newId,  // ✅ 직접 부여
-         title: name,
-         content: description,
-         type: 'PW',
-         startDt: start,
-         endDt: end,
-         color: '#3788d8',
-         allDay: true,
-         projectId: projectId
-       };
-
-       return fetch("/project/schedule/save", {
-         method: "POST",
-         headers: { "Content-Type": "application/json" },
-         body: JSON.stringify(newSchedule)
-       });
-     })
-     .then(res => {
-       if (res.ok) {
-         alert("작업 저장 완료");
-         location.reload();
-       } else {
-         alert("서버 저장 실패");
-       }
-     })
-     .catch(error => {
-       console.error("저장 오류:", error);
-       alert("서버 오류 발생");
+     // 2) 스케줄 저장
+     const newSchedule = {
+       id: newId,
+       title: name,
+       content: description,
+       type: 'PW',
+       startDt: start,
+       endDt: end,
+       color: '#3788d8',
+       allDay: true,
+       projectId: projectId
+     };
+     const saveRes = await fetch("/project/schedule/save", {
+       method: "POST",
+       headers: { "Content-Type": "application/json" },
+       body: JSON.stringify(newSchedule)
      });
+     if (!saveRes.ok) throw new Error("스케줄 저장 실패");
 
-   closeGanttModal();
+	 // 3) 선택 멤버를 members로 보내기 (B 방식)
+	 const members = Array.from(document.getElementById("form-select").selectedOptions)
+	   .map(o => ({
+	     userId: o.value,                // 문자열 그대로
+	     name: o.textContent.trim()
+	   }));
+
+	 const repRes = await fetch('/task-member/project/schedule/members/replace', {
+	   method: 'POST',
+	   headers: { 'Content-Type': 'application/json' },
+	   body: JSON.stringify({ scheduleId: newId, members })
+	 });
+	 if (!repRes.ok) throw new Error('멤버 저장 실패');
+
+
+     alert("작업 + 멤버 저장 완료");
+     location.reload();
+   } catch (err) {
+     console.error(err);
+     alert("서버 오류: " + err.message);
+   } finally {
+     closeGanttModal();
+   }
  });
 
 
 //수정-새로고침 안함
- document.getElementById("save-task-modify").addEventListener("click", function () {
-   if (!selectedSchedule) return;
+// 수정 - 새로고침 없이 반영
+document.getElementById("save-task-modify")?.addEventListener("click", async function () {
+  const scheduleId =
+    (window.selectedSchedule && window.selectedSchedule.id) ??
+    (selectedTask && (selectedTask.scheduleId ?? selectedTask.id));
 
-   const name = document.getElementById("task-name-modify").value.trim();
-   const start = document.getElementById("task-start-modify").value;
-   const end = document.getElementById("task-end-modify").value;
-   const description = document.getElementById("task-description-modify").value;
-   const selected = Array.from(document.getElementById("form-select-modify").selectedOptions).map(opt => opt.value);
+  if (!scheduleId) { alert('스케줄을 먼저 선택하세요.'); return; }
 
-   if (!name || !start || !end) {
-     alert("모든 필드를 입력해주세요.");
-     return;
-   }
+  // 1) 폼값 수집
+  const name = document.getElementById("task-name-modify").value.trim();
+  const start = document.getElementById("task-start-modify").value;
+  const end   = document.getElementById("task-end-modify").value;
+  const description = document.getElementById("task-description-modify").value;
+  if (!name || !start || !end) { alert("모든 필드를 입력해주세요."); return; }
 
-   const projectId = document.getElementById("project-id")?.value;
+  const updatedSchedule = {
+    id: scheduleId,
+    title: name,
+    content: description,
+    startDt: start,
+    endDt: end,
+    type: 'PW',
+    color: '#3788d8',
+    allDay: true,
+    projectId: Number(projectId)
+  };
 
-   const updatedSchedule = {
-     id: selectedSchedule.id,
-     title: name,
-     content: description,
-     startDt: start,
-     endDt: end,
-     type: 'PW',
-     color: '#3788d8',
-     allDay: true,
-     projectId: Number(projectId),
-     // 💡 필요시 멤버도 저장하려면 여기에 추가
-     // member: selected
-   };
+  try {
+    // 2) 일정 수정
+    const res = await fetch("/project/schedule/update", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updatedSchedule)
+    });
+    if (!res.ok) throw new Error("스케줄 수정 실패");
 
-   console.log("보낼 JSON", JSON.stringify(updatedSchedule));
+    // 3) 멤버 치환
+    const updatedMembers = await replaceScheduleMembers(scheduleId, "form-select-modify");
+    if (!updatedMembers) throw new Error("멤버 저장 실패");
 
-   fetch("/project/schedule/update", {
-     method: "POST",
-     headers: { "Content-Type": "application/json" },
-     body: JSON.stringify(updatedSchedule)
-   })
-     .then(res => {
-       if (res.ok) {
-         alert("스케줄 수정 완료");
+    // === 여기서부터 UI 즉시 동기화 ===
+    // 패널 텍스트
+    document.getElementById("detail-title").textContent = name;
+    document.getElementById("detail-description").textContent = description;
+    document.getElementById("detail-start").textContent = start;
+    document.getElementById("detail-end").textContent = end;
 
-         // ✅ UI 정리
-         closeGanttModalModify();
-         //document.getElementById("task-edit-panel").classList.add("hidden-section");
-		 //document.getElementById("task-edit-title").textContent = updatedSchedule.title;
-         document.getElementById("task-detail-panel").style.display = "none";
+    // 상세 콤보 + 오른쪽 이름 텍스트
+    const detailSelect = document.getElementById("form-select-detail"); // 모달이라면 id 맞춰 변경
+    if (detailSelect) {
+      fillSelectWithMembers(detailSelect, updatedMembers);
+      renderDetailMemberNames(updatedMembers, '#form-select-detail');
+    }
 
-         selectedSchedule = null;
-         selectedTask = null;
+    // 선택 상태 갱신(다음 클릭/갱신에 대비)
+    selectedTask = { id: scheduleId, scheduleId, name, description, start, end };
+    window.selectedSchedule = { id: scheduleId };
 
-         // ✅ Gantt 새로고침
-         fetchTasksAndRenderGantt();
-		 document.getElementById("task-edit-title").textContent = updatedSchedule.title;
-       } else {
-         alert("스케줄 수정 실패");
-       }
-     })
-     .catch(error => {
-       console.error("스케줄 수정 오류:", error);
-       alert("서버 오류 발생");
-     });
- });
+    // Gantt/캘린더 리프레시
+    fetchTasksAndRenderGantt();
+    if (typeof calendar !== "undefined" && calendar) calendar.refetchEvents();
+
+    // 리렌더 직후 패널 다시 그리기(보장용)
+    setTimeout(() => {
+      showGanttTaskDetail(selectedTask);
+      onTaskChange(selectedTask); // 멤버 선택 재적용
+    }, 200);
+
+    // 모달 닫기
+    document.getElementById("ganttTaskModalModify").style.display = "none";
+    document.getElementById("ganttTaskBackdrop").style.display = "none";
+
+    alert("스케줄 + 멤버 수정 완료");
+  } catch (e) {
+    console.error(e);
+    alert("저장 실패: " + e.message);
+  }
+});
+
 
 
 
@@ -427,9 +481,164 @@ document.querySelector('#task-edit-panel .btn-danger').addEventListener('click',
 
   document.getElementById("cancel-task").addEventListener("click", closeGanttModal);
   
+  // 도우미(한 번만 추가)
+  function fillSelectWithMembers(select, members) {
+    if (!select) return;
+    select.innerHTML = '';
+    (members || []).forEach(m => {
+      const userId = String(m.userId ?? m.id ?? m).trim();
+      const name   = String(m.name   ?? m.userId ?? m).trim();
+      select.add(new Option(name, userId, true, true)); // 모두 선택
+    });
+    select.multiple = true;
+    select.size = Math.min(5, Math.max(1, select.options.length));
+  }
+
+  
+  function getScheduleIdFromTask(task) {
+    return (task && (task.scheduleId ?? task.id))
+        ?? (window.selectedSchedule && window.selectedSchedule.id)
+        ?? null;
+  }
+
+
+  
+  let detailLoadToken = 0;
+
+  // 👇 여기 둬
+  function onTaskChange(task) {
+    const scheduleId = getScheduleIdFromTask(task);
+    if (!scheduleId) return;
+    loadAndApplyTaskMembers(String(scheduleId).trim());
+  }
+
+  
+  // 상세 select에 선택 반영(문자열 userId + trim)
+  async function loadAndApplyTaskMembers(scheduleId) {
+    const token = ++detailLoadToken;
+    const res = await fetch(`/schedule/${encodeURIComponent(scheduleId)}/members?t=${Date.now()}`, { cache: 'no-store' });
+    if (!res.ok) return;
+    const memberIds = await res.json(); // ["u01","u02",...]
+    if (token !== detailLoadToken) return;
+
+    const sel = document.getElementById('form-select-detail');
+    if (!sel) return;
+    for (const opt of sel.options) opt.selected = false;
+
+    const want = new Set(memberIds.map(x => String(x).trim()));
+    for (const opt of sel.options) {
+      if (want.has(String(opt.value).trim())) opt.selected = true;
+    }
+  }
+
+
+  
+  // (A) 스케줄 멤버 조회
+  async function loadTaskMembers(scheduleId) {
+    const res = await fetch(`/task-member/list?scheduleId=${encodeURIComponent(scheduleId)}`, { cache: 'no-store' });
+    if (!res.ok) throw new Error('loadTaskMembers failed');
+    return res.json(); // [{userId, name}, ...]
+  }
+
+  function buildIdToNameMap(selectCss = '#form-select-modify') {
+    const map = {};
+    document.querySelectorAll(`${selectCss} option`).forEach(o => {
+      map[String(o.value)] = o.textContent.trim();
+    });
+    return map;
+  }
+
+  // (B) 이름 매핑해서 상세 영역에 그려주는 보조 함수 (이름 변경!)
+  function renderDetailMemberNames(members, selectCss = '#form-select-modify') {
+    const idToName = {};
+    document.querySelectorAll(`${selectCss} option`).forEach(o => {
+      idToName[String(o.value)] = o.textContent.trim();
+    });
+    const names = members.map(m => idToName[String(m.userId)] || String(m.userId));
+    document.getElementById('detail-member').textContent = names.join(', ');
+  }
+
+
+  // (C) 저장(치환) 호출 + 응답으로 다시 selected 동기화
+  async function replaceScheduleMembers(scheduleId, selectId) {
+    const select = document.getElementById(selectId);
+    if (!select || !scheduleId) { alert('스케줄을 먼저 선택하세요.'); return; }
+
+    // ✅ 선택된 option에서 [userId, name] 묶어서 보냄
+    const members = Array.from(select.selectedOptions).map(opt => ({
+      userId: String(opt.value),
+      name: opt.textContent.trim()
+    }));
+
+    const res = await fetch('/task-member/project/schedule/members/replace', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ scheduleId, members })
+    });
+    if (!res.ok) { alert('저장 실패'); return; }
+
+    const updated = await res.json(); // [{userId, name}, ...]
+    applyMemberSelection(select, updated); // 응답 기준으로 다시 동기화
+    return updated;
+  }
+
+
+
+
+  
+  //보조유틸(작업참여자)
+  async function ensureProjectMemberOptions(select, projectId, scheduleId) {
+    if (!select) return;
+    if (select.options.length > 0 && !select.dataset.needsReload) return;
+
+    // 1) 프로젝트 멤버 시도
+    let list = [];
+    if (projectId) {
+      const r = await fetch(`/project/members?projectId=${encodeURIComponent(projectId)}`, { cache:'no-store' });
+      if (r.ok) {
+        const text = await r.text();
+        if (text) list = JSON.parse(text);
+      }
+    }
+
+    // 2) 실패/빈 배열이면 스케줄 멤버로 폴백
+    if (!Array.isArray(list) || list.length === 0) {
+      if (!scheduleId) {
+        select.innerHTML = '';
+        select.add(new Option('멤버 목록을 불러오지 못했습니다', ''));
+        return;
+      }
+      const r2 = await fetch(`/task-member/list?scheduleId=${encodeURIComponent(scheduleId)}`, { cache:'no-store' });
+      list = r2.ok ? await r2.json() : [];
+    }
+
+    // 3) 옵션 채우기 (value=userId)
+    select.innerHTML = '';
+    list.forEach(pm => {
+      const userId = String(pm.userId ?? pm.id ?? pm).trim();
+      const name   = String(pm.name ?? pm.userId ?? pm).trim();
+      select.add(new Option(name, userId));
+    });
+  }
+
+
+
+
+
+
+  function applyMemberSelection(select, members) {
+    const ids = new Set(members.map(m => String(m.userId ?? m.id ?? m.name).trim()));
+    Array.from(select.options).forEach(o => {
+      o.selected = ids.has(String(o.value).trim());
+    });
+  }
+
+  
   ////////////////////////////////// 간트렌더링
   function fetchTasksAndRenderGantt() {
-    const projectId = document.getElementById("project-id")?.value;
+    //const projectId = document.getElementById("project-id")?.value;
+	
+	console.log('프로젝트아이디아이디:'+projectId);
     if (!projectId) return;
 
     fetch(`/project/schedule/gantt?projectId=${projectId}`)
@@ -467,9 +676,10 @@ document.querySelector('#task-edit-panel .btn-danger').addEventListener('click',
           bar_height: 80,
           padding: 20,
           on_click: function (task) {
-            selectedSchedule = task;
+			selectedSchedule = { id: getScheduleIdFromTask(task) }; // ✅ 통일
             showGanttTaskDetail(task);
             showGanttTaskEdit(task);
+			onTaskChange(task);//추가
           }
         });
       })
@@ -498,17 +708,52 @@ document.querySelector('#task-edit-panel .btn-danger').addEventListener('click',
     document.getElementById("task-start-modify").value = "";
     document.getElementById("task-end-modify").value = "";
   }
-
-  function showGanttTaskDetail(task) {
-    selectedTask = task;
-    document.getElementById("task-edit-title").textContent = task.name;
-    document.getElementById("detail-description").textContent = task.description;
-    //document.getElementById("detail-member").textContent = task.member?.join(', ') || '';
-    document.getElementById("detail-start").textContent = task.start;
-    document.getElementById("detail-end").textContent = task.end;
-    //document.getElementById("detail-progress").textContent = task.progress;
-    document.getElementById("task-detail-panel").style.display = "block";
+  // 완전 리셋 유틸 (이전 선택/옵션/상태를 전부 제거)
+  function resetSelect(el) {
+    const clone = el.cloneNode(false);     // 옵션/값 없이 껍데기만 복제
+    clone.id = el.id;
+    clone.name = el.name;
+    el.parentNode.replaceChild(clone, el); // DOM 교체
+    return clone;
   }
+
+  // 비동기라 붙이기 (상세 콤보에는 작업참가자만 표시)
+
+
+  // ✅ 교체: 프로젝트 멤버 불러오던 줄(ensureProjectMemberOptions) 지우고, 아래처럼
+  async function showGanttTaskDetail(task) {
+    selectedTask = task;
+
+    document.getElementById("task-edit-title").textContent = task.name || '';
+    document.getElementById("detail-description").textContent = task.description || '';
+    document.getElementById("detail-start").textContent = task.start || '';
+    document.getElementById("detail-end").textContent = task.end || '';
+    document.getElementById("task-detail-panel").style.display = "block";
+
+    const scheduleId = (task && (task.scheduleId ?? task.id)) ?? (window.selectedSchedule && window.selectedSchedule.id);
+    if (!scheduleId) return;
+
+    let selDetail = document.getElementById("form-select-detail");
+    if (!selDetail) return;
+    selDetail = resetSelect(selDetail);
+
+    // ⬇ 스케줄 멤버만으로 콤보/텍스트 채우기
+    let members = [];
+    try {
+      const r = await fetch(`/task-member/list?scheduleId=${encodeURIComponent(scheduleId)}`, { cache: 'no-store' });
+      if (r.ok) members = await r.json(); // [{userId,name}, ...]
+    } catch (e) { console.error(e); }
+
+    fillSelectWithMembers(selDetail, members);                // 콤보
+    renderDetailMemberNames(members, '#form-select-detail');  // 오른쪽 텍스트
+    selDetail.disabled = true;                                // 읽기전용
+  }
+
+
+
+
+
+
   function showGanttTaskEdit(task) {
 	    selectedTask = task;
 	    document.getElementById("detail-title").textContent = task.name;
@@ -789,36 +1034,99 @@ document.querySelector('#task-edit-panel .btn-danger').addEventListener('click',
 	  window.currentEditEvent = event;
 	}
     
-    //스케쥴 수정 함수
-    function updateScheduleEvent(info) {
-   	  const event = info.event;
+	// 스케줄 수정 함수 - ✅ 이 블록 전체로 교체
+	function updateScheduleEvent(info) {
+	  const event = info.event;
 
-		  const updatedData = {
-		    id: event.id,
-		    title: event.title,
-		    content: event.extendedProps.description,
-		    type: event.extendedProps.type,
-		    startDt: event.start,
-		    endDt: event.end,
-		    color: event.backgroundColor,
-		    allDay: event.allDay
-		  };
+	  const updatedData = {
+	    id: event.id,
+	    title: event.title,
+	    content: event.extendedProps.description,
+	    type: event.extendedProps.type,
+	    startDt: event.start,   // 필요하면 toISOString() 등으로 변환
+	    endDt: event.end,
+	    color: event.backgroundColor,
+	    allDay: event.allDay
+	  };
 
-		  $.ajax({
-		    url: '/project/schedule/update',
-		    type: 'POST',
-		    contentType: 'application/json',
-		    data: JSON.stringify(updatedData),
-		    success: function () {
-		      console.log('업데이트 성공');
-		    },
-		    error: function () {
-		      alert('일정 업데이트 실패');
-		      info.revert();
-		    }
-		  });
-   	}
-    
+	  $.ajax({
+	    url: '/project/schedule/update',
+	    type: 'POST',
+	    contentType: 'application/json',
+	    data: JSON.stringify(updatedData),
+	    success: function () {
+	      console.log('업데이트 성공');
+	    },
+	    error: function () {
+	      alert('일정 업데이트 실패');
+	      info.revert();
+	    }
+	  });
+	}
+
+	// (B) 캘린더 이벤트를 휴지통으로 드래그해 삭제하는 경우: 멤버 -> 스케줄 순서
+	  // ===========================
+	  // 아래 핸들러는 기존 calendar 설정 안의 eventDragStop 를 교체하세요.
+	  // (캘린더 객체 생성 직후에 붙었던 기존 eventDragStop 로직을 이 블록으로 교체)
+	  function attachEventDragStopForTrash(calendar) {
+	    calendar.setOption('eventDragStop', function (info) {
+	      document.removeEventListener("mousemove", handleTrashHover);
+
+	      const trashEl = document.getElementById("fc-event-trash");
+	      if (!trashEl) return;
+
+	      const trashRect = trashEl.getBoundingClientRect();
+	      const x = info.jsEvent.clientX;
+	      const y = info.jsEvent.clientY;
+
+	      const inTrash =
+	        x >= trashRect.left &&
+	        x <= trashRect.right &&
+	        y >= trashRect.top &&
+	        y <= trashRect.bottom;
+
+	      trashEl.classList.remove("hovered");
+
+	      if (!inTrash) return;
+
+	      if (!confirm("일정을 삭제하시겠습니까?")) {
+	        info.revert();
+	        return;
+	      }
+
+	      const scheduleId = info.event.id;
+
+	      // 먼저 UI에서 제거 (낙관적), 실패 시 알림만
+	      info.event.remove();
+
+		  // 1) task-member 비우기 → 2) schedule 삭제
+		  postJson('/task-member/project/schedule/members/replace', {
+		    scheduleId,
+		    members: []   // ✅ B방식: 비울 때도 members 키를 사용
+		  })
+		    .then(repRes => {
+		      if (!repRes.ok) throw new Error('멤버 삭제(치환) 실패');
+		      return postJson('/project/schedule/delete', { id: scheduleId });
+		    })
+		    .then(delRes => {
+		      if (!delRes.ok) throw new Error('스케줄 삭제 실패');
+		      // 필요하면 calendar.refetchEvents();
+		    })
+		    .catch(err => {
+		      console.error(err);
+		      alert('삭제 중 오류가 발생했습니다.');
+		      // calendar.refetchEvents();
+		    });
+
+	    });
+	  }
+
+	  // ===========================
+	  // (C) 기존 캘린더 생성 코드 이후에 위 로직 삽입
+	  // ===========================
+	  // 네가 만들었던 FullCalendar 인스턴스를 calendar 라고 했으므로, 생성 뒤에 아래를 호출
+	  // calendar.render(); 앞/뒤 어느 쪽이든 setOption은 즉시 반영됨.
+	 
     const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
       initialView: 'dayGridMonth',
       headerToolbar: {
@@ -868,6 +1176,10 @@ document.querySelector('#task-edit-panel .btn-danger').addEventListener('click',
         document.getElementById('fc-event-details').style.display = 'block';
 		document.getElementById('fc-modal-id').value = id;
 		
+		// ✅ 이렇게
+		 const scheduleId = String(id).trim();
+		 onTaskChange({ id: scheduleId, scheduleId });
+		
 		if(!isEditMode) return;
 		
 		openEditModal(event);
@@ -875,7 +1187,8 @@ document.querySelector('#task-edit-panel .btn-danger').addEventListener('click',
       eventDragStart: function(info) {
     	  document.addEventListener("mousemove", handleTrashHover);
       },
-      eventDragStop: function(info) {
+	  // ❌ 기존 eventDragStop 는 완전히 제거 (여기 넣지 말기)
+     /* eventDragStop: function(info) {
    	    document.removeEventListener("mousemove", handleTrashHover);
    	    const trashEl = document.getElementById("fc-event-trash");
    	    const trashRect = trashEl.getBoundingClientRect();
@@ -911,7 +1224,7 @@ document.querySelector('#task-edit-panel .btn-danger').addEventListener('click',
    	          });
 	   	    }
 	   	  }
-	   	},
+	   	},*/
     	
     	eventDrop: function(info) {
    		  updateScheduleEvent(info);
@@ -996,6 +1309,9 @@ document.querySelector('#task-edit-panel .btn-danger').addEventListener('click',
       closeModal();
     });
 
+	// 기존 옵션으로 calendar 생성한 "바로 다음 줄"에 추가
+	attachEventDragStopForTrash(calendar);
+	
     calendar.render();
 	
 
