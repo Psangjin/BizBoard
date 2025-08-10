@@ -35,6 +35,8 @@
 	 <%@ include file="../include/layout.jsp" %>	<!-- layout.jsp에서 형식 그대로 가져오기(마지막에 div3개 닫기) -->
 	
 		<input type="hidden" id="project-id" value="${projectId}" />
+		<input type="hidden" id="login-user" value="${loginUser}" />
+		
 	
 			<!-- 바디 페이지 -->
 			<div class="body-container">
@@ -210,9 +212,9 @@
 				<!-- 커멘트 추가 -->
 				<div id="task-comment-add-modal">
 					<h2>커멘트 등록</h2>
-					<label>커멘트 날짜일시: <input type="text"
+					<label>커멘트 날짜일시: <input type="datetime-local"
 						id="task-comment-time-add" /></label><br> <br> <label>커멘트
-						작성자: <input type="text" id="task-comment-writter-add" />
+						작성자: <input type="text" id="task-comment-writter-add"  value="${loginUser}" readonly />
 					</label><br> <br> <label>커멘트 제목: <input type="text"
 						id="task-comment-title-add" /></label><br> <br> <label>커멘트
 						설명: <input type="text" id="task-comment-description-add" />

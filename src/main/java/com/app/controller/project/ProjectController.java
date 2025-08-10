@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.app.dto.project.Project;
 import com.app.dto.project.ProjectMember;
@@ -33,6 +34,8 @@ public class ProjectController {
 	
 	@Autowired
 	ScheduleService scheduleService;
+	
+
 	
 	@GetMapping("/project/main/{projectId}")
 	public String projectMain(@PathVariable Long projectId, Model model) {
@@ -86,6 +89,7 @@ public class ProjectController {
 		// ✅ 멤버 리스트 내려주기 (JSP에서 ${projectMemberList}로 사용)
 	        List<ProjectMember> members = projectMemberService.getMembers(projectId);
 	        model.addAttribute("projectMemberList", members);
+	        model.addAttribute("loginUser", "id1");  // ✅ 이게 핵심
 		return "project/schedule";
 	}
 	

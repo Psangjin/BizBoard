@@ -1,4 +1,3 @@
-// ✅ 공통 POST JSON 헬퍼
 function postJson(url, payload) {
   return fetch(url, {
     method: 'POST',
@@ -82,6 +81,8 @@ document.querySelector('.fa-arrow-right-arrow-left').addEventListener('click', f
           showGanttTaskDetail(task);
           showGanttTaskEdit(task);
 		  onTaskChange(task);//추가
+		  // ✅ 여기 추가
+		    setCurrentScheduleForComments(String(selectedSchedule.id).trim());
         }
       });
     }
@@ -261,13 +262,13 @@ document.querySelectorAll('.comment-edit-btn').forEach(function (editBtn) {
 	  modal.style.display = "block";
 
 	  // 약간의 지연을 두고 초기화
-	  setTimeout(() => {
+	/* setTimeout(() => {
 	    document.getElementById("task-comment-time-add").value = "";
-	    document.getElementById("task-comment-writter-add").value = "";
+	    //document.getElementById("task-comment-writter-add").value = ""; 지우기 금지
 	    document.getElementById("task-comment-title-add").value = "";
 	    document.getElementById("task-comment-description-add").value = "";
 	    document.getElementById("task-comment-file-add").value = null;
-	  }, 10);
+	  }, 10);*/
 });
 
 document.getElementById("task-comment-add-btn").addEventListener("click", function () {
@@ -680,6 +681,8 @@ document.getElementById("save-task-modify")?.addEventListener("click", async fun
             showGanttTaskDetail(task);
             showGanttTaskEdit(task);
 			onTaskChange(task);//추가
+			// ✅ 여기 추가
+			  setCurrentScheduleForComments(String(selectedSchedule.id).trim());
           }
         });
       })
@@ -1179,6 +1182,9 @@ document.getElementById("save-task-modify")?.addEventListener("click", async fun
 		// ✅ 이렇게
 		 const scheduleId = String(id).trim();
 		 onTaskChange({ id: scheduleId, scheduleId });
+		 
+		 // ✅ 댓글 등록용 스케줄 ID 세팅 (이 한 줄 추가)
+		   setCurrentScheduleForComments(scheduleId);
 		
 		if(!isEditMode) return;
 		
@@ -1375,3 +1381,273 @@ document.getElementById("save-task-modify")?.addEventListener("click", async fun
 	});
 
   });
+  //////////////////////////////커멘트
+  document.addEventListener('DOMContentLoaded', function () {
+    // ====== 공통 유틸 ======
+	/* function postJson(url, payload) {
+      return fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: payload ? JSON.stringify(payload) : null
+      });
+    }*/
+    function escapeHtml(s = '') {
+      return String(s)
+        .replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')
+        .replaceAll('"','&quot;').replaceAll("'", '&#39;');
+    }
+
+    // ====== 상태 ======
+    let currentScheduleId = null;  // 현재 상세보기 중인 스케줄 ID
+    let currentComments = [];      // 마지막으로 로드된 코멘트 목록
+
+    window.setCurrentScheduleForComments = function(scheduleId) {
+      currentScheduleId = scheduleId;
+      loadAndRenderComments();
+    };
+
+    // ====== 로드 & 렌더 ======
+    async function loadAndRenderComments(order = '최신순') {
+      if (!currentScheduleId) return;
+      try {
+        const res = await fetch(`/task-comment/list?scheduleId=${currentScheduleId}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const list = await res.json();
+        currentComments = Array.isArray(list) ? list : [];
+
+        // 정렬
+        currentComments.sort((a, b) => {
+          const ta = new Date(a.writeTime).getTime();
+          const tb = new Date(b.writeTime).getTime();
+          return order === '등록순' ? (ta - tb) : (tb - ta);
+        });
+
+        renderComments(currentComments);
+      } catch (e) {
+        console.error('댓글 로드 실패:', e);
+        document.getElementById('task-comment').innerHTML =
+          `<div class="text-danger">댓글 로드 실패</div>`;
+      }
+    }
+
+	function renderComments(list) {
+	  const box = document.getElementById('task-comment');
+	  if (!list?.length) { box.innerHTML = '<div class="text-muted">등록된 코멘트가 없습니다.</div>'; return; }
+
+	  box.innerHTML = list.map(c => {
+	    const ts = c.writeTime ? new Date(c.writeTime) : null;
+	    const tsText = ts ? ts.toLocaleString() : '';
+	    const writerText = c.writterName || c.userName || `User#${c.userId ?? ''}`;
+	    return `
+	      <div class="card mb-2" data-comment-id="${c.id}">
+	        <div class="card-body p-2">
+	          <div class="d-flex justify-content-between">
+	            <div>
+	              <!-- 보기 모드 -->
+	              <div class="view-area">
+	                <div class="fw-bold comment-title-text">${c.title ?? ''}</div>
+	                <div class="small text-secondary">${writerText} · ${tsText}</div>
+	                <div class="mt-2 comment-desc-text">${c.description ?? ''}</div>
+	                ${c.filePath ? `<div class="mt-1"><i class="fa-regular fa-file"></i> ${c.filePath}</div>` : ''}
+	              </div>
+
+	              <!-- 편집 모드 (초기 숨김) -->
+	              <div class="edit-area d-none">
+	                <input class="form-control form-control-sm mb-2" name="title" value="${c.title ?? ''}">
+	                <textarea class="form-control form-control-sm mb-2" rows="3" name="desc">${c.description ?? ''}</textarea>
+	                <input type="file" class="form-control form-control-sm" name="file">
+	                <div class="small text-muted mt-1">현재 파일: ${c.filePath ?? '없음'}</div>
+	              </div>
+	            </div>
+	            <div class="text-nowrap ms-2">
+	              <button class="btn btn-sm btn-outline-primary" data-action="edit">편집</button>
+	              <button class="btn btn-sm btn-outline-success d-none" data-action="save">저장</button>
+	              <button class="btn btn-sm btn-outline-secondary d-none" data-action="cancel">취소</button>
+	              <button class="btn btn-sm btn-outline-danger" data-action="delete">삭제</button>
+	            </div>
+	          </div>
+	        </div>
+	      </div>
+	    `;
+	  }).join('');
+	}
+
+
+    // ====== 정렬 셀렉트 ======
+    const orderSel = document.getElementById('comment-orderby');
+    if (orderSel) {
+      orderSel.addEventListener('change', () => {
+        const selected = orderSel.value;
+        if (currentComments.length) {
+          currentComments.sort((a, b) => {
+            const ta = new Date(a.writeTime).getTime();
+            const tb = new Date(b.writeTime).getTime();
+            return selected === '등록순' ? (ta - tb) : (tb - ta);
+          });
+          renderComments(currentComments);
+        } else {
+          loadAndRenderComments(selected);
+        }
+      });
+    }
+
+    // ====== 등록 모달 열기/닫기 ======
+	function setTodayDateTime() {
+	  const now = new Date();
+	  const pad = n => String(n).padStart(2, '0');
+	  const today = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+	  document.getElementById('task-comment-time-add').value = today;
+	}
+	// 모달 "등록하러가기" 버튼 클릭 시 날짜 세팅
+	document.getElementById('open-add-comment-btn').addEventListener('click', function () {
+	  setTodayDateTime(); // 현재 시각 세팅
+	  document.getElementById('task-comment-add-modal').style.display = 'block';
+	});
+    const openAddBtn = document.getElementById('open-add-comment-btn');
+    const addModal   = document.getElementById('task-comment-add-modal');
+    const addBackdrop= document.getElementById('fc-modalBackdrop');
+
+	function openAddCommentModal() {
+	  if (!currentScheduleId) { alert('스케줄을 먼저 선택하세요.'); return; }
+	  setTodayDateTime();                        // ✅ 여기서만 세팅
+	  const loginUser = document.getElementById('login-user')?.value || '';
+	  document.getElementById('task-comment-writter-add').value = loginUser; // 서버 바인딩 유지
+	  document.getElementById('task-comment-title-add').value = '';
+	  document.getElementById('task-comment-description-add').value = '';
+	  document.getElementById('task-comment-file-add').value = '';
+	  addModal.style.display = 'block';
+	  if (addBackdrop) addBackdrop.style.display = 'block';
+	}
+
+    function closeAddCommentModal() {
+      addModal.style.display = 'none';
+      if (addBackdrop) addBackdrop.style.display = 'none';
+    }
+    if (openAddBtn) openAddBtn.addEventListener('click', openAddCommentModal);
+
+    const addCancelBtn = document.getElementById('task-comment-add-cancel-btn');
+    if (addCancelBtn) addCancelBtn.addEventListener('click', closeAddCommentModal);
+
+    // ====== 등록 요청 ======
+	document.getElementById('task-comment-add-btn').addEventListener('click', async () => {
+	  if (!currentScheduleId) { alert('스케줄을 먼저 선택하세요.'); return; }
+
+	  const userId = document.getElementById('login-user')?.value || '';
+	  if (!userId) { alert('로그인이 필요합니다.'); return; }
+
+	  const title = document.getElementById('task-comment-title-add').value.trim();
+	  const description = document.getElementById('task-comment-description-add').value.trim();
+	  const fileInput = document.getElementById('task-comment-file-add');
+	  const filePath = fileInput && fileInput.files[0] ? fileInput.files[0].name : '';
+
+	  if (!title) { alert('제목을 입력하세요.'); return; }
+
+	  try {
+	    const res = await postJson('/task-comment/add', {
+	      scheduleId: currentScheduleId,
+	      userId,               // ✅ 이것 때문에 1400 에러가 사라짐
+	      title,
+	      description,
+	      filePath
+	    });
+	    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+	    closeAddCommentModal();
+	    const selected = document.getElementById('comment-orderby')?.value || '최신순';
+	    await loadAndRenderComments(selected);
+	  } catch (e) {
+	    console.error('댓글 등록 실패:', e);
+	    alert('등록에 실패했습니다.');
+	  }
+	});
+
+
+    // ====== 삭제 ======
+	const commentBox = document.getElementById('task-comment');
+
+	commentBox.addEventListener('click', async (e) => {
+	  const card = e.target.closest('[data-comment-id]');
+	  if (!card) return;
+
+	  const view = card.querySelector('.view-area');
+	  const edit = card.querySelector('.edit-area');
+	  const btnEdit   = card.querySelector('[data-action="edit"]');
+	  const btnSave   = card.querySelector('[data-action="save"]');
+	  const btnCancel = card.querySelector('[data-action="cancel"]');
+
+	  // 편집
+	  if (e.target.matches('[data-action="edit"]')) {
+	    view.classList.add('d-none');
+	    edit.classList.remove('d-none');
+	    btnEdit.classList.add('d-none');
+	    btnSave.classList.remove('d-none');
+	    btnCancel.classList.remove('d-none');
+	    return;
+	  }
+
+	  // 취소 (리셋: 다시 로드해서 원복)
+	  if (e.target.matches('[data-action="cancel"]')) {
+	    const order = document.getElementById('comment-orderby')?.value || '최신순';
+	    await loadAndRenderComments(order);
+	    return;
+	  }
+
+	  // 저장
+	  if (e.target.matches('[data-action="save"]')) {
+	    const id = card.dataset.commentId;
+	    const title = edit.querySelector('input[name="title"]').value.trim();
+	    const desc  = edit.querySelector('textarea[name="desc"]').value.trim();
+	    const fileInput = edit.querySelector('input[name="file"]');
+	    const filePath  = fileInput.files[0]?.name || undefined; // 파일 선택 안 하면 undefined로 보내서 유지
+
+	    if (!title) { alert('제목을 입력하세요.'); return; }
+
+	    // 서버로 업데이트
+	    const payload = { id, title, description: desc };
+	    if (filePath !== undefined) payload.filePath = filePath;
+
+	    try {
+	      const res = await postJson('/task-comment/update', payload);
+	      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+	      // 성공 후 목록 새로고침
+	      const order = document.getElementById('comment-orderby')?.value || '최신순';
+	      await loadAndRenderComments(order);
+	    } catch (err) {
+	      console.error(err);
+	      alert('수정에 실패했습니다.');
+	    }
+	    return;
+	  }
+
+	  // 삭제 (이미 구현되어 있으면 그대로 두세요)
+	  if (e.target.matches('[data-action="delete"]')) {
+		const id = card.dataset.commentId;
+		 if (!id) return;
+
+		 if (!confirm('정말 삭제하시겠습니까?')) return;
+
+		 // 더블클릭 방지
+		 e.target.disabled = true;
+
+		 try {
+		   // (A) 쿼리스트링으로 id 전달 (지금 너 코드 스타일)
+		   const res = await postJson(`/task-comment/delete?id=${encodeURIComponent(id)}`, null);
+
+		   // (B) 만약 서버가 body로 받게 되어 있으면 아래로 교체
+		   // const res = await postJson('/task-comment/delete', { id });
+
+		   if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+		   // 성공 시 목록 새로고침 (정렬 유지)
+		   const order = document.getElementById('comment-orderby')?.value || '최신순';
+		   await loadAndRenderComments(order);
+		 } catch (err) {
+		   console.error('삭제 실패:', err);
+		   alert('삭제에 실패했습니다.');
+		   e.target.disabled = false; // 실패 시 원복
+		 }
+		 return;
+	  }
+	});
+
+  });
+
