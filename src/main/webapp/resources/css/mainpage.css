@@ -1,11 +1,13 @@
 @charset "UTF-8";
 
-.mainpage-header {
+/* 메인페이지 헤더 */
+.mainpage-login-header {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	margin-right: 20px;
 	margin-bottom: 20px;
+	border-bottom: 2px solid #ebebeba4;
 }
 
 #mainpage-header-logo {
@@ -32,6 +34,7 @@
 	cursor: pointer;
 }
 
+/* 로그인 시 메인페이지 */
 .mainpage-container {
 	display: flex;
 	gap: 50px;
@@ -55,17 +58,27 @@
 }
 
 .mainpage-contents-box {
-	background-color: #9ab3c4;
+	background-color: #1a75c53d;
 	border-radius: 10px;
 	padding: 20px;
+	box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
 .contents-text {
-	color: #0c61aa;
+	color: #0e6cbe;
 	font-size: 25px;
 	font-weight: bold;
 	margin-bottom: 10px;
 	margin-left: 13px;
+}
+
+/* 비로그인 시 메인페이지 */
+.mainpage-logout-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-right: 20px;
+	margin-bottom: 20px;
 }
 
 #mainpage-image{
@@ -203,15 +216,12 @@
 	width:100%;
 	display: flex;
 	flex:1;
-	/* margin-bottom: 10px; */
-
 }
 
 .mainpage-func-items2{
 	width:100%;
 	display: flex;
 	flex:1;
-	/* margin-bottom: 10px; */
 }
 
 .mp-func-single{
