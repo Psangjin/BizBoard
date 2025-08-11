@@ -36,6 +36,7 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	min-height: 85px;
 }
 
 #memo-btn-area {
@@ -43,7 +44,8 @@
 	height: 4vh;
 	display: flex;
 	justify-content: space-between;
-	margin: 0 40px 8px 0;
+	margin-right: 40px;
+	min-height: 45px;
 }
 
 #memo-area {
@@ -51,10 +53,8 @@
 	height: 73vh;
 	overflow: auto;
 	margin-left: 20px;
-	display: flex;
 	flex-wrap: wrap;
 	gap: 20px;
-	justify-content: flex-start;
 }
 
 .memo-row {
@@ -280,6 +280,10 @@
 	margin: 0 5px;
 }
 
+#add-memo-btn, #memo-orderby{
+	height: 40px;
+}
+
 /* 툴바 */
 .add-memo-tool-bar {
 	padding: 10px 20px;
@@ -368,7 +372,7 @@
 	<div id="memo-body-container">
 		<div id="title-area">
 			<!--  선택한 프로젝트 이름 -->
-			<h1>${selectProject.name}</h1>
+			<h1>${sessionScope.project.title}</h1>
 		</div>
 		<div id="memo-btn-area">
 			<button id="add-memo-btn" class="btn btn-primary">새 메모</button>

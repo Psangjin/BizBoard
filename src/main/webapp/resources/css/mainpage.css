@@ -58,7 +58,8 @@
 }
 
 .mainpage-contents-box {
-	background-color: #1a75c53d;
+	/* background-color: #1a75c53d; */
+	background-color: #bed3f0d7;;
 	border-radius: 10px;
 	padding: 20px;
 	box-shadow: 0 5px 15px rgba(0,0,0,0.2);
