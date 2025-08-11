@@ -80,21 +80,101 @@
 		</div>
 		
 	<!-- 하단: 공지사항 + 팀원 목록 -->
-	<div class="project-main-bot">
-		<div class="project-main-notice project-main-innerbox">
-			<h3>공지사항</h3>
-		</div>
-		<div class="project-main-member project-main-innerbox">
-			<h3>팀원 목록</h3>
-			<c:forEach var="m" items="${projectMemberList}">
-				<p>${m.name}</p>
-			</c:forEach>
-			<!-- 버튼 클릭 시 모달 오픈 -->
-			<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#memberManageModal">
-				팀원초대
-			</button>
-		</div>
+<div class="project-main-bot">
+  	<!-- 공지사항 -->
+	<div class="project-main-notice project-main-innerbox" id="noticeBox">
+	  <div class="d-flex justify-content-between align-items-center">
+	    <h3 class="mb-0">공지사항</h3>
+	    <div class="d-flex gap-2">
+	      <button type="button" class="btn btn-sm btn-outline-secondary" id="btnNoticeEditToggle">편집</button>
+	      <button type="button" class="btn btn-sm btn-primary" id="btnNoticeAdd">
+	        <i class="fa fa-plus"></i>
+	      </button>
+	    </div>
+	  </div>
+	
+	  <div class="project-main-innerbox-scroll mt-2">
+	    <table class="table table-sm align-middle mb-0">
+	      <thead class="table-light">
+	        <tr>
+	          <th style="width:20%;">제목</th>
+	          <th style="width:66%;">내용</th>
+	          <th class="th-actions" style="width:14%;">조치</th> <!-- 편집 토글 시에만 보임 -->
+	        </tr>
+	      </thead>
+	      <tbody id="noticeListBody">
+	        <tr><td colspan="3" class="text-center text-muted">불러오는 중…</td></tr>
+	      </tbody>
+	    </table>
+	  </div>
 	</div>
+
+
+  <!-- 팀원 목록 (기존 그대로) -->
+  <div class="project-main-member project-main-innerbox">
+    <h3>팀원 목록</h3>
+    <c:forEach var="m" items="${projectMemberList}">
+      <p>${m.name}</p>
+    </c:forEach>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#memberManageModal">팀원초대</button>
+  </div>
+</div>
+<!-- 공지 상세 모달 (읽기 전용) -->
+<div class="modal fade" id="noticeViewModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">공지 상세</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        <h4 id="view-title" class="mb-2"></h4>
+        <div class="text-muted small mb-3">
+          <span>작성자: <span id="view-user"></span></span>
+          <span class="mx-2">•</span>
+          <span>작성일: <span id="view-time"></span></span>
+        </div>
+        <div id="view-desc" style="white-space: pre-wrap;"></div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" id="view-edit">편집</button>
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">닫기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 공지 모달 (등록/수정 겸용) -->
+<div class="modal fade" id="noticeModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="noticeModalTitle">공지 등록</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        <input type="hidden" id="notice-id">
+        <div class="mb-3">
+          <label class="form-label">제목</label>
+          <input type="text" id="notice-title" class="form-control" maxlength="200" placeholder="제목을 입력하세요">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">내용</label>
+          <textarea id="notice-desc" class="form-control" rows="8" placeholder="내용을 입력하세요"></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">취소</button>
+        <button type="button" class="btn btn-primary" id="btnNoticeSave">저장</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 </div>
 </div>
 </div>
