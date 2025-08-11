@@ -74,6 +74,12 @@ public class ProjectController {
         List<ProjectMember> members = projectMemberService.getMembers(projectId);
         model.addAttribute("projectMemberList", members);
         
+        int scheduleNum = projectService.countNumberofScheduleByProjectId(projectId);
+        int scheduleDoneNum = projectService.countNumberofScheduleDoneByProjectId(projectId);
+        
+        model.addAttribute("scheduleNum", scheduleNum);
+        model.addAttribute("scheduleDoneNum", scheduleDoneNum);
+        
 		return "project/projectMain";
 		
 		

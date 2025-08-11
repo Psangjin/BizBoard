@@ -46,4 +46,20 @@ public class ProjectDAOImpl implements ProjectDAO{
 		return projectList;
 	}
 
+	@Override
+	public int countNumberofScheduleByProjectId(Long projectId) {
+		
+		int cnt = sqlSessionTemplate.selectOne("project_mapper.countNumberofScheduleByProjectId", projectId);
+		
+		return cnt;
+	}
+	
+	@Override
+	public int countNumberofScheduleDoneByProjectId(Long projectId) {
+		
+		int cnt = sqlSessionTemplate.selectOne("project_mapper.countNumberofScheduleDoneByProjectId", projectId);
+		
+		return cnt;
+	}
+
 }

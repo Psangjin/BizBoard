@@ -44,13 +44,10 @@
 					</svg>
 				</div>
 				<div>
-					<h1>4 / 21</h1>
-					<h3>총 21가지 작업 중</h3>
-					<h4>4가지 작업 완료</h4>
-					<div class="buttons">
-						<button onclick="changeProgress(-10)">-10%</button>
-						<button onclick="changeProgress(10)">+10%</button>
-					</div>
+					<h1>${scheduleDoneNum} / ${scheduleNum}</h1>
+					<h3>총 ${scheduleNum}가지 작업 중</h3>
+					<h4>${scheduleDoneNum}가지 작업 완료</h4>
+
 				</div>
 			 </div>
 		</div>
@@ -299,6 +296,67 @@
 			location.reload();
 		}).catch(e => alert(e.message));
 	}
+
+	document.addEventListener('DOMContentLoaded', () => {
+	    let completedTasks = parseInt("${scheduleDoneNum}");
+	    let totalTasks = parseInt("${scheduleNum}");
+
+	    let progressPercentage = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+
+	    let progressCircle = document.getElementById("progress-circle");
+	    let percentText = document.getElementById("percentText");
+
+	    const radius = 60;
+	    const circumference = 2 * Math.PI * radius;
+
+	    progressCircle.style.strokeDasharray = circumference;
+
+	    // 애니메이션이 완료될 때 표시될 최종 퍼센트
+	    percentText.textContent = Math.round(progressPercentage) + "%";
+
+	    // 애니메이션 속도를 0.5초(500ms)로 단축
+	    const animationDuration = 500; 
+	    const startTime = performance.now();
+
+	    function animate(time) {
+	        let elapsed = time - startTime;
+	        let progress = Math.min(elapsed / animationDuration, 1);
+
+	        // 현재 진행률에 따라 오프셋 계산
+	        let currentProgress = progressPercentage * progress;
+	        let offset = circumference - (currentProgress / 100) * circumference;
+	        progressCircle.style.strokeDashoffset = offset;
+
+	        // 텍스트도 함께 애니메이션
+	        let animatedText = Math.round(currentProgress);
+	        percentText.textContent = animatedText + "%";
+
+	        if (progress < 1) {
+	            requestAnimationFrame(animate);
+	        }
+	    }
+
+	    requestAnimationFrame(animate);
+	});
+
+    
+    let ddayElement = document.querySelector('.project-dday');
+    if (${daysLeft} > 0) {
+        ddayElement.textContent = `마감일까지 : D-${daysLeft}`;
+        if(${daysLeft} >= 14) {
+        	ddayElement.style.backgroundColor = '#2e7d32';
+        } else if (${daysLeft} >= 4){
+        	ddayElement.style.backgroundColor = '#f9a825';
+        } else {
+        	ddayElement.style.backgroundColor = '#ef6c00';
+        }
+    } else if (${daysLeft} === 0) {
+        ddayElement.textContent = "마감일: D-DAY";
+        ddayElement.style.backgroundColor = '#c62828';
+    } else {
+        ddayElement.textContent = `종료된 프로젝트`;
+        ddayElement.style.backgroundColor = '#616161';
+    }
 </script>
 </body>
 </html>

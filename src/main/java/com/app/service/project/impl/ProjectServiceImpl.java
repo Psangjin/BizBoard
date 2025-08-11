@@ -46,5 +46,20 @@ public class ProjectServiceImpl implements ProjectService {
 		
 		return projectList;
 	}
+
+	@Override
+	public int countNumberofScheduleByProjectId(Long projectId) {
+		
+		int cnt = projectDAO.countNumberofScheduleByProjectId(projectId);
+		
+		return cnt;
+	}
 	
+	@Override
+	public int countNumberofScheduleDoneByProjectId(Long projectId) {
+		
+		int cnt = projectDAO.countNumberofScheduleDoneByProjectId(projectId);
+		
+		return cnt;
+	}
 }
