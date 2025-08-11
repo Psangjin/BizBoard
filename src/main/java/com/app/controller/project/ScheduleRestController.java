@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.app.dto.project.Project;
 import com.app.dto.project.Schedule;
 import com.app.dto.user.User;
+import com.app.service.project.InformService;
 import com.app.service.project.ProjectService;
 import com.app.service.project.ScheduleService;
 
@@ -33,16 +35,34 @@ public class ScheduleRestController {
 	@Autowired
 	private ScheduleService scheduleService;
 	
+    @Autowired
+    private ProjectService projectService;
+
+    @Autowired
+    private InformService informService;   // ✅ 추가
+    
+ // 로그인 사용자 보장용 (401)
+    private String requireLogin(HttpSession session){
+        User u = (User) session.getAttribute("loginUser");
+        if (u == null) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                org.springframework.http.HttpStatus.UNAUTHORIZED, "LOGIN_REQUIRED");
+        }
+        return u.getId();
+    }
+
+    private static final DateTimeFormatter DT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+    private static String fmt(java.sql.Timestamp ts){
+        return ts == null ? "" : ts.toLocalDateTime().format(DT);
+    }
+    
+	
 	@GetMapping("/project/schedule/max-id")
 	public ResponseEntity<Integer> findMaxScheduleId() {
 	    Integer maxId = scheduleService.findMaxScheduleId();
 	    return ResponseEntity.ok(maxId != null ? maxId : 0); // 아무 것도 없으면 0
 	}
-
-
-	@Autowired
-    private ProjectService projectService;
-	
 	
 	@PostMapping("/project/create")
 	public ResponseEntity<String> createProject(@RequestBody Project project) {
@@ -229,21 +249,88 @@ public class ScheduleRestController {
 //	}
 
 
-	@PostMapping("/project/schedule/delete")
-	public ResponseEntity<?> deleteSchedule(@RequestBody Map<String, Object> payload) {
-		long id = Long.parseLong(payload.get("id").toString());
-		scheduleService.deleteScheduleById(id);
-		return ResponseEntity.ok().build();
-	}
+//	@PostMapping("/project/schedule/delete")
+//	public ResponseEntity<?> deleteSchedule(@RequestBody Map<String, Object> payload) {
+//		long id = Long.parseLong(payload.get("id").toString());
+//		scheduleService.deleteScheduleById(id);
+//		return ResponseEntity.ok().build();
+//	}
+	 /** 일정 삭제 + 알림 */
+    @PostMapping("/project/schedule/delete")
+    public ResponseEntity<?> deleteSchedule(@RequestBody Map<String, Object> payload,
+                                            HttpSession session) {
+        String actor = requireLogin(session);
 
-	@PostMapping("/project/schedule/update")
-	public ResponseEntity<?> updateSchedule(@RequestBody Schedule schedule) {
-		try {
-			scheduleService.modifySchedule(schedule);
-			return ResponseEntity.ok().build();
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("일정 업데이트 실패: " + e.getMessage());
-		}
-	}
+        long id = Long.parseLong(payload.get("id").toString());
+
+        // 🔎 삭제 전 정보 확보 (제목/기간/프로젝트ID 등)
+        Schedule before = scheduleService.getById(id);     // ✅ service에 getById 추가 필요
+        if (before == null) return ResponseEntity.ok().build();
+
+        // 📣 알림 (담당자 대상) — 삭제 전에 쏜다
+        try {
+            String pjTitle = informService.getProjectTitle(before.getProjectId()); // 있으면 사용
+            String taskTitle = before.getTitle();
+            String memo = String.format("[%s] 작업 일정 삭제: %s (%s ~ %s)",
+                    pjTitle != null ? pjTitle : "",
+                    taskTitle != null ? taskTitle : "(제목 없음)",
+                    fmt(before.getStartDt()), fmt(before.getEndDt()));
+            informService.publishTaskEvent(before.getId(), actor, memo, false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // 실제 삭제
+        scheduleService.deleteScheduleById(id);
+        return ResponseEntity.ok().build();
+    }
+
+//	@PostMapping("/project/schedule/update")
+//	public ResponseEntity<?> updateSchedule(@RequestBody Schedule schedule) {
+//		try {
+//			scheduleService.modifySchedule(schedule);
+//			return ResponseEntity.ok().build();
+//		} catch (Exception e) {
+//			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("일정 업데이트 실패: " + e.getMessage());
+//		}
+//	}
+    /** 일정 수정 + 알림 */
+    @PostMapping("/project/schedule/update")
+    public ResponseEntity<?> updateSchedule(@RequestBody Schedule schedule,
+                                            HttpSession session) {
+        String actor = requireLogin(session);
+
+        try {
+            // 🔎 수정 전/후 비교를 위해 기존 가져오기
+            Schedule before = scheduleService.getById(schedule.getId());  // ✅ service에 getById 추가 필요
+            scheduleService.modifySchedule(schedule);
+            Schedule after  = scheduleService.getById(schedule.getId());
+
+            // 📣 알림 (담당자 대상)
+            try {
+                Long projectId = (after != null ? after.getProjectId()
+                        : (before != null ? before.getProjectId() : null));
+                String pjTitle   = (projectId != null) ? informService.getProjectTitle(projectId) : "";
+                String titleNew  = (after != null && after.getTitle()!=null) ? after.getTitle()
+                                : (before != null ? before.getTitle() : "(제목 없음)");
+
+                // 간단 메모(필요하면 변경사항 상세를 더 붙여도 OK)
+                String memo = String.format("[%s] 작업 일정 수정: %s (%s ~ %s)",
+                        pjTitle != null ? pjTitle : "",
+                        titleNew,
+                        fmt(after != null ? after.getStartDt() : (before != null ? before.getStartDt() : null)),
+                        fmt(after != null ? after.getEndDt()   : (before != null ? before.getEndDt()   : null)));
+
+                informService.publishTaskEvent(schedule.getId(), actor, memo, false);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("일정 업데이트 실패: " + e.getMessage());
+        }
+    }
 
 }

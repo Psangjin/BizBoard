@@ -15,4 +15,6 @@ public interface ScheduleDAO {
 	int modifySchedule(Schedule schedule);
 	
 	int  findMaxScheduleId();
+	
+	Schedule selectById(Long id);
 }

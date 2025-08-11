@@ -48,5 +48,14 @@
 		WHERE id=#{id}
 	</update>
 	
+	<!-- 단건 조회 -->
+  <select id="selectById" parameterType="long" resultType="Schedule">
+    SELECT
+      ID, PROJECT_ID, TITLE, CONTENT, TYPE,
+      START_DT, END_DT, COLOR, COMPLETED
+    FROM SCHEDULE
+    WHERE ID = #{id}
+  </select>
+	
 
 </mapper>

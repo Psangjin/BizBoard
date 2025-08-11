@@ -15,4 +15,6 @@ public interface ScheduleService {
 	int modifySchedule(Schedule schedule);
 
 	int  findMaxScheduleId();
+	
+	Schedule getById(Long id);
 }

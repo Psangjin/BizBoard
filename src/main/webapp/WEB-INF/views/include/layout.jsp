@@ -93,5 +93,32 @@
   </div>
 </div>
 <%@ include file="../include/createProjectModal.jsp"%>
+
+<!-- 🔔 알림 모달 -->
+<div id="inform-modal-backdrop" class="bb-modal-backdrop" style="display:none"></div>
+<div id="inform-modal" class="bb-modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="inform-modal-title">
+  <div class="bb-modal-header">
+    <h3 id="inform-modal-title">알림</h3>
+    <button class="bb-close" id="inform-modal-close" aria-label="닫기">×</button>
+  </div>
+
+  <div class="bb-modal-tabs">
+    <button class="bb-tab active" data-scope="unread" id="tab-unread">읽지 않은</button>
+    <button class="bb-tab" data-scope="all" id="tab-all">전체</button>
+  </div>
+
+  <div class="bb-modal-body">
+    <!-- 리스트 영역 -->
+    <ul id="inform-list" class="inform-list"></ul>
+
+    <!-- 비어있을 때 -->
+    <div id="inform-empty" class="inform-empty" style="display:none">표시할 알림이 없습니다.</div>
+  </div>
+
+  <div class="bb-modal-footer">
+    <button class="bb-btn" id="inform-modal-close-2">닫기</button>
+  </div>
+</div>
+
 </body>
 </html>

@@ -12,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.app.dto.project.Project;
@@ -115,4 +117,18 @@ public class ProjectController {
 	public String  newProject() {
 		return "project/newProject";
 	}
+	
+//	@PostMapping("/project/{projectId}/update")
+//	public String updateProject(@PathVariable Long projectId,
+//	                            @ModelAttribute ProjectForm form,
+//	                            HttpSession session) {
+//	    String actorUserId = ((User)session.getAttribute("loginUser")).getId();
+//
+//	    projectService.updateProject(projectId, form); // ✅ 실제 수정
+//
+//	    // 🔔 알림 발행 (작성자 제외 예: includeActor=false)
+//	    informService.publishProjectEvent(projectId, actorUserId, "프로젝트가 수정되었습니다.", false);
+//	    return "redirect:/project/main/" + projectId;
+//	}
+
 }

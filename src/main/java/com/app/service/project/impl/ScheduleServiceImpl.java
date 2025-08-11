@@ -53,4 +53,9 @@ public class ScheduleServiceImpl implements ScheduleService{
 		return result;
 	}
 
+	@Override
+	public Schedule getById(Long id) {
+		return scheduleDAO.selectById(id);
+	}
+
 }

@@ -53,4 +53,9 @@ public class ScheduleDAOImpl implements ScheduleDAO{
 		return result;
 	}
 
+	@Override
+	public Schedule selectById(Long id) {
+		return sqlSessionTemplate.selectOne("schedule_mapper.selectById",id);
+	}
+
 }
