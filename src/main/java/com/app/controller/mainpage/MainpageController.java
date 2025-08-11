@@ -25,4 +25,22 @@ public class MainpageController {
 	public String pricing() {
 		return "pricing/pricing";
 	}
+	@RequestMapping("/inquiryFAQ")
+	public String inquiryFAQ() {
+		return "inquiry/inquiryFAQ";
+
+	}
+	@RequestMapping("/inquiryOne")
+	public String inquiryOne() {
+		return "inquiry/inquiryOne";
+
+	}
+/*	@RequestMapping("/project/{projectId}")
+	public String showProjectDetail(@PathVariable int projectId, HttpSession session) {
+	    Project project = projectService.getProject(projectId);
+	    if (project == null || !project.isMember(session.getAttribute("loggedInUser"))) {
+	        return "error/errorScreen"; 
+	    }
+	    return "project/projectDetail";
+	}  */
 }

@@ -1,0 +1,249 @@
+@charset "UTF-8";/*
+ * 제목 칸의 너비를 직접 지정하여 크기를 조절할 수 있도록 수정한 CSS 코드입니다.
+ */
+
+/* body와 container의 기본 레이아웃 설정은 유지합니다. */
+body {
+    margin: 0;
+    font-family: sans-serif;
+    background-color: #e6e6e6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    border: none;
+    background-color: #fff;
+    box-shadow: none;
+}
+
+/* 사이드바 스타일 */
+.sidebar {
+    flex-shrink: 0;
+    width: 300px;
+    height: 100%;
+    background-color: #487eb0;
+    color: #fff;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.logo-image {
+    width: 100%;
+    height: auto;
+    margin-bottom: 50px;
+}
+
+.sidebar h2 {
+    font-size: 2em;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.sidebar-menu {
+    width: 100%;
+    text-align: center;
+}
+
+.sidebar-menu hr {
+    border: 0;
+    height: 1px;
+    background-color: #fff;
+    margin: 20px 0;
+}
+
+.sidebar-menu a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.2em;
+    font-weight: bold;
+    display: block;
+    margin: 10px 0;
+}
+
+.sidebar-menu a.current-page {
+    pointer-events: none;
+    cursor: default;
+    opacity: 0.7;
+    font-weight: 900;
+}
+
+/* 오른쪽 콘텐츠 영역 */
+.content {
+    flex-grow: 1;
+    padding: 50px;
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    background-color: #fff;
+}
+
+.inquiry-title {
+    font-size: 2.5em;
+    font-weight: bold;
+    margin-bottom: 40px;
+    color: #333;
+}
+
+/* --- 폼 레이아웃 및 스타일 재구성 --- */
+
+/* 기본 폼 그룹 스타일 */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+/* 제목 입력 - 라벨과 입력필드를 한 줄에 배치 */
+.form-group:first-of-type {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.form-group:first-of-type label {
+    width: 80px;
+    margin-bottom: 0;
+    min-width: 80px;
+}
+
+/* 제목 입력 필드의 너비를 직접 지정 */
+.form-group:first-of-type input {
+  	width: 760px;
+
+}
+
+
+/* 이름, 이메일이 같은 줄에 나란히 배치 */
+.form-group-inline {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 30px;
+}
+
+.form-group-inline .form-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0;
+}
+
+.form-group-inline .form-group label {
+    width: 80px;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 0;
+    min-width: 80px;
+    margin-right:0px;
+}
+
+/* --- 이름과 이메일 칸 너비 설정 --- */
+.form-group-inline .form-group:first-child input {
+    width: 250px;
+}
+/*email*/
+.form-group-inline .form-group:last-child input {
+    width: 365px;
+}
+
+/* 입력 필드 공통 스타일 */
+input[type="text"],
+input[type="email"],
+textarea {
+    width: 100%;
+    padding: 12px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+}
+
+textarea {
+    min-height: 500px;
+    resize: vertical;
+    font-family: inherit;
+}
+
+/* 개인정보 동의 박스 스타일 */
+.consent-box {
+    background-color: #f7f7f7;
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin: 30px 0;
+    border-radius: 5px;
+}
+
+.consent-box p {
+    font-size: 1em;
+    margin: 0 0 10px 0;
+    font-weight: bold;
+    color: #333;
+}
+
+.consent-box .consent-text {
+    line-height: 1.4;
+    color: #555;
+    font-weight: normal;
+    margin-bottom: 15px;
+}
+
+/* 동의 체크박스 스타일 */
+.consent-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+.consent-checkbox input[type="checkbox"] {
+    margin: 0;
+    width: auto;
+}
+
+.consent-checkbox span {
+    font-weight: normal;
+    color: #333;
+}
+
+/* 전송 버튼 스타일 */
+.submit-button {
+    width: 150px;
+    padding: 15px;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #fff;
+    background-color: #487eb0;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: block;
+    margin: 30px auto 0;
+}
+
+.submit-button:hover {
+    background-color: #357abd;
+}
+
+/* 폼 전체 스타일 */
+#inquiryForm {
+    background-color: #fff;
+    padding: 0;
+}
