@@ -1,6 +1,8 @@
 package com.app.dao.project.impl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +53,15 @@ public class ScheduleDAOImpl implements ScheduleDAO{
 	public int findMaxScheduleId() {
 		 int result = sqlSessionTemplate.selectOne("schedule_mapper.findMaxScheduleId");
 		return result;
+	}
+
+	@Override
+	public List<Schedule> selectSchedulesByUserAndProject(String userId, Long projectId) {
+		Map<String, Object> paramMap = new HashMap<>();
+		paramMap.put("userId", userId);
+	    paramMap.put("projectId", projectId);
+		List<Schedule> scheduleList = sqlSessionTemplate.selectList("schedule_mapper.selectSchedulesByUserAndProject", paramMap);
+		return scheduleList;
 	}
 
 }

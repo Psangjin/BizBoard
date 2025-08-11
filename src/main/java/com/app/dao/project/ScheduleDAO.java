@@ -15,4 +15,6 @@ public interface ScheduleDAO {
 	int modifySchedule(Schedule schedule);
 	
 	int  findMaxScheduleId();
+	
+	List<Schedule> selectSchedulesByUserAndProject(String userId, Long projectId);
 }

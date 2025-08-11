@@ -53,4 +53,9 @@ public class ScheduleServiceImpl implements ScheduleService{
 		return result;
 	}
 
+	@Override
+	public List<Schedule> selectSchedulesByUserAndProject(String userId, Long projectId) {
+        return scheduleDAO.selectSchedulesByUserAndProject(userId, projectId);
+    }
+
 }

@@ -48,5 +48,24 @@
 		WHERE id=#{id}
 	</update>
 	
+	<select id="selectSchedulesByUserAndProject" resultType="Schedule" parameterType="map">
+  SELECT 
+    s.ID          AS id,
+    s.TITLE       AS title,
+    s.CONTENT     AS content,
+    s.TYPE        AS type,
+    s.START_DT    AS startDt,
+    s.END_DT      AS endDt,
+    s.COMPLETED   AS completed,
+    s.COLOR       AS color,
+    s.PROJECT_ID  AS projectId
+  FROM taskmember tm
+  INNER JOIN schedule s ON tm.SCHEDULE_ID = s.ID
+  WHERE tm.USER_ID = #{userId}
+    AND s.PROJECT_ID = #{projectId}
+</select>
+	
+	
+	
 
 </mapper>

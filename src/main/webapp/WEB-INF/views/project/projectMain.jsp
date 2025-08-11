@@ -71,8 +71,19 @@
 			    </ul>
 			    </div>
 			</div>
-			<div class="project-task-individual project-main-innerbox">
-				<h3>프로젝트에서 내가 할 일 목록들</h3>
+			<div class="project-task-today project-main-innerbox">
+			    <h3>프로젝트에서 내가 할 일 목록들</h3>
+			    
+			    <div class="project-main-innerbox-scroll">
+				  <ul class="schedule-list">
+				    <c:forEach var="schedule" items="${schedulesByUserAndProject}">
+				      <li>
+				        <strong>${schedule.title}</strong>
+				        <div class="dates">${schedule.startDt} ~ ${schedule.endDt}</div>
+				      </li>
+				    </c:forEach>
+				  </ul>
+				</div>
 			</div>
 		</div>
 		

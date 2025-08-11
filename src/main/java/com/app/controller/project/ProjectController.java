@@ -38,7 +38,7 @@ public class ProjectController {
 
 	
 	@GetMapping("/project/main/{projectId}")
-	public String projectMain(@PathVariable Long projectId, Model model) {
+	public String projectMain(@PathVariable Long projectId, Model model, HttpSession session) {
 		Project project = projectService.findProjectById(projectId);
 		if(project == null) {
 			return "redirect:/error";
@@ -79,6 +79,18 @@ public class ProjectController {
         
         model.addAttribute("scheduleNum", scheduleNum);
         model.addAttribute("scheduleDoneNum", scheduleDoneNum);
+        
+        User loginUser = (User) session.getAttribute("loginUser");
+        
+        if (loginUser == null) {
+            return "redirect:/account/login";
+        }
+        
+        String userId = loginUser.getId();
+        
+        List<Schedule> schedulesByUserAndProject = scheduleService.selectSchedulesByUserAndProject(userId, projectId);
+        
+        model.addAttribute("schedulesByUserAndProject", schedulesByUserAndProject);
         
 		return "project/projectMain";
 		

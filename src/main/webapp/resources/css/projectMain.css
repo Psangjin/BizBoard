@@ -173,6 +173,26 @@
     line-height: 1.4;
 }
 
+  ul.schedule-list {
+    list-style: none;
+    padding: 10px 12px;
+    margin: 0;
+  }
+
+
+
+  ul.schedule-list li strong {
+    display: block;
+    font-size: 1.1em;
+    color: #333;
+    margin-bottom: 6px;
+  }
+
+  ul.schedule-list li .dates {
+    font-size: 0.9em;
+    color: #666;
+  }
+
 /* 공지사항 */
 .project-main-notice {
 	flex: 3;
