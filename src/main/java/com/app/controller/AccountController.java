@@ -42,7 +42,7 @@ public class AccountController {
 		
 		if(loginUser != null) {
 			session.setAttribute("loginUser", loginUser);
-			return "redirect:/account/mypage";
+			return "redirect:/";
 		} else {
 			 System.out.println("[로그인 실패] ID: " + user.getId()); // 디버깅용
 		        model.addAttribute("error", "아이디 또는 비밀번호가 올바르지 않습니다.");

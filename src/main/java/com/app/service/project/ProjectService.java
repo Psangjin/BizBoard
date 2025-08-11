@@ -11,4 +11,6 @@ public interface ProjectService {
 	List<Project> findAllProjects();
 	
 	Project findProjectById(Long projectId);
+	
+	List<Project> findProjectsByUserId(String userId);
 }

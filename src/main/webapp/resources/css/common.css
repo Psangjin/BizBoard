@@ -300,7 +300,7 @@ body {
 }
 
 .fab-popup .fab-popup-project-list {
-  min-height: 370px;
+  max-height: 370px;
   overflow-y: auto;
 }
 

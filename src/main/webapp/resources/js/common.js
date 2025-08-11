@@ -42,7 +42,11 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   const fabMain = document.querySelector('.fab-main');
     const fabMenu = document.querySelector('.fab-menu');
-
+	const mainLogo = document.querySelector('#header-logo');
+	
+	mainLogo.addEventListener('click', () => {
+		location.href = `/`;
+	})
     let hideTimeout;
 
     // + 버튼 클릭 시 메뉴 토글
@@ -91,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		
 		$(document).ready(function () {
 		    $.ajax({
-		      url: '/project/list',
+		      url: '/project/listByUserId',
 		      method: 'GET',
 		      success: function (projects) {
 		        const $popupList = document.querySelector('.fab-item[data-popup="프로젝트 관련"] .fab-popup ul');

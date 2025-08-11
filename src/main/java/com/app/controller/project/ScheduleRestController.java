@@ -4,10 +4,13 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.app.dto.project.Project;
 import com.app.dto.project.Schedule;
+import com.app.dto.user.User;
 import com.app.service.project.ProjectService;
 import com.app.service.project.ScheduleService;
 
@@ -58,7 +62,16 @@ public class ScheduleRestController {
 	}
 	
 	
-	
+	@GetMapping("/project/listByUserId")
+	public List<Project> getProjectsByUserId(HttpSession session) {
+	    User loginUser = (User) session.getAttribute("loginUser");
+	    if (loginUser == null) {
+	        return Collections.emptyList(); // 로그인 안된 경우 빈 리스트 반환
+	    }
+
+	    String userId = loginUser.getId(); // User 객체에서 아이디 꺼내기
+	    return projectService.findProjectsByUserId(userId);
+	}
 	
 	
 	

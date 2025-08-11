@@ -1145,6 +1145,7 @@ document.getElementById("save-task-modify")?.addEventListener("click", async fun
       eventDurationEditable: false,
       events: `/project/schedule/events?projectId=${projectId}`, //초기 설정 일정
       eventDisplay: 'block',
+	  timeZone: 'Asia/Seoul',
       
 	  //캘린더에 일정 드래그앤 드롭시
       eventReceive: function(info) {
