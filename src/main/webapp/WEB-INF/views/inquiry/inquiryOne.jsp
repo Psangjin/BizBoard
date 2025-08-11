@@ -14,7 +14,7 @@
 		<div class="sidebar">
 			<a href="${pageContext.request.contextPath}/"> <img
 				class="logo-image"
-				src="${pageContext.request.contextPath}/resources/image/logo2.png"
+				src="${pageContext.request.contextPath}/resources/image/logo_inversion.png"
 				alt="BizBoard 로고" />
 			</a>
 			<h2>문의하기</h2>
