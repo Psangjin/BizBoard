@@ -381,3 +381,24 @@ body {
 }
 .btn-read[disabled]{ opacity:.45; cursor:default; }
 .inform-empty{ padding:24px; text-align:center; color:#777; }
+/*********/
+/* FAB 메인 + 버튼 뱃지 */
+.fab-main { position: relative; }
+.fab-badge-dot {
+  position: absolute; top: -6px; right: -6px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: #e02424; color: #fff; font-size: 12px;
+  display: none; align-items: center; justify-content: center;
+  box-shadow: 0 0 0 2px #fff;
+}
+
+/* 🔔 알림 메뉴 숫자 뱃지 */
+.fab-item { position: relative; }
+.fab-badge-count {
+  position: absolute; top: -6px; right: -6px;
+  min-width: 20px; height: 18px; padding: 0 6px;
+  border-radius: 9px; background: #e02424; color: #fff;
+  font-size: 12px; line-height: 18px; text-align: center;
+  display: none; box-shadow: 0 0 0 2px #fff;
+}
+

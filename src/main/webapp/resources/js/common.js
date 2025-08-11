@@ -132,6 +132,66 @@ document.addEventListener('DOMContentLoaded', function() {
 		      }
 		    });
 		  });
+		  /////
+		  // ===== 뱃지 DOM 생성 =====
+		  const fabMainBtn = document.querySelector('.fab-main');
+		  let fabMainBadge = document.querySelector('.fab-badge-dot');
+		  if (!fabMainBadge && fabMainBtn) {
+		    fabMainBadge = document.createElement('span');
+		    fabMainBadge.className = 'fab-badge-dot';
+		    fabMainBadge.textContent = '!'; // 느낌표
+		    fabMainBtn.appendChild(fabMainBadge);
+		  }
+
+		  const bellItem = document.querySelector('.fab-item[data-popup="알림 목록"]');
+		  let bellBadge = document.querySelector('.fab-badge-count');
+		  if (!bellBadge && bellItem) {
+		    bellBadge = document.createElement('span');
+		    bellBadge.className = 'fab-badge-count';
+		    bellBadge.textContent = '0';
+		    bellItem.appendChild(bellBadge);
+		  }
+
+		  /** 뱃지 갱신 */
+		  // ===== 뱃지 갱신 함수 =====
+		  async function refreshInformBadges() {
+		    try {
+		      const res = await fetch('/inform/api/list?scope=unread', {
+		        headers: { Accept: 'application/json' }
+		      });
+
+		      let count = 0;
+		      if (res.status === 200) {
+		        const arr = await res.json();
+		        count = Array.isArray(arr) ? arr.length : 0;
+		      } // 204면 count=0 유지
+
+		      // + 버튼 배지
+		      if (fabMainBadge) fabMainBadge.style.display = count > 0 ? 'inline-flex' : 'none';
+
+		      // 🔔 숫자 배지
+		      if (bellBadge) {
+		        if (count > 0) {
+		          bellBadge.textContent = count > 99 ? '99+' : String(count);
+		          bellBadge.style.display = 'inline-block';
+		        } else {
+		          bellBadge.style.display = 'none';
+		        }
+		      }
+		    } catch (e) {
+		      console.warn('[INFORM] badge refresh error', e);
+		      if (fabMainBadge) fabMainBadge.style.display = 'none';
+		      if (bellBadge) bellBadge.style.display = 'none';
+		    }
+		  }
+
+		  // ✅ 전역에서 호출 가능하도록
+		  window.refreshInformBadges = refreshInformBadges;
+
+		  // 최초 1회
+		  refreshInformBadges();
+
+ 
 
 });
 // ============ 알림 모달 열기 트리거 연결 ============
@@ -255,14 +315,29 @@ async function loadAndRenderInforms(scope) {
         </div>
       `;
 
-      li.addEventListener('click', async (e) => {
-        const btn = e.target.closest('[data-action="read"]');
-        if (!btn) return;
-        btn.disabled = true;
-        const ok = await markAsRead(it.informId);
-        if (ok) btn.remove();
-        else { btn.disabled = false; alert('읽음 처리에 실패했습니다.'); }
-      });
+	  li.addEventListener('click', async (e) => {
+	    const btn = e.target.closest('[data-action="read"]');
+	    if (!btn) return;
+	    btn.disabled = true;
+
+	    const ok = await markAsRead(it.informId);
+
+	    if (ok) {
+	      if (scope === 'unread') {
+	        li.remove();
+	        if (!listEl.children.length) {
+	          emptyEl.textContent = '표시할 알림이 없습니다.';
+	          emptyEl.style.display = 'block';
+	        }
+	      } else {
+	        btn.remove();
+	      }
+	      refreshInformBadges(); // ✅ 읽음 후 카운트 갱신
+	    } else {
+	      btn.disabled = false;
+	      alert('읽음 처리에 실패했습니다.');
+	    }
+	  });
 
       listEl.appendChild(li);
     }
