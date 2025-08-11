@@ -45,6 +45,15 @@ public class TaskMemberDAOImpl implements TaskMemberDAO {
 		return sqlSessionTemplate.selectList("taskMember_mapper.findUserIdsByTaskId",scheduleId);
 	}
 
+	@Override
+	public int insertSingle(Long scheduleId, String userId, String name) {
+		Map<String, Object> param = new HashMap<>();
+	    param.put("scheduleId", scheduleId);
+	    param.put("userId", userId);
+	    param.put("name", name);
+	    return sqlSessionTemplate.insert("taskMember_mapper.insertSingle", param);
+	}
+
 
 	
 	

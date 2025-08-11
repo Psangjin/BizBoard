@@ -9,4 +9,5 @@ public interface TaskMemberDAO {
 	  int insertTaskMemberBatch(Long scheduleId,List<TaskMember> list);
 	  List<TaskMember> findByScheduleId(Long scheduleId);
 	  List<String> findUserIdsByTaskId(Long scheduleId);
+	  int insertSingle(Long scheduleId, String userId, String name);
 }

@@ -2,6 +2,8 @@ package com.app.controller.project;
 
 import java.util.*;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -50,5 +52,6 @@ public class TaskMemberRestController {
         List<TaskMember> saved = taskMemberService.replaceMembers(scheduleId, members); // ✅ 배치 사용
         return ResponseEntity.ok(saved);
     }
+    
 
 }

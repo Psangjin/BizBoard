@@ -25,25 +25,28 @@ public class TaskMemberServiceImpl implements TaskMemberService {
 	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public List<TaskMember> replaceMembers(Long scheduleId, List<TaskMember> members) {
-	   taskMemberDAO.deleteByScheduleId(scheduleId);
-	   if (members != null && !members.isEmpty()) {
-	       Set<String> seen = new HashSet<>();
-	       List<TaskMember> cleaned = new ArrayList<>();
-	       for (TaskMember m : members) {
-	           if (m == null || m.getUserId() == null) continue;
-	           String uid = m.getUserId().trim();
-	           if (uid.isEmpty()) continue;
-	           if (seen.add(uid)) {
-	               m.setId(null);
-	               m.setScheduleId(scheduleId);
-	               cleaned.add(m);
-	           }
-	       }
-	       if (!cleaned.isEmpty()) {
-	           taskMemberDAO.insertTaskMemberBatch(scheduleId, cleaned);
-	       }
-	   }
-	   return taskMemberDAO.findByScheduleId(scheduleId);
+	    taskMemberDAO.deleteByScheduleId(scheduleId);
+	    if (members != null && !members.isEmpty()) {
+	        Set<String> seen = new HashSet<>();
+	        List<TaskMember> cleaned = new ArrayList<>();
+	        for (TaskMember m : members) {
+	            if (m == null || m.getUserId() == null) continue;
+	            String uid = m.getUserId().trim();
+	            if (uid.isEmpty()) continue;
+	            if (seen.add(uid)) {
+	                m.setId(null);
+	                m.setScheduleId(scheduleId);
+	                cleaned.add(m);
+	            }
+	        }
+	        if (!cleaned.isEmpty()) {
+	            // 배치 대신 단일 insert 반복 호출 예시
+	            for (TaskMember tm : cleaned) {
+	                taskMemberDAO.insertSingle(scheduleId, tm.getUserId(), tm.getName());
+	            }
+	        }
+	    }
+	    return taskMemberDAO.findByScheduleId(scheduleId);
 	}
 	
 	@Override

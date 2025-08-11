@@ -18,13 +18,12 @@
   </delete>
 
   <!-- 배치 insert: ID 시퀀스가 필요하면 여기서 넣음 -->
-  <insert id="insertTaskMemberBatch" parameterType="map">
+<insert id="insertTaskMemberBatch" parameterType="map">
+  <foreach collection="list" item="item" separator=";">
     INSERT INTO TASKMEMBER (ID, SCHEDULE_ID, USER_ID, NAME)
-    VALUES
-    <foreach collection="list" item="item" separator=",">
-      (SEQ_TASK_MEMBER.NEXTVAL, #{scheduleId}, #{item.userId}, #{item.name})
-    </foreach>
-  </insert>
+    VALUES (SEQ_TASK_MEMBER.NEXTVAL, #{scheduleId}, #{item.userId}, #{item.name})
+  </foreach>
+</insert>
 
   <!-- 조회 -->
   <select id="findByScheduleId" resultType="com.app.dto.project.TaskMember" parameterType="map">
@@ -32,5 +31,10 @@
     FROM TASKMEMBER
     WHERE SCHEDULE_ID = #{scheduleId}
   </select>
+  
+  <insert id="insertSingle" parameterType="map">
+    INSERT INTO TASKMEMBER (ID, SCHEDULE_ID, USER_ID, NAME)
+    VALUES (SEQ_TASK_MEMBER.NEXTVAL, #{scheduleId}, #{userId}, #{name})
+</insert>
 
 </mapper>
