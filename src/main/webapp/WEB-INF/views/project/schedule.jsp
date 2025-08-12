@@ -139,11 +139,11 @@
 					</label><br> <label>제목: <input type="text" id="fc-modal-title" /></label><br>
 
 					<br> <label>설명: <textarea id="fc-modal-description"></textarea></label>
-					<div style="margin-top: 10px;">
+					<div style="margin-top: 10px; display:flex; gap:60px;">
 
 						<label><strong>색상 선택:</strong></label>
 						<div id="fc-color-options"
-							style="margin-top: 5px; display: flex; gap: 10px;">
+							style="margin: 5px; display: flex; gap: 10px;">
 							<div class="fc-color-circle" data-color="#007bff"
 								style="background-color: #007bff;"></div>
 							<div class="fc-color-circle" data-color="#28a745"
@@ -156,6 +156,12 @@
 								style="background-color: #6f42c1;"></div>
 						</div>
 						<input type="hidden" id="fc-modal-color" value="#007bff" />
+						
+						<select
+						id="state-select-modify-cal">
+							<option value="null">진행</option>
+							<option value="Done">완료</option>
+				  	</select>
 					</div>
 					<br> <br>
 					<button id="fc-save-event">저장</button>
@@ -193,8 +199,8 @@
 				  <label for="state-select-modify">상태:</label>
 				  <select
 						id="state-select-modify">
-						<option>진행</option>
-						<option>완료</option>
+						<option value="null">진행</option>
+						<option value="Done">완료</option>
 				  </select><br><br> 
 				  <label for="form-select-modify">멤버:</label>
 				 <select id="form-select-modify" multiple>

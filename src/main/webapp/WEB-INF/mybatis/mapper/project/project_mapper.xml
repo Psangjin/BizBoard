@@ -39,14 +39,16 @@
   WHERE m.user_id = #{userId}
 	</select>
 
-	<select id="countNumberofScheduleByProjectId" resultType="int" parameterType="Long">
+	<select id="countNumberofScheduleByProjectId" resultType="int" parameterType="map">
 	select count(*) from schedule
 	where project_id=#{projectId}
+	and type=#{type}
 	</select>
 	
-	<select id="countNumberofScheduleDoneByProjectId" resultType="int" parameterType="Long">
+	<select id="countNumberofScheduleDoneByProjectId" resultType="int" parameterType="map">
 	select count(*) from schedule
 	where project_id=#{projectId} AND completed is not null
+	and type=#{type}
 	</select>
 	
 </mapper>
