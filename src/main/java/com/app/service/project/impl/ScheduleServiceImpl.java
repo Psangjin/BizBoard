@@ -24,9 +24,9 @@ public class ScheduleServiceImpl implements ScheduleService{
 	}
 
 	@Override
-	public List<Schedule> findAllSchedules() {
+	public List<Schedule> findSchedulesByProjectId(Long projectId) {
 		
-		List<Schedule> allSchedule = scheduleDAO.findAllSchedules();
+		List<Schedule> allSchedule = scheduleDAO.findSchedulesByProjectId(projectId);
 		
 		return allSchedule;
 	}
@@ -44,6 +44,12 @@ public class ScheduleServiceImpl implements ScheduleService{
 		
 		int result = scheduleDAO.modifySchedule(schedule);
 		
+		return result;
+	}
+
+	@Override
+	public int findMaxScheduleId() {
+		int result = scheduleDAO.findMaxScheduleId();
 		return result;
 	}
 

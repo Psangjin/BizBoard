@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC
+		   "-//mybatis.org//DTD Mapper 3.0//EN" 
+		   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="notice_mapper">
+	<!-- mapper.xml -->
+<select id="getById" resultType="com.app.dto.project.Notice" parameterType="long">
+  SELECT
+    ID          AS id,
+    PROJECT_ID  AS projectId,
+    USER_ID     AS userId,
+    TITLE       AS title,
+    DESCRIPTION AS description,
+    WRITE_TIME  AS writeTime
+  FROM NOTICE
+  WHERE ID = #{id}
+</select>
+	
+
+	<select id="listByProjectId" resultType="com.app.dto.project.Notice" parameterType="long">
+    SELECT ID, PROJECT_ID, USER_ID, TITLE, DESCRIPTION, WRITE_TIME
+    FROM NOTICE
+    WHERE PROJECT_ID = #{projectId}
+    ORDER BY WRITE_TIME DESC
+  </select>
+
+  <!-- insert: selectKey로 PK를 notice.id에 채움 (반환은 여전히 int) -->
+  <insert id="insert" parameterType="com.app.dto.project.Notice">
+    <selectKey keyProperty="id" resultType="long" order="BEFORE">
+      SELECT SEQ_NOTICE.NEXTVAL FROM DUAL
+    </selectKey>
+    INSERT INTO NOTICE
+      (ID, PROJECT_ID, USER_ID, TITLE, DESCRIPTION, WRITE_TIME)
+    VALUES
+      (#{id}, #{projectId}, #{userId}, #{title},
+       #{description, jdbcType=CLOB}, SYSTIMESTAMP)
+  </insert>
+
+
+  <update id="update" parameterType="com.app.dto.project.Notice">
+    UPDATE NOTICE
+       SET TITLE = #{title},
+           DESCRIPTION = #{description},
+           WRITE_TIME = SYSTIMESTAMP   <!-- ✅ 수정 시각으로 갱신 -->
+     WHERE ID = #{id}
+  </update>
+
+  <delete id="delete" parameterType="long">
+    DELETE FROM NOTICE WHERE ID = #{id}
+  </delete>
+</mapper>	 

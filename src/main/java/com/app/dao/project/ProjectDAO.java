@@ -3,6 +3,7 @@ package com.app.dao.project;
 import java.util.List;
 
 import com.app.dto.project.Project;
+import com.app.dto.user.User;
 
 public interface ProjectDAO {
 
@@ -10,8 +11,7 @@ public interface ProjectDAO {
 	
 	List<Project> findAllProjects();
 	
+	Project findProjectById(Long projectId);
 	
-	List<Project> findMyProjects(String userId);		// 내가 작성한 프로젝트 목록 조회
-	
-    List<Project> findParticipatedProjects(String userId);		// 참여중인 프로젝트 목록 조회
+	List<Project> findProjectsByUserId(String userId);
 }

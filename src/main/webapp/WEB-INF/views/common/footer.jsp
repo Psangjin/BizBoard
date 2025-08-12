@@ -29,7 +29,7 @@
 		</div>
 		
 		<div class="mp-footer-sns">
-			<span> <a href="/support" style="text-decoration: none; color:rgb(92, 92, 92);">고객지원 문의하기</a></span><br>
+			<span> <a href="/inquiryFAQ" style="text-decoration: none; color:rgb(92, 92, 92);">고객지원 문의하기</a></span><br>
 			<i class="fa-brands fa-facebook"></i>
 			<i class="fa-brands fa-instagram"></i>
 			<i class="fa-brands fa-youtube"></i>

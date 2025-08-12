@@ -21,6 +21,18 @@
 	<select id="findAllProjects" resultType="Project">
 		SELECT * FROM t_project
 	</select>
+	
+	<select id="findProjectById" resultType="Project" parameterType="Long">
+		SELECT * FROM t_project
+		where id = #{projectId}
+	</select>
+	
+	<select id="findProjectsByUserId" resultType="Project" parameterType="String">
+		SELECT p.*
+  FROM project_member m
+  JOIN t_project p ON m.project_id = p.id
+  WHERE m.user_id = #{userId}
+	</select>
 
 
 

@@ -34,6 +34,10 @@
 	
 	 <%@ include file="../include/layout.jsp" %>	<!-- layout.jsp에서 형식 그대로 가져오기(마지막에 div3개 닫기) -->
 	
+		<input type="hidden" id="project-id" value="${projectId}" />
+		<input type="hidden" id="login-user" value="${loginUser}" />
+		
+	
 			<!-- 바디 페이지 -->
 			<div class="body-container">
 				<!-- 캘린더 요소 클릭시 뜨는 박스 -->
@@ -165,12 +169,12 @@
 				  <label>설명: <textarea id="task-description" /></textarea></label><br><br>
 				  <label for="form-select">멤버:</label>
 				<select id="form-select" multiple aria-label="멤버 선택">
-					<option selected>김동욱</option>
-					<option>한승준</option>
-					<option>이하은</option>
-					<option>석준형</option>
-					<option>박상진</option>
-				</select><br><br>
+				  <c:forEach var="member" items="${projectMemberList}">
+				    <!-- value는 userId, selected는 서버에서 주지 않음 -->
+				    <option value="${member.userId}">${member.name}</option>
+				  </c:forEach>
+				</select>
+				<br><br>
 				  <label>시작일: <input type="date" id="task-start" /></label><br><br>
 				  <label>종료일: <input type="date" id="task-end" /></label><br><br>
 				  
@@ -184,15 +188,21 @@
 				
 				  <label>작업명: <input type="text" id="task-name-modify" /></label><br><br>
 				  <label>설명: <textarea id="task-description-modify" /></textarea></label><br><br>
+				  <label for="state-select-modify">상태:</label>
+				  <select
+						id="state-select-modify">
+						<option>진행</option>
+						<option>완료</option>
+				  </select><br><br> 
 				  <label for="form-select-modify">멤버:</label>
-				<select id="form-select-modify" multiple aria-label="멤버 선택">
-					<option selected>김동욱</option>
-					<option>한승준</option>
-					<option>이하은</option>
-					<option>석준형</option>
-					<option>박상진</option>
-				</select><br><br>
-				  <label>시작일: <input type="date" id="task-start-modify" /></label><br><br>
+				 <select id="form-select-modify" multiple>
+				  <c:forEach var="member" items="${projectMemberList}">
+				    <!-- value는 userId, text는 name -->
+				    <option value="${member.userId}">${member.name}</option>
+				  </c:forEach>
+				 </select>
+
+			<label>시작일: <input type="date" id="task-start-modify" /></label><br><br>
 				  <label>종료일: <input type="date" id="task-end-modify" /></label><br><br>
 				  
 				  <button id="save-task-modify" class="btn btn-primary">저장</button>
@@ -202,9 +212,9 @@
 				<!-- 커멘트 추가 -->
 				<div id="task-comment-add-modal">
 					<h2>커멘트 등록</h2>
-					<label>커멘트 날짜일시: <input type="text"
+					<label>커멘트 날짜일시: <input type="datetime-local"
 						id="task-comment-time-add" /></label><br> <br> <label>커멘트
-						작성자: <input type="text" id="task-comment-writter-add" />
+						작성자: <input type="text" id="task-comment-writter-add"  value="${loginUser}" readonly />
 					</label><br> <br> <label>커멘트 제목: <input type="text"
 						id="task-comment-title-add" /></label><br> <br> <label>커멘트
 						설명: <input type="text" id="task-comment-description-add" />
@@ -222,26 +232,21 @@
 			<div id="ganttDetailContainer">
 				<div id="ganttDetailLeft">
 					<label>작업명: <input type="text" id="task-name-detail" /></label><br>
-					<label for="state-select-detail">상태:</label> <select
-						id="state-select-detail">
-						<option selected>진행</option>
-						<option>완료</option>
-					</select><br> <br> <label>설명: <textarea
+					<label>설명: <textarea
 							id="task-description-detail" /></textarea></label><br>
-							<label>시작일:
+					<label>상태</label>
+					<p>상태상태</p>
+					<label>시작일:
 						<input type="date" id="task-start-detail" />
 					</label><br>
 					<label>종료일: <input type="date"
 						id="task-end-detail" /></label><br>
-						<label
-						for="form-select-detail">멤버:</label> <select
-						id="form-select-detail" multiple aria-label="멤버 선택">
-						<option selected>김동욱</option>
-						<option>한승준</option>
-						<option>이하은</option>
-						<option>석준형</option>
-						<option>박상진</option>
-					</select><br>
+						<label for="form-select-detail">멤버:</label>
+						<select id="form-select-detail" class="form-select" multiple size="8">
+						  <c:forEach var="m" items="${projectMemberList}">
+						    <option value="${m.userId}" data-name="${m.name}">${m.name}</option>
+						  </c:forEach>
+						</select>
 				</div>
 				<div id="ganttDetailRight">
 					<select id="comment-orderby">
@@ -273,6 +278,15 @@
 </div>
 </div>
 <script>
+/*  window.projectId =
+	  document.getElementById('project-id')?.value
+	  || (location.pathname.match(/\/project\/(?:schedule|main)\/(\d+)/)?.[1] ?? ''); */
+	//console.log('projectId:', projectId);
+
+//console.log('project-id 엘리먼트:', document.getElementById('project-id'));
+//console.log('projectId 값:', projectId);
+
+
 	const commentList = [
 	    <c:forEach var="comment" items="${commentList}" varStatus="status">
 	      {

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="projectMember_mapper">
+
+   <!-- 목록 (JSP 렌더용) -->
+  <select id="findMembersByProjectId"
+          parameterType="long"
+          resultType="com.app.dto.project.ProjectMember">
+    <![CDATA[
+      SELECT pm.ID, pm.PROJECT_ID, pm.USER_ID, pm.ROLE, pm.STATUS,
+             pm.JOINED_AT, pm.LEFT_AT,
+             u.NAME  AS name,
+             u.EMAIL AS email
+      FROM PROJECT_MEMBER pm
+      JOIN USERS u ON u.ID = pm.USER_ID
+      WHERE pm.PROJECT_ID = #{projectId,jdbcType=NUMERIC}
+        AND pm.STATUS = 'ACTIVE'
+      ORDER BY pm.JOINED_AT ASC
+    ]]>
+  </select>
+
+  <!-- 유저 존재 여부 (EMAIL) -->
+  <select id="existsUserByEmail" parameterType="string" resultType="int">
+    <![CDATA[
+      SELECT COUNT(*) FROM USERS WHERE EMAIL = #{email,jdbcType=VARCHAR}
+    ]]>
+  </select>
+
+  <!-- 이미 ACTIVE 멤버인지 (EMAIL) -->
+  <select id="existsActiveMember" parameterType="map" resultType="int">
+    <![CDATA[
+      SELECT COUNT(*)
+      FROM PROJECT_MEMBER pm
+      JOIN USERS u ON pm.USER_ID = u.ID
+      WHERE pm.PROJECT_ID = #{projectId,jdbcType=NUMERIC}
+        AND u.EMAIL = #{email,jdbcType=VARCHAR}
+        AND pm.STATUS = 'ACTIVE'
+    ]]>
+  </select>
+
+  <!-- 멤버 추가 (EMAIL 기준) -->
+  <insert id="insertMemberByEmail" parameterType="map">
+    <![CDATA[
+      INSERT INTO PROJECT_MEMBER (ID, PROJECT_ID, USER_ID, ROLE, STATUS, JOINED_AT)
+      SELECT SEQ_PROJECT_MEMBER.NEXTVAL,
+             #{projectId,jdbcType=NUMERIC},
+             u.ID,
+             #{role},
+             'ACTIVE',
+             SYSTIMESTAMP
+      FROM USERS u
+      WHERE u.EMAIL = #{email,jdbcType=VARCHAR}
+    ]]>
+  </insert>
+
+  <!-- 권한 변경 (EMAIL 기준) -->
+  <update id="updateRole" parameterType="map">
+    <![CDATA[
+      UPDATE PROJECT_MEMBER pm
+      SET pm.ROLE = #{role}
+      WHERE pm.PROJECT_ID = #{projectId,jdbcType=NUMERIC}
+        AND pm.USER_ID = (SELECT ID FROM USERS WHERE EMAIL = #{email,jdbcType=VARCHAR})
+        AND pm.STATUS = 'ACTIVE'
+    ]]>
+  </update>
+
+  <!-- 강퇴 (소프트 삭제, EMAIL 기준) -->
+  <update id="removeMember" parameterType="map">
+    <![CDATA[
+      UPDATE PROJECT_MEMBER pm
+      SET pm.STATUS = 'REMOVED', pm.LEFT_AT = SYSTIMESTAMP
+      WHERE pm.PROJECT_ID = #{projectId,jdbcType=NUMERIC}
+        AND pm.USER_ID = (SELECT ID FROM USERS WHERE EMAIL = #{email,jdbcType=VARCHAR})
+        AND pm.ROLE <> 'OWNER'
+        AND pm.STATUS = 'ACTIVE'
+    ]]>
+  </update>
+
+</mapper>
+
