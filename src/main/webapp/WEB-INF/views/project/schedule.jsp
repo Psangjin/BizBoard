@@ -214,7 +214,7 @@
 					<h2>커멘트 등록</h2>
 					<label>커멘트 날짜일시: <input type="datetime-local"
 						id="task-comment-time-add" /></label><br> <br> <label>커멘트
-						작성자: <input type="text" id="task-comment-writter-add"  value="${loginUser}" readonly />
+						작성자: <input type="text" id="task-comment-writter-add"  value="${sessionScope.loginUser.id}" readonly />
 					</label><br> <br> <label>커멘트 제목: <input type="text"
 						id="task-comment-title-add" /></label><br> <br> <label>커멘트
 						설명: <input type="text" id="task-comment-description-add" />

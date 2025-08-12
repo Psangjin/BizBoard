@@ -1154,6 +1154,7 @@ document.getElementById("save-task-modify")?.addEventListener("click", async fun
         // 드롭한 날짜 시작날짜로 설정
         const droppedDate = info.event.startStr;
         setInputDate(droppedDate);
+		
 		info.event.remove();
         
         //새로운 데이터 입력을 위한 다른 데이터 초기화

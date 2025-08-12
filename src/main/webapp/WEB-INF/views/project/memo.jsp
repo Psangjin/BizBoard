@@ -377,8 +377,8 @@
 		<div id="memo-btn-area">
 			<button id="add-memo-btn" class="btn btn-primary">새 메모</button>
 			<select id="memo-orderby" aria-label="메모 선택">
-				<option selected>수정날짜순</option>
-				<option>등록날짜순</option>
+				<option value="desc" selected>최신순</option>
+				<option value="asc">오래된순</option>
 			</select>
 		</div>
 		<div id="memo-area">
@@ -510,6 +510,7 @@
 	</div>
 	</div>
 	<script>
+	
 	 const loginUser = "${loginUser}";
 	 //const loginUser = "아이디";
 	let currentMemoIndex = null;
@@ -614,9 +615,6 @@
 		}
 
 	</script>
-	<script>
-	  renderMemos();  // 페이지 로드시 초기 렌더링
-	</script>
 
 	<script>
 	  document.getElementById("add-memo-btn").addEventListener("click", function () {
@@ -719,19 +717,40 @@
 		function addSetFontSize(size) {
 		  document.execCommand('fontSize', false, size);
 		}
-
 		
-		/////////////////메모CRUD
-		function fetchMemos(projectId) {
-console.log(projectId);
-		  fetch(`/memo/list?projectId=${projectId}`)
-		    .then(res => res.json())
+		// 1) 정렬 셀렉트
+		const orderSel = document.getElementById('memo-orderby');
+		const currentOrder = () => orderSel.value;   // 'asc' 또는 'desc'
+		
+		// 2) 목록 조회 (order 전달)
+		function fetchMemos(projectId, order) {
+		  if (!projectId) {
+		    console.warn('❗ projectId가 비어있습니다.');
+		    return;
+		  }
+		  console.log(order);  //order vs ${order}
+		  console.log(`/memo/list?projectId=${projectId}&order=`+order);
+		  const url = `/memo/list?projectId=${projectId}&order=`+order;
+		  fetch(url)
+		    .then(res => {
+		      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+		      return res.json();
+		    })
 		    .then(data => {
 		      memoList.length = 0;
 		      memoList.push(...data);
 		      renderMemos();
-		    });
+		    })
+		    .catch(err => console.error('메모 조회 실패:', err));
 		}
+
+		
+		// 처음 로딩 + 셀렉트 변경 시
+		document.addEventListener('DOMContentLoaded', () => {
+		  const projectId = document.getElementById('memo-project-id').value; // hidden에서 읽기
+		  if (projectId) fetchMemos(projectId, currentOrder());
+		  orderSel.addEventListener('change', () => fetchMemos(projectId, currentOrder()));
+		});
 
 
 		/////////////////////////////////메모 저장
@@ -795,7 +814,8 @@ console.log(projectId);
   const updatedMemo = {
     id: memo.id,
     title: newTitle,
-    content: newContent
+    content: newContent,
+    writter: loginUser
   };
 
   fetch("/memo/update", {

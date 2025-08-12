@@ -84,14 +84,20 @@ public class ProjectController {
 		
 	}
 	
-	
 	@GetMapping("/project/schedule/{projectId}")
-	public String projectSchedule(@PathVariable Long projectId,Model model) {
-		  model.addAttribute("projectId", projectId);  // ✅ 이게 핵심
+	public String projectSchedule(@PathVariable Long projectId,Model model,HttpSession session) {
+		Project project = projectService.findProjectById(projectId);
+		if(project == null) {
+			return "redirect:/error";
+		}
+		 model.addAttribute("projectId", projectId);  // ✅ 이게 핵심
 		// ✅ 멤버 리스트 내려주기 (JSP에서 ${projectMemberList}로 사용)
 	        List<ProjectMember> members = projectMemberService.getMembers(projectId);
 	        model.addAttribute("projectMemberList", members);
-	        model.addAttribute("loginUser", "id1");  // ✅ 이게 핵심
+	        //model.addAttribute("loginUser", "id1");  // ✅ 이게 핵심
+	   	 User u = (User) session.getAttribute("loginUser");
+	     String actorUserId = (u != null ? u.getId() : "anonymous");
+	     model.addAttribute("loginUser",actorUserId);   
 		return "project/schedule";
 	}
 	
@@ -101,12 +107,26 @@ public class ProjectController {
 	}
 	
 	@GetMapping("/project/memo/{projectId}")
-	public String  projectMemo(@PathVariable Long projectId,HttpSession session ,Model model) {
-		Project project = (Project)session.getAttribute("project");
-		 model.addAttribute("projectId", project.getId());  // ✅ 이게 핵심
-		 model.addAttribute("loginUser", "id1");  // ✅ 이게 핵심
+	public String  projectMemo(@PathVariable Long projectId,Model model) {
+		
+		//예외 발생 -> 처리
+		//처리방법??
+		
+		// 1) try catch
+		// 2) null 다 체크 해서 진행
+		
+		// 3) 값이 그럼 없는경우에 어떻게 할건데?
+		//		session 값 확인 ? 없어? -> 경로값 확인 ? -> 없으면? -> 
+		Project project = projectService.findProjectById(projectId);
+		if(project == null) {
+			return "redirect:/error";
+		}
+		
+		 model.addAttribute("projectId", projectId);
+  
 		return "project/memo";
 	}
+	
 	
 	@GetMapping("/project/user")
 	public String projectUser() {
