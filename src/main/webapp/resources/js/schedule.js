@@ -973,6 +973,13 @@ document.getElementById("save-task-modify")?.addEventListener("click", async fun
 
 	  return `${year}-${month}-${day}T${hour}:${minute}`;
 	}
+	function toDatetimeUTC(date) {
+	  if (!(date instanceof Date)) return '';
+	  
+	  const dtValue = toDatetimeLocal(date);
+	  
+	  return new Date(dtValue).toISOString().slice(0, 16);
+	}
 	//시작 날짜 자동 설정 함수
     function setInputDate(datetimeStr) {
    	  const input = document.getElementById('fc-event-start');
@@ -1024,10 +1031,11 @@ document.getElementById("save-task-modify")?.addEventListener("click", async fun
 	  document.getElementById('fc-event-allday').checked = event.allDay;
 	  
 	  // 시작일 설정 (datetime-local 포맷)
-	  document.getElementById('fc-event-start').value = toDatetimeLocal(event.start);
+	  //document.getElementById('fc-event-start').value = toDatetimeLocal(event.start);
+	  document.getElementById('fc-event-start').value = toDatetimeUTC(event.start);
 	  
 	  // 종료일 설정 (있으면)
-	  document.getElementById('fc-event-end').value = toDatetimeLocal(event.end);
+	  document.getElementById('fc-event-end').value = toDatetimeUTC(event.end);
 
 	  // 모달 보이기
 	  document.getElementById('fc-eventModal').style.display = 'block';
@@ -1131,6 +1139,7 @@ document.getElementById("save-task-modify")?.addEventListener("click", async fun
 	  // calendar.render(); 앞/뒤 어느 쪽이든 setOption은 즉시 반영됨.
 	 
     const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
+	  timeZone: 'UTC',
       initialView: 'dayGridMonth',
       headerToolbar: {
         left: 'prevYear,prev,next,nextYear today',
@@ -1145,7 +1154,7 @@ document.getElementById("save-task-modify")?.addEventListener("click", async fun
       eventDurationEditable: false,
       events: `/project/schedule/events?projectId=${projectId}`, //초기 설정 일정
       eventDisplay: 'block',
-	  timeZone: 'Asia/Seoul',
+	  
       
 	  //캘린더에 일정 드래그앤 드롭시
       eventReceive: function(info) {
@@ -1158,6 +1167,8 @@ document.getElementById("save-task-modify")?.addEventListener("click", async fun
 		info.event.remove();
         
         //새로운 데이터 입력을 위한 다른 데이터 초기화
+		document.getElementById('fc-modal-id').value = null;
+		
         document.getElementById('fc-modal-title').value = '';
         document.getElementById('fc-modal-description').value = '';
         document.getElementById('fc-modal-color').value = '#007bff';
@@ -1251,8 +1262,20 @@ document.getElementById("save-task-modify")?.addEventListener("click", async fun
    	  const title = document.getElementById('fc-modal-title').value.trim();
    	  const desc = document.getElementById('fc-modal-description').value.trim();
    	  const color = document.getElementById('fc-modal-color').value;
-   	  const start = document.getElementById('fc-event-start').value;
-   	  const end = document.getElementById('fc-event-end').value;
+   	  //const start = document.getElementById('fc-event-start').value;
+	  const start = new Date(document.getElementById('fc-event-start').value).toISOString().slice(0, 16) + 'Z'; 
+   	  //const end = document.getElementById('fc-event-end').value;
+	  //const end = new Date(document.getElementById('fc-event-end').value).toISOString().slice(0, 16) + 'Z';
+	  let end = null; // 기본값 (없으면 null 전송)
+
+	  const endEl = document.getElementById('fc-event-end');
+	  if (endEl && endEl.value.trim() !== '') {
+	    const d = new Date(endEl.value);              // 'YYYY-MM-DDTHH:MM' (로컬) → Date
+	    if (!Number.isNaN(d.getTime())) {             // 유효성 체크
+	      end = d.toISOString().slice(0, 16) + 'Z';   // → 'YYYY-MM-DDTHH:MMZ' (UTC)
+	    }
+	  }
+
    	  const alldayCheckbox = document.getElementById('fc-event-allday');
 	  const id = document.getElementById('fc-modal-id').value;
    	  
@@ -1266,6 +1289,7 @@ document.getElementById("save-task-modify")?.addEventListener("click", async fun
       }
       const allDay = alldayCheckbox.checked;
 
+	  console.log(start);
       let startDt = '';
       let endDt = null;
 

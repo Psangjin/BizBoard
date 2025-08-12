@@ -116,7 +116,7 @@
 						<div id="gantt-target"></div>
 					</div>
 				</div>
-				<!-- 기존 요소들 사이에 모달창 추가 -->
+				<!-- 기존 요소들 사이에 모달창 추가 -->	
 				<div id="fc-eventModal">
 					<h3>일정 추가</h3>
 					<input type="hidden" id="fc-modal-id" /> <!-- id전달 위한 hidden -->
