@@ -146,6 +146,7 @@ document.querySelector('.fa-arrow-right-arrow-left').addEventListener('click', f
     document.getElementById("task-description-modify").value = selectedTask.description || '';
     document.getElementById("task-start-modify").value = selectedTask.start || '';
     document.getElementById("task-end-modify").value = selectedTask.end || '';
+	document.getElementById("task-color").value = selectedTask.color || '#999';
 	const completedValue = selectedTask.completed === null ? 'null' : selectedTask.completed;
 	    document.getElementById("state-select-modify").value = completedValue;
 
@@ -170,6 +171,9 @@ document.querySelector('.fa-arrow-right-arrow-left').addEventListener('click', f
     document.getElementById("task-description-detail").value = selectedTask.description || '';
     document.getElementById("task-start-detail").value = selectedTask.start;
     document.getElementById("task-end-detail").value = selectedTask.end;
+	document.getElementById("task-user-check").textContent = selectedTask.completed=="Done" ? '완료' : '진행중';
+	console.log(selectedTask.completed);
+	
 
     const selDetail = document.getElementById("form-select-detail");
     await ensureProjectMemberOptions(selDetail, projectId);      // ✅ 프로젝트 멤버 옵션 채우기
@@ -341,6 +345,8 @@ document.getElementById("task-comment-add-cancel-btn").addEventListener("click",
    const start = document.getElementById("task-start").value;
    const end = document.getElementById("task-end").value;
    const description = document.getElementById("task-description").value;
+   const color = document.getElementById("task-color").value || '#999';
+   const complete = document.getElementById("task-isCompleted").value || 'null';
 
    if (!name || !start || !end) {
      alert("모든 필드를 입력해주세요.");
@@ -360,8 +366,9 @@ document.getElementById("task-comment-add-cancel-btn").addEventListener("click",
        type: 'PW',
        startDt: start,
        endDt: end,
-       color: '#3788d8',
+       color: color,
        allDay: true,
+	   completed : complete,
        projectId: projectId
      };
      const saveRes = await fetch("/project/schedule/save", {
@@ -412,6 +419,7 @@ document.getElementById("save-task-modify")?.addEventListener("click", async fun
   const end   = document.getElementById("task-end-modify").value;
   const description = document.getElementById("task-description-modify").value;
   const complete = document.getElementById("state-select-modify").value;
+  const color = document.getElementById("task-color").value;
   if (!name || !start || !end) { alert("모든 필드를 입력해주세요."); return; }
 
   const updatedSchedule = {
@@ -422,7 +430,7 @@ document.getElementById("save-task-modify")?.addEventListener("click", async fun
     endDt: end,
 	completed: complete,
     type: 'PW',
-    color: '#3788d8',
+    color: color,
     allDay: true,
     projectId: Number(projectId)
   };
@@ -663,7 +671,9 @@ document.getElementById("save-task-modify")?.addEventListener("click", async fun
               end: end,
               progress: schedule.progress || 0,
               dependencies: schedule.dependencies || '',
-              description: schedule.description || ''
+              description: schedule.description || '',
+			  color: schedule.color || '',
+              completed: schedule.completed || ''
             };
           })
           .filter(item => item !== null);
@@ -736,6 +746,7 @@ document.getElementById("save-task-modify")?.addEventListener("click", async fun
     document.getElementById("detail-start").textContent = task.start || '';
     document.getElementById("detail-end").textContent = task.end || '';
     document.getElementById("task-detail-panel").style.display = "block";
+	document.getElementById("task-color").value = task.color;
 
     const scheduleId = (task && (task.scheduleId ?? task.id)) ?? (window.selectedSchedule && window.selectedSchedule.id);
     if (!scheduleId) return;

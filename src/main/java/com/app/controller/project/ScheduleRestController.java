@@ -126,6 +126,8 @@ public class ScheduleRestController {
 	            map.put("progress", 0);
 	            map.put("dependencies", "");
 	            map.put("description", s.getContent());
+	            map.put("color", s.getColor());
+	            map.put("completed", s.getCompleted());
 	            return map;
 	        })
 	        .filter(m -> m.containsKey("start"))

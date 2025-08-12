@@ -182,7 +182,7 @@
 				    <option value="${member.userId}">${member.name}</option>
 				  </c:forEach>
 				</select>
-				<br><br>
+				<br><br><input type="hidden" id="task-isCompleted">
 				  <label>시작일: <input type="date" id="task-start" /></label><br><br>
 				  <label>종료일: <input type="date" id="task-end" /></label><br><br>
 				  
@@ -202,6 +202,7 @@
 						<option value="null">진행</option>
 						<option value="Done">완료</option>
 				  </select><br><br> 
+				  <input type="hidden" id="task-color">
 				  <label for="form-select-modify">멤버:</label>
 				 <select id="form-select-modify" multiple>
 				  <c:forEach var="member" items="${projectMemberList}">
@@ -243,7 +244,7 @@
 					<label>설명: <textarea
 							id="task-description-detail" /></textarea></label><br>
 					<label>상태</label>
-					<p>상태상태</p>
+					<p id="task-user-check"></p>
 					<label>시작일:
 						<input type="date" id="task-start-detail" />
 					</label><br>
