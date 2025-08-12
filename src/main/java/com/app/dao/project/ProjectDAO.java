@@ -14,4 +14,8 @@ public interface ProjectDAO {
 	Project findProjectById(Long projectId);
 	
 	List<Project> findProjectsByUserId(String userId);
+	
+	int countNumberofScheduleByProjectId(Long projectId, String type);
+	
+	int countNumberofScheduleDoneByProjectId(Long projectId, String type);
 }

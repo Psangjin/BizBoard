@@ -31,7 +31,7 @@
 			<div class="project-info-container">
 					<span class="project-dday">마감일까지 : D-${daysLeft}</span>
 					<h1>${project.title}</h1>
-					<h3>PM : ${project.manager}</h3>
+					<h3>PM : ${pmName}</h3>
 					<h3>${project.content}</h3>
 			</div>
 			<div class="progress-container">
@@ -44,13 +44,10 @@
 					</svg>
 				</div>
 				<div>
-					<h1>4 / 21</h1>
-					<h3>총 21가지 작업 중</h3>
-					<h4>4가지 작업 완료</h4>
-					<div class="buttons">
-						<button onclick="changeProgress(-10)">-10%</button>
-						<button onclick="changeProgress(10)">+10%</button>
-					</div>
+					<h1>${scheduleDoneNum} / ${scheduleNum}</h1>
+					<h3>총 ${scheduleNum}가지 작업 중</h3>
+					<h4>${scheduleDoneNum}가지 작업 완료</h4>
+
 				</div>
 			 </div>
 		</div>
@@ -74,8 +71,26 @@
 			    </ul>
 			    </div>
 			</div>
-			<div class="project-task-individual project-main-innerbox">
-				<h3>프로젝트에서 내가 할 일 목록들</h3>
+			<div class="project-task-today project-main-innerbox">
+			    <h3>프로젝트에서 내가 할 일 목록들</h3>
+			    
+			    <div class="project-main-innerbox-scroll">
+				  <ul class="schedule-list">
+				  <c:choose>
+			            <c:when test="${not empty schedulesByUserAndProject}">
+						    <c:forEach var="schedule" items="${schedulesByUserAndProject}">
+						      <li>
+						        <strong>${schedule.title}</strong>
+						        <div class="dates">${schedule.startDt} ~ ${schedule.endDt}</div>
+						      </li>
+						    </c:forEach>
+				    	</c:when>
+			            <c:otherwise>
+			                <li>아직 할당 받은 일이 없습니다.</li>
+			            </c:otherwise>
+			        </c:choose>
+				  </ul>
+				</div>
 			</div>
 		</div>
 		
@@ -86,10 +101,12 @@
 	  <div class="d-flex justify-content-between align-items-center">
 	    <h3 class="mb-0">공지사항</h3>
 	    <div class="d-flex gap-2">
+	    <c:if test="${sessionScope.loginUserRole == 'ADMIN'}">
 	      <button type="button" class="btn btn-sm btn-outline-secondary" id="btnNoticeEditToggle">편집</button>
 	      <button type="button" class="btn btn-sm btn-primary" id="btnNoticeAdd">
 	        <i class="fa fa-plus"></i>
 	      </button>
+        </c:if>
 	    </div>
 	  </div>
 	
@@ -112,11 +129,16 @@
 
   <!-- 팀원 목록 (기존 그대로) -->
   <div class="project-main-member project-main-innerbox">
-    <h3>팀원 목록</h3>
+    <h3 style="display:inline;margin-right:40px;">팀원 목록</h3>
+    <c:if test="${sessionScope.loginUserRole == 'ADMIN'}">
+    	<button class="btn btn-primary invite-btn" data-bs-toggle="modal" data-bs-target="#memberManageModal">팀원관리</button>
+    </c:if>
+    <div class="project-main-innerbox-scroll mt-2">
     <c:forEach var="m" items="${projectMemberList}">
       <p>${m.name}</p>
     </c:forEach>
-    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#memberManageModal">팀원초대</button>
+    </div>
+    
   </div>
 </div>
 <!-- 공지 상세 모달 (읽기 전용) -->
@@ -299,6 +321,67 @@
 			location.reload();
 		}).catch(e => alert(e.message));
 	}
+
+	document.addEventListener('DOMContentLoaded', () => {
+	    let completedTasks = parseInt("${scheduleDoneNum}");
+	    let totalTasks = parseInt("${scheduleNum}");
+
+	    let progressPercentage = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+
+	    let progressCircle = document.getElementById("progress-circle");
+	    let percentText = document.getElementById("percentText");
+
+	    const radius = 60;
+	    const circumference = 2 * Math.PI * radius;
+
+	    progressCircle.style.strokeDasharray = circumference;
+
+	    // 애니메이션이 완료될 때 표시될 최종 퍼센트
+	    percentText.textContent = Math.round(progressPercentage) + "%";
+
+	    // 애니메이션 속도를 0.5초(500ms)로 단축
+	    const animationDuration = 500; 
+	    const startTime = performance.now();
+
+	    function animate(time) {
+	        let elapsed = time - startTime;
+	        let progress = Math.min(elapsed / animationDuration, 1);
+
+	        // 현재 진행률에 따라 오프셋 계산
+	        let currentProgress = progressPercentage * progress;
+	        let offset = circumference - (currentProgress / 100) * circumference;
+	        progressCircle.style.strokeDashoffset = offset;
+
+	        // 텍스트도 함께 애니메이션
+	        let animatedText = Math.round(currentProgress);
+	        percentText.textContent = animatedText + "%";
+
+	        if (progress < 1) {
+	            requestAnimationFrame(animate);
+	        }
+	    }
+
+	    requestAnimationFrame(animate);
+	});
+
+    
+    let ddayElement = document.querySelector('.project-dday');
+    if (${daysLeft} > 0) {
+        ddayElement.textContent = `마감일까지 : D-${daysLeft}`;
+        if(${daysLeft} >= 14) {
+        	ddayElement.style.backgroundColor = '#2e7d32';
+        } else if (${daysLeft} >= 4){
+        	ddayElement.style.backgroundColor = '#f9a825';
+        } else {
+        	ddayElement.style.backgroundColor = '#ef6c00';
+        }
+    } else if (${daysLeft} === 0) {
+        ddayElement.textContent = "마감일: D-DAY";
+        ddayElement.style.backgroundColor = '#c62828';
+    } else {
+        ddayElement.textContent = `종료된 프로젝트`;
+        ddayElement.style.backgroundColor = '#616161';
+    }
 </script>
 </body>
 </html>

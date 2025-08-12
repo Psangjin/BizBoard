@@ -75,6 +75,7 @@ body {
 	align-items: center;
 	padding-top: 20px;
 	transition: all 0.3s ease;
+	justify-content: space-between;
 }
 
 .body-side-menubar.hidden {
@@ -86,13 +87,13 @@ body {
 }
 
 .body-side-menubar-items {
-  margin: 12px 0;
-  width: 48px;
-  height: 48px;
+  margin: 16px 0;
+  width: 56px;
+  height: 56px;
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 12px;
+  border-radius: 14px;
   transition: background-color 0.3s ease;
   color: #2c3e50;
 }

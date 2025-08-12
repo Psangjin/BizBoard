@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -14,6 +15,7 @@
   <script src="/js/common.js"></script>
 </head>
 <body>
+
 <input type="hidden" id="project-id" value="${sessionScope.project.id}">
 <%-- <input type="hidden" id="login-user" value="${loginUser}"> --%>
 
@@ -31,6 +33,8 @@
 	<div class="body">
 		<!-- 사이드 메뉴 바  -->
 		<div class="body-side-menubar">
+		
+		<div>
 			<div class="body-side-menubar-items">
 				<i class="fa-solid fa-house fa-xl" id="fa-project-icon" style="cursor: pointer;"></i>
 			</div>
@@ -40,14 +44,24 @@
 			<div class="body-side-menubar-items">
 				<i class="fa-solid fa-note-sticky fa-xl" id="fa-note-icon" style="cursor: pointer;"></i>
 			</div>
+			
+	    	<c:if test="${isCalendar == true}">
 			<div class="body-side-menubar-items">
 				<i class="fa-solid fa-arrow-right-arrow-left fa-xl"></i>
 			</div>
-			<div class="body-side-menubar-items">
+			</c:if>
+			<!-- <div class="body-side-menubar-items">
 				<i class="fa-solid fa-user-pen fa-xl" id="fa-user-pen-icon"></i>
-			</div>
+			</div> -->
 		</div>
 		<div>
+			<div class="body-side-menubar-items">
+				<i class="fa-solid fa-arrow-right-from-bracket fa-xl" id="side-logout-icon" onClick="location.href='/account/logout'"></i>
+			</div>
+		</div>
+			
+	</div>
+<div>
 		<!--             본문 내용                 -->
 <!-- 		</div>
  	</div>

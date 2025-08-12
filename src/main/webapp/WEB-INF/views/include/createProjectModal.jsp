@@ -80,11 +80,6 @@
     </label>
 
     <label>
-      생성자:
-      <input type="text" id="new-project-owner" placeholder="생성자 이름" />
-    </label>
-
-    <label>
       프로젝트 기간:
       <input type="date" id="new-project-start-date" /> ~ <input type="date" id="new-project-end-date" />
     </label>
@@ -125,37 +120,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	  createBtn.addEventListener('click', () => {
 	    const title = document.getElementById('new-project-title').value.trim();
-	    const owner = document.getElementById('new-project-owner').value.trim();
 	    const startDate = document.getElementById('new-project-start-date').value;
 	    const endDate = document.getElementById('new-project-end-date').value;
 	    const description = document.getElementById('new-project-desc').value.trim();
 
-	    if (!title || !owner || !startDate || !endDate) {
+	    if (!title || !startDate || !endDate) {
 	      alert('모든 필드를 입력해주세요.');
 	      return;
 	    }
 
 	    const projectData = {
 	      title,
-	      manager: owner,
 	      content: description,
 	      startDt: startDate,
 	      endDt: endDate
 	    };
 
 	    $.ajax({
-	      url: '/project/create',
-	      method: 'POST',
-	      contentType: 'application/json',
-	      data: JSON.stringify(projectData),
-	      success: function () {
-	        alert('프로젝트가 생성되었습니다!');
-	        modalOverlay.style.display = 'none';
-	        location.reload();
-	      },
-	      error: function (xhr) {
-	        alert('생성 실패: ' + xhr.responseText);
-	      }
+	        url: '/project/create',
+	        method: 'POST',
+	        contentType: 'application/json',
+	        data: JSON.stringify(projectData),
+	        success: function (response) {
+	            alert('프로젝트가 생성되었습니다!');
+	            // 서버 응답(response)으로 받은 URL로 페이지 이동
+	            if (response) {
+	                window.location.href = response;
+	            } else {
+	                // 응답이 없거나 예기치 않은 경우, 기본 페이지로 리로드
+	                location.reload();
+	            }
+	        },
+	        error: function (xhr) {
+	            alert('생성 실패: ' + xhr.responseText);
+	        }
 	    });
 	  });
 	});

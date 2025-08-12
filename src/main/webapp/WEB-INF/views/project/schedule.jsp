@@ -31,7 +31,6 @@
 
 </head>
 <body>
-	
 	 <%@ include file="../include/layout.jsp" %>	<!-- layout.jsp에서 형식 그대로 가져오기(마지막에 div3개 닫기) -->
 	
 		<input type="hidden" id="project-id" value="${projectId}" />
@@ -45,6 +44,7 @@
 				<div class="body-left">
 					<!-- 외부 이벤트 등록용 DIV -->
 					<button id="toggle-edit-mode" class="btn btn-outline-danger mb-2">편집 모드 켜기</button>
+					
 					<div id="fc-external-events">
 						<p>
 							<strong>달력에 드래그하여 추가</strong>
@@ -110,7 +110,9 @@
 										id="gantt-view-day" autocomplete="off"> <label
 										class="btn btn-outline-dark" for="gantt-view-day">일</label>
 								</div>
+								
 								<button id="open-add-task" class="btn btn-primary">새 작업</button>
+								
 							</div>
 						</div>
 						<div id="gantt-target"></div>
@@ -137,11 +139,11 @@
 					</label><br> <label>제목: <input type="text" id="fc-modal-title" /></label><br>
 
 					<br> <label>설명: <textarea id="fc-modal-description"></textarea></label>
-					<div style="margin-top: 10px;">
+					<div style="margin-top: 10px; display:flex; gap:60px;">
 
 						<label><strong>색상 선택:</strong></label>
 						<div id="fc-color-options"
-							style="margin-top: 5px; display: flex; gap: 10px;">
+							style="margin: 5px; display: flex; gap: 10px;">
 							<div class="fc-color-circle" data-color="#007bff"
 								style="background-color: #007bff;"></div>
 							<div class="fc-color-circle" data-color="#28a745"
@@ -154,6 +156,12 @@
 								style="background-color: #6f42c1;"></div>
 						</div>
 						<input type="hidden" id="fc-modal-color" value="#007bff" />
+						
+						<select
+						id="state-select-modify-cal">
+							<option value="null">진행</option>
+							<option value="Done">완료</option>
+				  	</select>
 					</div>
 					<br> <br>
 					<button id="fc-save-event">저장</button>
@@ -174,7 +182,7 @@
 				    <option value="${member.userId}">${member.name}</option>
 				  </c:forEach>
 				</select>
-				<br><br>
+				<br><br><input type="hidden" id="task-isCompleted">
 				  <label>시작일: <input type="date" id="task-start" /></label><br><br>
 				  <label>종료일: <input type="date" id="task-end" /></label><br><br>
 				  
@@ -191,9 +199,10 @@
 				  <label for="state-select-modify">상태:</label>
 				  <select
 						id="state-select-modify">
-						<option>진행</option>
-						<option>완료</option>
+						<option value="null">진행</option>
+						<option value="Done">완료</option>
 				  </select><br><br> 
+				  <input type="hidden" id="task-color">
 				  <label for="form-select-modify">멤버:</label>
 				 <select id="form-select-modify" multiple>
 				  <c:forEach var="member" items="${projectMemberList}">
@@ -235,7 +244,7 @@
 					<label>설명: <textarea
 							id="task-description-detail" /></textarea></label><br>
 					<label>상태</label>
-					<p>상태상태</p>
+					<p id="task-user-check"></p>
 					<label>시작일:
 						<input type="date" id="task-start-detail" />
 					</label><br>
@@ -298,6 +307,11 @@
 	      }<c:if test="${!status.last}">,</c:if>
 	    </c:forEach>
 	];
+	const isAdmin = ${isAdmin};
+	if (!isAdmin) {
+		  document.getElementById("open-add-task").classList.add("invisible"); 
+		  document.getElementById("toggle-edit-mode").classList.add("invisible");
+		}
 	</script>
 <script src="/js/schedule.js"></script>
 </body>

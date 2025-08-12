@@ -34,6 +34,8 @@ document.addEventListener('DOMContentLoaded', function() {
 	  location.href = `/project/memo/${projectId}`;
 	});
   }
+  
+	  
   const userIcon = document.getElementById('fa-user-pen-icon')
   if (userIcon) {
   userIcon.addEventListener('click', function () {

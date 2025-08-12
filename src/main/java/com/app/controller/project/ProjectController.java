@@ -19,6 +19,7 @@ import com.app.dto.project.Project;
 import com.app.dto.project.ProjectMember;
 import com.app.dto.project.Schedule;
 import com.app.dto.user.User;
+import com.app.service.UserService;
 import com.app.service.project.ProjectMemberService;
 import com.app.service.project.ProjectService;
 import com.app.service.project.ScheduleService;
@@ -35,10 +36,13 @@ public class ProjectController {
 	@Autowired
 	ScheduleService scheduleService;
 	
+	@Autowired
+	UserService userService;
+	
 
 	
 	@GetMapping("/project/main/{projectId}")
-	public String projectMain(@PathVariable Long projectId, Model model) {
+	public String projectMain(@PathVariable Long projectId, Model model, HttpSession session) {
 		Project project = projectService.findProjectById(projectId);
 		if(project == null) {
 			return "redirect:/error";
@@ -74,6 +78,31 @@ public class ProjectController {
         List<ProjectMember> members = projectMemberService.getMembers(projectId);
         model.addAttribute("projectMemberList", members);
         
+        int scheduleNum = projectService.countNumberofScheduleByProjectId(projectId,"PW");
+        int scheduleDoneNum = projectService.countNumberofScheduleDoneByProjectId(projectId,"PW");
+        
+        model.addAttribute("scheduleNum", scheduleNum);
+        model.addAttribute("scheduleDoneNum", scheduleDoneNum);
+        
+        User loginUser = (User) session.getAttribute("loginUser");
+        
+        if (loginUser == null) {
+            return "redirect:/account/login";
+        }
+        
+        String userId = loginUser.getId();
+        
+        List<Schedule> schedulesByUserAndProject = scheduleService.selectSchedulesByUserAndProject(userId, projectId);
+        
+        model.addAttribute("schedulesByUserAndProject", schedulesByUserAndProject);
+        
+        User pm = (User) userService.getUser(project.getManager());
+        if (pm == null) {
+            pm=new User();
+            pm.setName("Null");
+        }
+        model.addAttribute("pmName", pm.getName());
+        
 		return "project/projectMain";
 		
 		
@@ -84,12 +113,17 @@ public class ProjectController {
 	
 	
 	@GetMapping("/project/schedule/{projectId}")
-	public String projectSchedule(@PathVariable Long projectId,Model model) {
+	public String projectSchedule(@PathVariable Long projectId,Model model,HttpSession session) {
 		  model.addAttribute("projectId", projectId);  // ✅ 이게 핵심
 		// ✅ 멤버 리스트 내려주기 (JSP에서 ${projectMemberList}로 사용)
 	        List<ProjectMember> members = projectMemberService.getMembers(projectId);
 	        model.addAttribute("projectMemberList", members);
 	        model.addAttribute("loginUser", "id1");  // ✅ 이게 핵심
+	        String userRole = (String) session.getAttribute("loginUserRole");
+	        boolean isAdmin ="ADMIN".equals(userRole);
+	        model.addAttribute("isAdmin", isAdmin);
+	        model.addAttribute("isCalendar", true);
+	        
 		return "project/schedule";
 	}
 	

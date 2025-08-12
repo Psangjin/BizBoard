@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.app.dto.project.Project;
 import com.app.dto.project.Schedule;
 import com.app.dto.user.User;
+import com.app.service.project.ProjectMemberService;
 import com.app.service.project.ProjectService;
 import com.app.service.project.ScheduleService;
 
@@ -43,14 +44,22 @@ public class ScheduleRestController {
 	@Autowired
     private ProjectService projectService;
 	
+	@Autowired
+	private ProjectMemberService projectMemberService;
 	
 	@PostMapping("/project/create")
-	public ResponseEntity<String> createProject(@RequestBody Project project) {
-        int result = projectService.createProject(project);
-        System.out.println("백");
-        System.out.println(project);
+	public ResponseEntity<String> createProject(@RequestBody Project project, HttpSession session) {
+        User user = (User) session.getAttribute("loginUser");
+    	project.setManager(user.getId());
+    	
+		int result = projectService.createProject(project);
+        
         if (result > 0) {
-            return ResponseEntity.ok("프로젝트 생성 성공");
+        	projectMemberService.insertProjectMemberAsAdmin(project.getId(), user.getId());
+            String loginUserRole = projectMemberService.findRoleByProjectAndUser(project.getId(), user.getId());
+            session.setAttribute("project", project);
+            session.setAttribute("loginUserRole", loginUserRole);
+            return ResponseEntity.ok("/project/main/"+project.getId());
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("프로젝트 생성 실패");
         }
@@ -117,6 +126,8 @@ public class ScheduleRestController {
 	            map.put("progress", 0);
 	            map.put("dependencies", "");
 	            map.put("description", s.getContent());
+	            map.put("color", s.getColor());
+	            map.put("completed", s.getCompleted());
 	            return map;
 	        })
 	        .filter(m -> m.containsKey("start"))
