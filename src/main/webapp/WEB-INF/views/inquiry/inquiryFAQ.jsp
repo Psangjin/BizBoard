@@ -28,7 +28,7 @@
                 <div class="faq-question">Q1. 비밀번호를 잊어버렸습니다.</div>
                 <div class="faq-answer">
                     A1. 비밀번호찾기에서 찾을수 있습니다. 
-                    <br></br>
+               
                     <br>가입시 적은 아이디와 Email로 인증 후 새로운 비밀번호를 전송합니다.</br>
                 </div>
             </div>
