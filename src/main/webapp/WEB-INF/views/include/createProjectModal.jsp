@@ -80,11 +80,6 @@
     </label>
 
     <label>
-      생성자:
-      <input type="text" id="new-project-owner" placeholder="생성자 이름" />
-    </label>
-
-    <label>
       프로젝트 기간:
       <input type="date" id="new-project-start-date" /> ~ <input type="date" id="new-project-end-date" />
     </label>
