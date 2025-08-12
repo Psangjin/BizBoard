@@ -29,7 +29,7 @@
                     </div>
                 </div>
 				
-                <button class="confirm-button" onClick="location.href='/'">확인</button>
+                <button class="confirm-button" onClick="location.href='/project/main/0'">확인</button>
             </div>
         </div>
     </div>

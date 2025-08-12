@@ -107,7 +107,7 @@
 }
 
 .center-text {
-	font-size: 24px;
+	font-size: 20px;
 	fill: #333;
 	dominant-baseline: middle;
 	text-anchor: middle;
@@ -133,6 +133,7 @@
 	background-color: #007bff;
 	color: white;
 	cursor: pointer;
+	margin-top:-10px;
 }
 
 .buttons button:hover {
