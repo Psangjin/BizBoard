@@ -2,6 +2,8 @@
  * 
  */
 document.addEventListener('DOMContentLoaded', function() {
+	let projectId = document.getElementById('project-id').value;
+	
   // 레이아웃 사이드바 토글
   const toggleSidebarBtn = document.getElementById('toggleSidebar');
   if (toggleSidebarBtn) {
@@ -15,24 +17,24 @@ document.addEventListener('DOMContentLoaded', function() {
   const projectIcon = document.getElementById('fa-project-icon');
   if (projectIcon) {
     projectIcon.addEventListener('click', function() {
-      location.href = "/project/main";
+    location.href = `/project/main/${projectId}`;
     });
   }
 
   const calendarIcon = document.getElementById('fa-calendar-icon');
   if (calendarIcon) {
     calendarIcon.addEventListener('click', function() {
-      location.href = "/project/schedule";
+      location.href = `/project/schedule/${projectId}`;
     });
   }
   
   const noteIcon = document.getElementById('fa-note-icon')
   if (noteIcon) {
 	noteIcon.addEventListener('click', function () {
-	  location.href = "/project/memo";
+	  location.href = `/project/memo/${projectId}`;
 	});
   }
-  const userIcon = document.getElementById('fa-user-pen')
+  const userIcon = document.getElementById('fa-user-pen-icon')
   if (userIcon) {
   userIcon.addEventListener('click', function () {
     location.href = "/project/user";
@@ -40,7 +42,11 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   const fabMain = document.querySelector('.fab-main');
     const fabMenu = document.querySelector('.fab-menu');
-
+	const mainLogo = document.querySelector('#header-logo');
+	
+	mainLogo.addEventListener('click', () => {
+		location.href = `/`;
+	})
     let hideTimeout;
 
     // + 버튼 클릭 시 메뉴 토글
@@ -89,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		
 		$(document).ready(function () {
 		    $.ajax({
-		      url: '/project/list',
+		      url: '/project/listByUserId',
 		      method: 'GET',
 		      success: function (projects) {
 		        const $popupList = document.querySelector('.fab-item[data-popup="프로젝트 관련"] .fab-popup ul');
@@ -100,6 +106,24 @@ document.addEventListener('DOMContentLoaded', function() {
 		          const li = document.createElement('li');
 		          li.textContent = project.title;
 		          li.setAttribute('data-id', project.id);
+				  // 클릭 시 해당 프로젝트 페이지로 이동
+		  		    li.addEventListener('click', () => {
+		  		      // 예: /project/detail/{projectId} 같은 URL로 이동
+					  $.ajax({
+					      url: '/project/setSession',
+					      method: 'POST',
+					      data: JSON.stringify(project),
+						  contentType: 'application/json',
+					      success: function () {
+					        // 저장이 끝나면 페이지 이동
+					        location.href = `/project/main/${project.id}`;
+					      },
+					      error: function () {
+					        alert('프로젝트 세션 저장에 실패했습니다.');
+					      }
+					    });
+					  
+		  		    });
 		          $popupList.appendChild(li);
 		        });
 		      },

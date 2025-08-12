@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -16,418 +16,498 @@
 <script
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <style>
-*{
+* {
 	box-sizing: border-box;
 }
-#memo-body-container{
+
+#memo-body-container {
 	width: 93vw;
 	height: 88vh;
+	padding: 10px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
 }
-#title-area{
+
+#title-area {
 	width: 100%;
 	height: 10vh;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-}
-#memo-btn-area{
-	width: 97%;
-	height: 5vh;
-	display: flex;
-	justify-content: space-between;
-	margin-left: 2%;
-	margin-right: 1%;
-}
-#memo-area{
-	width: 100%;
-	height: 73vh;
-	background-color: beige;
-	overflow: auto;
-}
-.memo-row{
-	width: 100%;
-	/* height: 25vh; */				/*유동적으로*/
-	margin-bottom: 30px;
-	display: flex;
-	justify-content: flex-start;
-	gap: 10%;
-	padding-left: 10px;
-}
-.memo-element{
-	width: 25%;
-	/* height: 100%; */			
- 	background-color: white;
-	margin-left: 1%;
-	margin-right: 1%;
-}
-.memo-content{
-	width: 100%;
-	height: 15vh;					/*고정*/
-	background-color: yellow;
-	overflow: hidden;
-}
-.memo-info{
-	width: 100%;				/* 다 담기도록*/
-}
-.memo-info h6, .memo-info p{
-	text-align: center;
-}
-#memoBackdrop{
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 999;
-}
-#memoModal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: none; /* ← 이것만 남김 */
-  width: 80%;
-  max-width: 800px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-  background-color: #fff;
-  /* flex 관련은 JS에서 제어 */
-  flex-direction: column;
-  font-family: 'Arial', sans-serif;
-  overflow: hidden;
-  z-index: 1000;
+	min-height: 85px;
 }
 
+#memo-btn-area {
+	width: 1020px;
+	height: 4vh;
+	display: flex;
+	justify-content: space-between;
+	margin-right: 40px;
+	min-height: 45px;
+}
+
+#memo-area {
+	width: 1100px;
+	height: 73vh;
+	overflow: auto;
+	margin-left: 20px;
+	flex-wrap: wrap;
+	gap: 20px;
+}
+
+.memo-row {
+	width: 100%;
+	/* height: 25vh; */ /*유동적으로*/
+	margin-bottom: 22px;
+	display: flex;
+	align-items: center;
+	gap: 20px;
+	padding-left: 10px;
+}
+
+.memo-element {
+	width: 240px;
+	height: 300px;
+	background-color: white;
+	/* margin-left: 1%;
+	margin-right: 1%; */
+	margin-top: 10px;
+	border: 1px solid #ccccccc0;
+	border-radius: 15px;
+	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.memo-element:hover {
+	transform: scale(1.02);
+}
+
+.memo-content {
+	width: 100%;
+	height: 180px; /*고정*/
+	background-color: rgba(255, 240, 220, 0.74);
+	/* background-color: #e3e8f086; */
+	/* background-color: #EDE7F6; */
+	/* background-color: #fff3df; */
+	overflow: hidden;
+	border-radius: 15px 15px 0 0;
+}
+
+.memo-info {
+	width: 100%; /* 다 담기도록*/
+}
+
+.memo-info h6 {
+	margin: 10px 0 13px 0;
+}
+
+.memo-info p {
+	margin-bottom: 5px;
+}
+
+.memo-info h6, .memo-info p {
+	text-align: center;
+}
+
+#memoBackdrop {
+	display: none;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.5);
+	z-index: 999;
+}
+
+#memoModal {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	display: none; /* ← 이것만 남김 */
+	width: 80%;
+	max-width: 800px;
+	border: 1px solid #ccc;
+	border-radius: 10px;
+	box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+	background-color: #fff;
+	/* flex 관련은 JS에서 제어 */
+	flex-direction: column;
+	font-family: 'Arial', sans-serif;
+	overflow: hidden;
+	z-index: 1000;
+}
 
 /* 상단 바 */
 #memo-up-bar {
-  background-color: #f8f9fa;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 20px;
-  border-bottom: 1px solid #ddd;
+	background-color: #f8f9fa;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 10px 20px;
+	border-bottom: 1px solid #ddd;
 }
 
 #memo-up-bar label {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 16px;
-  margin-left: auto;
-  margin-right: auto;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	font-size: 16px;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 #memo-up-bar input[name="memo-title"] {
-  font-size: 16px;
-  padding: 5px 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  width: 300px;
+	font-size: 16px;
+	padding: 5px 10px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	width: 300px;
 }
 
-
 #memo-up-bar button {
-  margin: 0 5px;
+	margin: 0 5px;
 }
 
 /* 툴바 */
-#memo-tool-bar {
-  padding: 10px 20px;
-  background-color: #f1f3f5;
-  border-bottom: 1px solid #ddd;
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.memo-tool-bar {
+	padding: 10px 20px;
+	background-color: #f1f3f5;
+	border-bottom: 1px solid #ddd;
+	display: flex;
+	align-items: center;
+	gap: 10px;
 }
 
-#memo-tool-bar button {
-  font-size: 18px;
-  padding: 5px 10px;
-  background: none;
-  border: none;
-  cursor: pointer;
+.memo-font-setting {
+	display: flex;
+	gap: 12px;
+	margin-left: 10px;
 }
 
-#memo-tool-bar button:hover {
-  background-color: #e0e0e0;
-  border-radius: 4px;
+.memo-tool-bar button {
+	font-size: 18px;
+	padding: 5px 5px;
+	background: none;
+	border: none;
+	cursor: pointer;
 }
 
-#memo-tool-bar select {
-  padding: 5px 10px;
+.memo-tool-bar button:hover {
+	background-color: #e0e0e0;
+	border-radius: 4px;
+}
+
+.memo-tool-bar select {
+	padding: 5px 10px;
 }
 
 /* 편집 영역 */
 #memo-editor {
-  min-height: 300px;
-  padding: 20px;
-  font-size: 16px;
-  line-height: 1.6;
-  outline: none;
-  overflow-y: auto;
+	min-height: 300px;
+	padding: 20px;
+	font-size: 16px;
+	line-height: 1.6;
+	outline: none;
+	overflow-y: auto;
 }
 
 /* 저장 버튼 영역 */
 #memo-save-btn-area {
-  padding: 15px 20px;
-  display: flex;
-  justify-content: flex-end;
-  background-color: #f8f9fa;
-  border-top: 1px solid #ddd;
+	padding: 15px 20px;
+	display: flex;
+	justify-content: flex-end;
+	background-color: #f8f9fa;
+	border-top: 1px solid #ddd;
 }
 
 /* font style 강조 구분 */
-#memo-tool-bar button.active {
-  background-color: #ccc;
-  border-radius: 4px;
-  font-weight: bold;
+.memo-tool-bar button.active {
+	background-color: #ccc;
+	border-radius: 4px;
+	font-weight: bold;
 }
 /******************메모추가*************************/
 #addMemoModal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: none; /* ← 이것만 남김 */
-  width: 80%;
-  max-width: 800px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-  background-color: #fff;
-  /* flex 관련은 JS에서 제어 */
-  flex-direction: column;
-  font-family: 'Arial', sans-serif;
-  overflow: hidden;
-  z-index: 1000;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	display: none; /* ← 이것만 남김 */
+	width: 80%;
+	max-width: 800px;
+	border: 1px solid #ccc;
+	border-radius: 10px;
+	box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+	background-color: #fff;
+	/* flex 관련은 JS에서 제어 */
+	flex-direction: column;
+	font-family: 'Arial', sans-serif;
+	overflow: hidden;
+	z-index: 1000;
 }
-
 
 /* 상단 바 */
 #add-memo-up-bar {
-  background-color: #f8f9fa;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 20px;
-  border-bottom: 1px solid #ddd;
+	background-color: #f8f9fa;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 10px 20px;
+	border-bottom: 1px solid #ddd;
 }
 
 #add-memo-up-bar label {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 16px;
-  margin-left: auto;
-  margin-right: auto;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	font-size: 16px;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 #add-memo-up-bar input[name="add-memo-title"] {
-  font-size: 16px;
-  padding: 5px 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  width: 300px;
+	font-size: 16px;
+	padding: 5px 10px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	width: 300px;
 }
 
-
 #add-memo-up-bar button {
-  margin: 0 5px;
+	margin: 0 5px;
+}
+
+#add-memo-btn, #memo-orderby{
+	height: 40px;
 }
 
 /* 툴바 */
-#add-memo-tool-bar {
-  padding: 10px 20px;
-  background-color: #f1f3f5;
-  border-bottom: 1px solid #ddd;
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.add-memo-tool-bar {
+	padding: 10px 20px;
+	background-color: #f1f3f5;
+	border-bottom: 1px solid #ddd;
+	display: flex;
+	align-items: center;
+	gap: 10px;
 }
 
-#add-memo-tool-bar button {
-  font-size: 18px;
-  padding: 5px 10px;
-  background: none;
-  border: none;
-  cursor: pointer;
+.add-memo-tool-bar button {
+	font-size: 18px;
+	padding: 5px 5px;
+	background: none;
+	border: none;
+	cursor: pointer;
 }
 
-#add-memo-tool-bar button:hover {
-  background-color: #e0e0e0;
-  border-radius: 4px;
+.add-memo-tool-bar button:hover {
+	background-color: #e0e0e0;
+	border-radius: 4px;
 }
 
-#add-memo-tool-bar select {
-  padding: 5px 10px;
+.add-memo-tool-bar select {
+	padding: 5px 10px;
 }
 
 /* 편집 영역 */
 #add-memo-editor {
-  min-height: 300px;
-  padding: 20px;
-  font-size: 16px;
-  line-height: 1.6;
-  outline: none;
-  overflow-y: auto;
+	min-height: 300px;
+	padding: 20px;
+	font-size: 16px;
+	line-height: 1.6;
+	outline: none;
+	overflow-y: auto;
 }
 
 /* 저장 버튼 영역 */
 #add-memo-save-btn-area {
-  padding: 15px 20px;
-  display: flex;
-  justify-content: flex-end;
-  background-color: #f8f9fa;
-  border-top: 1px solid #ddd;
+	padding: 15px 20px;
+	display: flex;
+	justify-content: flex-end;
+	background-color: #f8f9fa;
+	border-top: 1px solid #ddd;
 }
 
 /* font style 강조 구분 */
-#add-memo-tool-bar button.active {
-  background-color: #ccc;
-  border-radius: 4px;
-  font-weight: bold;
+.add-memo-tool-bar button.active {
+	background-color: #ccc;
+	border-radius: 4px;
+	font-weight: bold;
 }
 
 .editable:empty:before {
-  content: attr(data-placeholder);
-  color: #aaa;
-  pointer-events: none;
-  display: block;
+	content: attr(data-placeholder);
+	color: #aaa;
+	pointer-events: none;
+	display: block;
 }
 
+.btn-secondary {
+	background-color: white;
+	color: black;
+	border: none;
+}
 
+.btn-warning {
+	background-color: white;
+	border: none;
+}
+
+.btn-save {
+	background-color: white;
+	border: none;
+	color: black;
+}
 </style>
 </head>
 <body>
-	<input type="hidden" id="memo-project-id" value="${projectId}">
+	<input type="hidden" id="memo-project-id" value="${sessionScope.project.id}">
 	<input type="hidden" id="memo-login-user" value="${loginUser}">
-	
-	 <%@ include file="../include/layout.jsp" %>	<!-- layout.jsp에서 형식 그대로 가져오기(마지막에 div3개 닫기) -->
-			<!-- 바디 페이지 -->
-			<div id="memo-body-container">
-				<div id="title-area">
-					<!--  선택한 프로젝트 이름 -->
-					<h1>${selectProject.name}</h1>
-				</div>
-				<div id="memo-btn-area">
-					<button id="add-memo-btn" class="btn btn-primary">새 메모</button>
-					<select id="memo-orderby" aria-label="메모 선택">
-						<option selected>수정날짜순</option>
-						<option>등록날짜순</option>
-					</select>
-				</div>
-				<div id="memo-area">
-				     <c:forEach var="shareMemo" items="${shareMemoList}" varStatus="status">
-					 	    <c:if test="${status.index % 3 == 0}">
-							  <div class="memo-row">
-						    </c:if>
-								<div class="memo-element">
-									<div class="memo-content">
-										${shareMemo.content}
-									</div>
-									<div class="memo-info">
-										<h6>${shareMemo.title}</h6>
-										<p>${shareMemo.modifytime}</p>
-										<p>${shareMemo.writter}</p>
-									</div>
-								</div>
-							<c:if test="${status.index % 3 == 2 || status.last}">
-							  </div>
-							</c:if>
-					</c:forEach>
-				 </div>
-				 <!-- 작업 추가 모달 -->
-				<div id="memoModal">
-				  <div id="memo-up-bar">
-					  <button id="close-memo-btn" class="btn btn-secondary">돌아가기</button>
-					  <label>제목:<input type="text" name="memo-title" disabled></label>
-					  <button id="edit-memo-btn" class="btn btn-warning">편집</button>
-					  <button id="delete-memo-btn" class="btn btn-danger">삭제</button>
-				  </div>
-				<div id="memo-tool-bar">
-				 <!-- #memo-tool-bar 색상 버튼 확장 -->
-				<button class="color-btn" onmousedown="setColor('black'); toggleActiveColor(this)">⚫</button>
-				<button class="color-btn" onmousedown="setColor('blue'); toggleActiveColor(this)">🔵</button>
-				<button class="color-btn" onmousedown="setColor('red'); toggleActiveColor(this)">🔴</button>
-				<button class="color-btn" onmousedown="setColor('green'); toggleActiveColor(this)">🟢</button>
-				<button class="color-btn" onmousedown="setColor('orange'); toggleActiveColor(this)">🟠</button>
-				<button class="color-btn" onmousedown="setColor('purple'); toggleActiveColor(this)">🟣</button>
 
-					
-					<!-- Bold 버튼은 따로 -->
-					<button onmousedown="setBold(this)">B</button>
+	<%@ include file="../include/layout.jsp"%>
+	<!-- layout.jsp에서 형식 그대로 가져오기(마지막에 div3개 닫기) -->
+	<!-- 바디 페이지 -->
+	<div id="memo-body-container">
+		<div id="title-area">
+			<!--  선택한 프로젝트 이름 -->
+			<h1>${sessionScope.project.title}</h1>
+		</div>
+		<div id="memo-btn-area">
+			<button id="add-memo-btn" class="btn btn-primary">새 메모</button>
+			<select id="memo-orderby" aria-label="메모 선택">
+				<option selected>수정날짜순</option>
+				<option>등록날짜순</option>
+			</select>
+		</div>
+		<div id="memo-area">
+			<c:forEach var="shareMemo" items="${shareMemoList}"
+				varStatus="status">
+				<c:if test="${status.index % 3 == 0}">
+					<div class="memo-row">
+				</c:if>
+				<div class="memo-element">
+					<div class="memo-content">${shareMemo.content}</div>
+					<div class="memo-info">
+						<h6>${shareMemo.title}</h6>
+						<p>${shareMemo.modifytime}</p>
+						<p>${shareMemo.writter}</p>
+					</div>
+				</div>
+				<c:if test="${status.index % 3 == 2 || status.last}">
+		</div>
+		</c:if>
+		</c:forEach>
+	</div>
+	<!-- 작업 추가 모달 -->
+	<div id="memoModal">
+		<div id="memo-up-bar">
+			<button id="close-memo-btn" class="btn btn-secondary">돌아가기</button>
+			<label>제목:<input type="text" name="memo-title" disabled></label>
+			<button id="edit-memo-btn" class="btn btn-warning">편집</button>
+			<button id="delete-memo-btn" class="btn btn-danger">삭제</button>
+		</div>
+		<div class="memo-tool-bar">
+			<div class="memo-color-btns">
+				<!-- #memo-tool-bar 색상 버튼 확장 -->
+				<button class="color-btn"
+					onmousedown="setColor('black'); toggleActiveColor(this)">⚫</button>
+				<button class="color-btn"
+					onmousedown="setColor('blue'); toggleActiveColor(this)">🔵</button>
+				<button class="color-btn"
+					onmousedown="setColor('red'); toggleActiveColor(this)">🔴</button>
+				<button class="color-btn"
+					onmousedown="setColor('green'); toggleActiveColor(this)">🟢</button>
+				<button class="color-btn"
+					onmousedown="setColor('orange'); toggleActiveColor(this)">🟠</button>
+				<button class="color-btn"
+					onmousedown="setColor('purple'); toggleActiveColor(this)">🟣</button>
+			</div>
+			<div class="memo-font-setting">
+				<!-- Bold 버튼은 따로 -->
+				<button onmousedown="setBold(this)">B</button>
 
-				  <select onchange="setFont(this.value)">
-				    <option value="Arial">Arial</option>
-				    <option value="Georgia">Georgia</option>
-				    <option value="Courier New">Courier</option>
-				  </select>
-				  
-				  <!-- memoModal의 #memo-tool-bar 내부에 추가 -->
-					<select onchange="setFontSize(this.value)">
-					  <option value="1">매우 작게(10)</option>
-					  <option value="2">작게(13)</option>
-					  <option value="3" selected>기본(16)</option>
-					  <option value="4">크게(18)</option>
-					  <option value="5">더 크게(24)</option>
-					  <option value="6">매우 크게(32)</option>
-					  <option value="7">최대(48)</option>
-					</select>
-				</div>
-				 <div id="memo-editor" contenteditable="false" class="editable" data-placeholder="여기에 메모를 입력하세요..."></div>
-				  <div id="memo-save-btn-area">
-				  	<button id="save-memo-btn" class="btn btn-primary">저장</button>
-				  </div>
-				</div>
-				
-				<div id="addMemoModal">
-				  <div id="add-memo-up-bar">
-					  <button id="close-add-memo-btn" class="btn btn-secondary">돌아가기</button>
-					  <label>제목:<input type="text" id="add-memo-title" name="add-memo-title"></label>
-				  </div>
-				<div id="add-memo-tool-bar">
-				 <!-- #add-memo-tool-bar 색상 버튼 확장 -->
-				<button class="color-btn" onmousedown="addSetColor('black'); addToggleActiveColor(this)">⚫</button>
-				<button class="color-btn" onmousedown="addSetColor('blue'); addToggleActiveColor(this)">🔵</button>
-				<button class="color-btn" onmousedown="addSetColor('red'); addToggleActiveColor(this)">🔴</button>
-				<button class="color-btn" onmousedown="addSetColor('green'); addToggleActiveColor(this)">🟢</button>
-				<button class="color-btn" onmousedown="addSetColor('orange'); addToggleActiveColor(this)">🟠</button>
-				<button class="color-btn" onmousedown="addSetColor('purple'); addToggleActiveColor(this)">🟣</button>
+				<select onchange="setFont(this.value)">
+					<option value="Arial">Arial</option>
+					<option value="Georgia">Georgia</option>
+					<option value="Courier New">Courier</option>
+				</select>
 
-					
-					<!-- Bold 버튼은 따로 -->
-					<button onmousedown="addSetBold(this)">B</button>
-
-				  <select onchange="addSetFont(this.value)">
-				    <option value="Arial">Arial</option>
-				    <option value="Georgia">Georgia</option>
-				    <option value="Courier New">Courier</option>
-				  </select>
-				  
-				  <!-- addMemoModal의 #add-memo-tool-bar 내부에 추가 -->
-					<select onchange="addSetFontSize(this.value)">
-					  <option value="1">매우 작게(10)</option>
-					  <option value="2">작게(13)</option>
-					  <option value="3" selected>기본(16)</option>
-					  <option value="4">크게(18)</option>
-					  <option value="5">더 크게(24)</option>
-					  <option value="6">매우 크게(32)</option>
-					  <option value="7">최대(48)</option>
-					</select>
-				</div>
-				 <div id="add-memo-editor" contenteditable="true"  class="editable" data-placeholder="여기에 메모를 입력하세요..."></div>
-				  <div id="add-memo-save-btn-area">
-				  	<button id="save-add-memo-btn" class="btn btn-primary">저장</button>
-				  </div>
-				</div>
-				 <!-- 배경 -->
-				<div id="memoBackdrop"></div>
+				<!-- memoModal의 #memo-tool-bar 내부에 추가 -->
+				<select onchange="setFontSize(this.value)">
+					<option value="1">매우 작게(10)</option>
+					<option value="2">작게(13)</option>
+					<option value="3" selected>기본(16)</option>
+					<option value="4">크게(18)</option>
+					<option value="5">더 크게(24)</option>
+					<option value="6">매우 크게(32)</option>
+					<option value="7">최대(48)</option>
+				</select>
 			</div>
 		</div>
+		<div id="memo-editor" contenteditable="false" class="editable"
+			data-placeholder="여기에 메모를 입력하세요..."></div>
+		<div id="memo-save-btn-area">
+			<button id="save-memo-btn" class="btn btn-primary btn-save">저장</button>
+		</div>
+	</div>
+
+	<div id="addMemoModal">
+		<div id="add-memo-up-bar">
+			<button id="close-add-memo-btn" class="btn btn-secondary">돌아가기</button>
+			<label>제목:<input type="text" id="add-memo-title"
+				name="add-memo-title"></label>
+		</div>
+		<div class="add-memo-tool-bar">
+			<!-- #add-memo-tool-bar 색상 버튼 확장 -->
+			<div class="memo-color-btns">
+				<button class="color-btn"
+					onmousedown="addSetColor('black'); addToggleActiveColor(this)">⚫</button>
+				<button class="color-btn"
+					onmousedown="addSetColor('blue'); addToggleActiveColor(this)">🔵</button>
+				<button class="color-btn"
+					onmousedown="addSetColor('red'); addToggleActiveColor(this)">🔴</button>
+				<button class="color-btn"
+					onmousedown="addSetColor('green'); addToggleActiveColor(this)">🟢</button>
+				<button class="color-btn"
+					onmousedown="addSetColor('orange'); addToggleActiveColor(this)">🟠</button>
+				<button class="color-btn"
+					onmousedown="addSetColor('purple'); addToggleActiveColor(this)">🟣</button>
+			</div>
+
+			<!-- Bold 버튼은 따로 -->
+			<div class="memo-font-setting">
+				<button onmousedown="addSetBold(this)">B</button>
+
+				<select onchange="addSetFont(this.value)">
+					<option value="Arial">Arial</option>
+					<option value="Georgia">Georgia</option>
+					<option value="Courier New">Courier</option>
+				</select>
+
+				<!-- addMemoModal의 #add-memo-tool-bar 내부에 추가 -->
+				<select onchange="addSetFontSize(this.value)">
+					<option value="1">매우 작게(10)</option>
+					<option value="2">작게(13)</option>
+					<option value="3" selected>기본(16)</option>
+					<option value="4">크게(18)</option>
+					<option value="5">더 크게(24)</option>
+					<option value="6">매우 크게(32)</option>
+					<option value="7">최대(48)</option>
+				</select>
+			</div>
+		</div>
+		<div id="add-memo-editor" contenteditable="true" class="editable"
+			data-placeholder="여기에 메모를 입력하세요..."></div>
+		<div id="add-memo-save-btn-area">
+			<button id="save-add-memo-btn" class="btn btn-primary btn-save">저장</button>
+		</div>
+	</div>
+	<!-- 배경 -->
+	<div id="memoBackdrop"></div>
+	</div>
+	</div>
 	</div>
 	<script>
 	 const loginUser = "${loginUser}";
@@ -436,7 +516,7 @@
 	
 	let memoList=[];
 	document.addEventListener("DOMContentLoaded", function () {
-		  const projectId = document.getElementById("memo-project-id")?.value;
+		  const projectId = '${sessionScope.project.id}';
 		  if (projectId) {
 		    fetchMemos(projectId);  // ✅ 메모 불러오기
 		  }
@@ -467,7 +547,7 @@
 		    console.log("렌더링할 메모:", memo);
 
 		    // 3개씩 묶기
-		    if (index % 3 === 0) {
+		    if (index % 4 === 0) {
 		      row = document.createElement("div");
 		      row.className = "memo-row";
 		      memoArea.appendChild(row);
@@ -643,6 +723,7 @@
 		
 		/////////////////메모CRUD
 		function fetchMemos(projectId) {
+console.log(projectId);
 		  fetch(`/memo/list?projectId=${projectId}`)
 		    .then(res => res.json())
 		    .then(data => {
@@ -663,7 +744,7 @@
     return;
   }
 
-  const projectId = document.getElementById("memo-project-id").value;
+  const projectId = '${sessionScope.project.id}'
   const newMemo = {
     projectId: projectId,
     title: title,

@@ -1,11 +1,13 @@
 @charset "UTF-8";
 
-.mainpage-header {
+/* 메인페이지 헤더 */
+.mainpage-login-header {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	margin-right: 20px;
 	margin-bottom: 20px;
+	border-bottom: 2px solid #ebebeba4;
 }
 
 #mainpage-header-logo {
@@ -32,6 +34,7 @@
 	cursor: pointer;
 }
 
+/* 로그인 시 메인페이지 */
 .mainpage-container {
 	display: flex;
 	gap: 50px;
@@ -55,17 +58,28 @@
 }
 
 .mainpage-contents-box {
-	background-color: #9ab3c4;
+	/* background-color: #1a75c53d; */
+	background-color: #bed3f0d7;;
 	border-radius: 10px;
 	padding: 20px;
+	box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
 .contents-text {
-	color: #0c61aa;
+	color: #0e6cbe;
 	font-size: 25px;
 	font-weight: bold;
 	margin-bottom: 10px;
 	margin-left: 13px;
+}
+
+/* 비로그인 시 메인페이지 */
+.mainpage-logout-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-right: 20px;
+	margin-bottom: 20px;
 }
 
 #mainpage-image{
@@ -203,15 +217,12 @@
 	width:100%;
 	display: flex;
 	flex:1;
-	/* margin-bottom: 10px; */
-
 }
 
 .mainpage-func-items2{
 	width:100%;
 	display: flex;
 	flex:1;
-	/* margin-bottom: 10px; */
 }
 
 .mp-func-single{
@@ -269,6 +280,41 @@
 
 .mp-func-icon{
 	width: 46px;
+}
+
+/* 메인페이지 프로젝트 리스트 ul */
+#mainpage-project-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* 메인페이지 프로젝트 리스트 항목 */
+#mainpage-project-list > li {
+  padding: 10px 15px;
+  border-bottom: 1px solid #ddd;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  color: #333;
+  user-select: none;
+}
+
+/* 마지막 항목 테두리 제거 */
+#mainpage-project-list > li:last-child {
+  border-bottom: none;
+}
+
+/* 호버 효과 */
+#mainpage-project-list > li:hover {
+  background-color: #f0f8ff;
+  color: #0056b3;
+}
+
+/* 클릭 시 배경색 */
+#mainpage-project-list > li:active,
+#mainpage-project-list > li:focus {
+  background-color: #cce0ff;
+  outline: none;
 }
 
 /* 메인페이지 푸터 */

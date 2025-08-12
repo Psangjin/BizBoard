@@ -42,7 +42,7 @@ public class AccountController {
 		
 		if(loginUser != null) {
 			session.setAttribute("loginUser", loginUser);
-			return "redirect:/account/mypage";
+			return "redirect:/";
 		} else {
 			 System.out.println("[로그인 실패] ID: " + user.getId()); // 디버깅용
 		        model.addAttribute("error", "아이디 또는 비밀번호가 올바르지 않습니다.");
@@ -56,14 +56,14 @@ public class AccountController {
 	@GetMapping("/logout")
 	public String logout(HttpSession session) {
 		session.invalidate();
-		return "redirect:/account/login";
+		return "redirect:/";
 	}
 	
 	@PostMapping("/logout")
 	public String logoutAction(HttpSession session, Model model) {
 		session.invalidate();
 		model.addAttribute("message", "로그아웃되었습니다.");
-		model.addAttribute("redirecter", "/account/login");
+		model.addAttribute("redirecter", "/");
 		return "common/message";
 	}
 

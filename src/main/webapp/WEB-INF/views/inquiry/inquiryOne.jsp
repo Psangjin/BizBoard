@@ -28,7 +28,6 @@
 		<div class="content">
 			<h1 class="inquiry-title">1:1 문의하기</h1>
 
-			<!-- 전송 성공 메시지 표시 영역 -->
 			<div id="successMessage" class="success-message"
 				style="display: none;">
 				<p>✓ 문의가 성공적으로 전송되었습니다. 빠른 시일 내에 답변드리겠습니다.</p>
@@ -76,47 +75,40 @@
 
 	<script>
 		// 폼 제출 처리
-		document
-				.getElementById('inquiryForm')
-				.addEventListener(
-						'submit',
-						function(e) {
-							e.preventDefault();
+		document.getElementById('inquiryForm').addEventListener('submit', function(e) {
+			
+			// 기본 폼 제출 동작을 막습니다.
+			e.preventDefault();
 
-							// 폼 유효성 검사
-							const subject = document
-									.getElementById('inquirySubject').value
-									.trim();
-							const name = document.getElementById('userName').value
-									.trim();
-							const email = document.getElementById('userEmail').value
-									.trim();
-							const content = document
-									.getElementById('inquiryContent').value
-									.trim();
-							const consent = document.getElementById('consent').checked;
+			// 폼 유효성 검사
+			const subject = document.getElementById('inquirySubject').value.trim();
+			const name = document.getElementById('userName').value.trim();
+			const email = document.getElementById('userEmail').value.trim();
+			const content = document.getElementById('inquiryContent').value.trim();
+			const consent = document.getElementById('consent').checked;
 
-							if (!subject || !name || !email || !content) {
-								alert('모든 필수 항목을 입력해주세요.');
-								return;
-							}
+			if (!subject || !name || !email || !content) {
+				alert('모든 필수 항목을 입력해주세요.');
+				return;
+			}
 
-							if (!consent) {
-								alert('개인정보 수집 및 이용에 동의해주세요.');
-								return;
-							}
+			// 이메일 유효성 검사
+			const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+			if (!emailPattern.test(email)) {
+				alert('올바른 이메일 주소를 입력해주세요.');
+				// 유효성 검사 실패 시 여기서 함수를 종료하여 폼 제출을 막습니다.
+				return; 
+			}
 
-							// 이메일 유효성 검사
-							const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-							if (!emailPattern.test(email)) {
-								alert('올바른 이메일 주소를 입력해주세요.');
-								return;
-							}
+			if (!consent) {
+				alert('개인정보 수집 및 이용에 동의해주세요.');
+				return;
+			}
 
-							// 실제로는 서버로 데이터 전송
-							// 여기서는 시뮬레이션
-							simulateFormSubmission();
-						});
+			// 위 모든 검사를 통과한 경우에만 폼 전송 시뮬레이션
+			// 실제로는 서버로 데이터를 AJAX로 전송하는 로직이 들어갑니다.
+			simulateFormSubmission();
+		});
 
 		// 폼 전송 시뮬레이션 함수
 		function simulateFormSubmission() {

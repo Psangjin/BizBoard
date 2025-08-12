@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="taskComment_mapper">
+
+  <!-- 스케줄별 목록 -->
+  <select id="listByScheduleId" parameterType="long"
+          resultType="TaskComment">
+    SELECT id, schedule_id, user_id, title, description, file_path, write_time
+    FROM task_comment
+    WHERE schedule_id = #{scheduleId}
+    ORDER BY write_time DESC
+  </select>
+
+  <!-- 단건 조회 -->
+  <select id="get" parameterType="long"
+          resultType="TaskComment">
+    SELECT id, schedule_id, user_id, title, description, file_path, write_time
+    FROM task_comment
+    WHERE id = #{id}
+  </select>
+
+  <!-- 등록 -->
+  <insert id="insert" parameterType="TaskComment">
+    INSERT INTO task_comment (
+      id, schedule_id, user_id, title, description, file_path, write_time
+    ) VALUES (
+      seq_task_comment.NEXTVAL,
+      #{scheduleId}, #{userId}, #{title},
+      #{description, jdbcType=CLOB},
+      #{filePath}, SYSTIMESTAMP
+    )
+  </insert>
+
+  <!-- 수정 -->
+  <update id="update" parameterType="TaskComment">
+    UPDATE task_comment
+       SET title = #{title},
+           description = #{description, jdbcType=CLOB},
+           file_path = #{filePath}
+     WHERE id = #{id}
+  </update>
+
+  <!-- 삭제 -->
+  <delete id="delete" parameterType="long">
+    DELETE FROM task_comment WHERE id = #{id}
+  </delete>
+
+  <!-- 스케줄 기준 전체 삭제 -->
+  <delete id="deleteByScheduleId" parameterType="long">
+    DELETE FROM task_comment WHERE schedule_id = #{scheduleId}
+  </delete>
+
+</mapper>

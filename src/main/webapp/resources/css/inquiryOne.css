@@ -1,8 +1,4 @@
-@charset "UTF-8";/*
- * 제목 칸의 너비를 직접 지정하여 크기를 조절할 수 있도록 수정한 CSS 코드입니다.
- */
 
-/* body와 container의 기본 레이아웃 설정은 유지합니다. */
 body {
     margin: 0;
     font-family: sans-serif;
@@ -125,7 +121,7 @@ body {
 
 /* 제목 입력 필드의 너비를 직접 지정 */
 .form-group:first-of-type input {
-  	width: 760px;
+  	width: 748px;
 
 }
 

@@ -31,4 +31,19 @@ public class ProjectDAOImpl implements ProjectDAO{
 		return allProjects;
 	}
 
+	@Override
+	public Project findProjectById(Long projectId) {
+		
+		Project project = sqlSessionTemplate.selectOne("project_mapper.findProjectById", projectId);
+		
+		return project;
+	}
+
+	@Override
+	public List<Project> findProjectsByUserId(String userId) {
+		
+		List<Project> projectList = sqlSessionTemplate.selectList("project_mapper.findProjectsByUserId", userId);
+		return projectList;
+	}
+
 }
