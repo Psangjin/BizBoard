@@ -3,6 +3,7 @@ package com.app.dao.project;
 import java.util.List;
 
 import com.app.dto.project.Schedule;
+import com.app.dto.project.ScheduleWithProject;
 
 public interface ScheduleDAO {
 	
@@ -17,4 +18,6 @@ public interface ScheduleDAO {
 	int  findMaxScheduleId();
 	
 	List<Schedule> selectSchedulesByUserAndProject(String userId, Long projectId);
+	
+	List<ScheduleWithProject> selectUserSchedules(String userId);
 }

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.app.dao.project.ScheduleDAO;
 import com.app.dto.project.Schedule;
+import com.app.dto.project.ScheduleWithProject;
 
 @Repository
 public class ScheduleDAOImpl implements ScheduleDAO{
@@ -61,6 +62,12 @@ public class ScheduleDAOImpl implements ScheduleDAO{
 		paramMap.put("userId", userId);
 	    paramMap.put("projectId", projectId);
 		List<Schedule> scheduleList = sqlSessionTemplate.selectList("schedule_mapper.selectSchedulesByUserAndProject", paramMap);
+		return scheduleList;
+	}
+
+	@Override
+	public List<ScheduleWithProject> selectUserSchedules(String userId) {
+		List<ScheduleWithProject> scheduleList = sqlSessionTemplate.selectList("schedule_mapper.selectUserSchedules", userId);
 		return scheduleList;
 	}
 

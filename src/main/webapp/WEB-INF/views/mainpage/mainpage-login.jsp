@@ -19,11 +19,17 @@
 		<div class='mainpage-left'>
 			<div class='mainpage-contents'>
 				<div class="contents-text">데일리 스케줄</div>
-				<div class='mainpage-contents-box'></div>
+				<div class='mainpage-contents-box'>
+				<ul id="daily-schedule-list">
+                </ul>
+                </div>
 			</div>
 			<div class='mainpage-contents'>
 				<div class="contents-text">오늘 할 일</div>
-				<div class='mainpage-contents-box'></div>
+				<div class='mainpage-contents-box'>
+				<ul id="today-tasks-list">
+                </ul>
+				</div>
 			</div>
 		</div>
 
@@ -35,7 +41,7 @@
 		      </div>
 			</div>
 			
-			<div class='mainpage-contents-box'>
+			<div class='mainpage-contents-box mainpage-scroll-long'>
 			  <div class="fab-item" data-popup="프로젝트 관련">
 			    <div class="fab-popup fab-project-popup">
 			      <div class="fab-popup-project-list">
@@ -53,16 +59,88 @@
 <%@ include file="../include/createProjectModal.jsp"%>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    // 프로젝트 목록을 가져오는 단일 함수
+
+	$.ajax({
+        url: '/main/data',
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+            const dailySchedules = data.dailySchedules;
+            const todayTasks = data.todayTasks;
+            
+            // 데일리 스케줄 리스트 렌더링
+            const dailyScheduleList = document.getElementById('daily-schedule-list');
+            const dailyScheduleFragment = document.createDocumentFragment();
+
+            if (dailySchedules.length === 0) {
+                dailyScheduleList.innerHTML = '<li class="no-data">데일리 스케줄이 없습니다.</li>';
+            } else {
+                dailySchedules.forEach(schedule => {
+                    const li = document.createElement('li');
+                    
+                    const containerDiv = document.createElement('div');
+                    containerDiv.classList.add('schedule-item-container');
+
+                    const titleSpan = document.createElement('span');
+                    titleSpan.classList.add('schedule-item-title');
+                    titleSpan.textContent = schedule.title;
+                    
+                    const projectTitleSpan = document.createElement('span');
+                    projectTitleSpan.classList.add('schedule-item-project-title');
+                    projectTitleSpan.textContent = schedule.projectTitle;
+                    
+                    containerDiv.appendChild(titleSpan);
+                    containerDiv.appendChild(projectTitleSpan);
+                    
+                    li.appendChild(containerDiv);
+                    dailyScheduleFragment.appendChild(li);
+                });
+                dailyScheduleList.appendChild(dailyScheduleFragment);
+            }
+
+            // 오늘 할 일 리스트 렌더링
+            const todayTasksList = document.getElementById('today-tasks-list');
+            const todayTasksFragment = document.createDocumentFragment();
+
+            if (todayTasks.length === 0) {
+                todayTasksList.innerHTML = '<li class="no-data">오늘 할 일이 없습니다.</li>';
+            } else {
+                todayTasks.forEach(task => {
+                    const li = document.createElement('li');
+
+                    const containerDiv = document.createElement('div');
+                    containerDiv.classList.add('task-item-container');
+
+                    const titleSpan = document.createElement('span');
+                    titleSpan.classList.add('task-item-title');
+                    titleSpan.textContent = task.title;
+
+                    const projectTitleSpan = document.createElement('span');
+                    projectTitleSpan.classList.add('task-item-project-title');
+                    projectTitleSpan.textContent = task.projectTitle;
+
+                    containerDiv.appendChild(titleSpan);
+                    containerDiv.appendChild(projectTitleSpan);
+
+                    li.appendChild(containerDiv);
+                    todayTasksFragment.appendChild(li);
+                });
+                todayTasksList.appendChild(todayTasksFragment);
+            }
+        },
+        error: function(xhr) {
+            console.error("데이터를 불러오는 데 실패했습니다: " + xhr.statusText);
+        }
+    });
+	
+    // Function to fetch and render the project list
     function fetchProjectsAndRender() {
         $.ajax({
             url: '/project/listByUserId',
             method: 'GET',
             dataType: 'json',
             success: function (projects) {
-                // 프로젝트 목록을 렌더링하는 함수 호출
                 renderProjectList(projects, '#mainpage-project-list');
-                renderProjectList(projects, '.fab-item[data-popup="프로젝트 관련"] .fab-popup ul');
             },
             error: function () {
                 alert("프로젝트 목록을 불러오는 데 실패했습니다.");
@@ -70,7 +148,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // 프로젝트 목록을 특정 ul에 렌더링하는 함수
+    // Function to render projects to a specific list
     function renderProjectList(projects, selector) {
         const $popupList = document.querySelector(selector);
         
@@ -107,9 +185,10 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
     
-    // 페이지 로드 시 프로젝트 목록 가져오기
+    // Call the function to fetch and render projects
     fetchProjectsAndRender();
 });
+</script>
 </script>
 </body>
 </html>
