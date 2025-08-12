@@ -1,0 +1,131 @@
+/*
+ * FAQ 페이지에 맞는 CSS 코드입니다.
+ * 폰트, 레이아웃, 그리고 표(table)의 스타일을 포함합니다.
+ */
+
+body {
+    margin: 0;
+    font-family: sans-serif;
+    background-color: #e6e6e6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    border: none;
+    background-color: #fff;
+    box-shadow: none;
+}
+
+.sidebar {
+    flex-shrink: 0;
+    width: 300px;
+    height: 100%;
+    background-color: #487eb0;
+    color: #fff;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+	text-align: center;
+
+
+}
+	
+
+
+.logo-image {
+    width: 100%;
+    height: auto;
+    margin-bottom: 50px;
+}
+
+.sidebar h2 {
+    font-size: 2em;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.sidebar-menu {
+    width: 100%;
+    text-align: center;
+}
+
+.sidebar-menu hr {
+    border: 0;
+    height: 1px;
+    background-color: #fff;
+    margin: 20px 0;
+}
+
+.sidebar-menu a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.2em;
+    font-weight: bold;
+    display: block;
+    margin: 10px 0;
+}
+
+.sidebar-menu a.current-page {
+    pointer-events: none;
+    cursor: default;
+    opacity: 0.7;
+    font-weight: 900;
+}
+
+.content {
+    flex-grow: 1;
+    padding: 50px;
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.faq-title {
+    font-size: 3em;
+    font-weight: bold;
+    margin-bottom: 40px;
+}
+
+.faq-item {
+    margin-bottom: 20px;
+}
+
+.faq-question {
+    font-size: 30px;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+
+.faq-answer {
+    font-size: 20px;
+    line-height: 1.5;
+    padding-left: 20px;
+    margin-bottom: 50px;
+}
+
+/* FAQ 페이지의 표(table) 스타일 추가 */
+.plan-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.plan-table th,
+.plan-table td {
+    border: 1px solid #000;
+    padding: 10px;
+}
+
+.plan-table thead th {
+    background-color: #d9d9d9;
+}
+
