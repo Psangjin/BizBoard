@@ -255,7 +255,7 @@ public class AccountController {
 	        if (!currentPw.equals(dbUser.getPw())) {
 	            ra.addFlashAttribute("deleteMsg", "현재 비밀번호가 일치하지 않습니다.");
 	            ra.addFlashAttribute("deleteOk", false);
-	            return "redirect:/mainpage";
+	            return "redirect:/";
 	        }
 
 	        userService.deleteUser(dbUser.getId());

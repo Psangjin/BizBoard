@@ -41,7 +41,7 @@ public class MainpageController {
 	public String mainPage_login(HttpServletRequest request) {
 		Boolean afterLogin = (Boolean) request.getAttribute("afterLogin");
 	    if (afterLogin == null || !afterLogin) {
-	        return "redirect:/error"; // 직접 접근 차단
+	        return "redirect:/"; // 직접 접근 차단
 	    }
 		return "mainpage/mainpage-login";
 	}

@@ -71,6 +71,7 @@
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css"
 	crossorigin="anonymous" referrerpolicy="no-referrer" />
 <link rel="stylesheet" href="/css/mainpage.css">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <body>
 
 	<%@ include file="/WEB-INF/views/common/login-header.jsp" %>
