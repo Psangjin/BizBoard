@@ -43,6 +43,20 @@ public class UserDAOImpl implements UserDAO {
     public int updateUserPassword(User user) {
         return sqlSession.update("user_mapper.updateUserPassword", user);
     }
+    
+    @Override
+    public int deleteUser(String id) {
+        return sqlSession.delete("user_mapper.deleteUser", id);
+    }
 
-   
+    @Override
+    public int checkEmailDuplicate(User user) {
+        return sqlSession.selectOne("user_mapper.checkEmailDuplicate", user);
+    }
+
+    @Override
+    public int updateUserProfile(User user) {
+        return sqlSession.update("user_mapper.updateUserProfile", user);
+    }
+
 }

@@ -91,14 +91,10 @@
     <h2>회원가입</h2>
     
       <!-- 서버에서 전달된 에러 메시지 -->
-   <c:choose>
-	    <c:when test="${error eq 'duplicate_id'}">
-	        <p class="error-text">❌ 이미 사용 중인 아이디입니다.</p>
-	    </c:when>
-	    <c:when test="${error eq 'signup_failed'}">
-	        <p class="error-text">❌ 회원가입 중 오류가 발생했습니다.</p>
-	    </c:when>
-	</c:choose>
+   
+		<c:if test="${not empty error}">
+		  <p class="error-text">${error}</p>
+		</c:if>
     
     <form action="${ctx}/account/signup" method="post">
         <input type="text" name="id" placeholder="아이디 입력"

@@ -4,12 +4,12 @@ package com.app.controller;
 
 
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.app.dto.project.Project;
 import com.app.dto.user.User;
@@ -33,7 +34,8 @@ public class AccountController {
 	
 	@Autowired
 	ProjectService projectService;
-		
+	
+	
 	//login
 	@GetMapping("/login")
 	public String login(Model model) {	    
@@ -113,6 +115,8 @@ public class AccountController {
 	        return "account/signup";
 	    }
 	    
+	   
+       
 	    
 	    //회원가입 처리
 	    
@@ -120,7 +124,7 @@ public class AccountController {
 	    
 	    try {
 	        userService.signup(user);	   
-	        request.setAttribute("message", " ❕ 회원가입 성공 ❕   ▫▫ 로그인 해주세요 ▫▫");
+	        request.setAttribute("message", "     ❕ 회원가입 성공 ❕<br>▫▫ 로그인 해주세요 ▫▫");
 	        request.setAttribute("redirecter", "/account/login");
 	        return "common/message";
 	        
@@ -168,46 +172,105 @@ public class AccountController {
 		}
 	
 	// 비밀번호 수정
-		@PostMapping("/mypage/update")
-		public String updatePassword(@RequestParam String pw,
-		                             @RequestParam String pwCheck,
-		                             HttpSession session, Model model) {
-		    User loginUser = (User) session.getAttribute("loginUser");
+	@PostMapping("/mypage/change-password")
+    public String changePassword(@RequestParam String currentPw,
+                                 @RequestParam String newPw,
+                                 @RequestParam String newPwCheck,
+                                 HttpSession session,
+                                 RedirectAttributes ra) {
+        User loginUser = (User) session.getAttribute("loginUser");
+        if (loginUser == null) return "redirect:/account/login";
 
-		    if (loginUser == null) {
-	            return "redirect:/account/login";
-	        }
-		    
-		    if (pw == null || !pw.equals(pwCheck)) {
-		        model.addAttribute("msg", "비밀번호가 일치하지 않습니다.");
-		        model.addAttribute("loginUser", loginUser);
-		        model.addAttribute("id", loginUser.getId());
-		        model.addAttribute("name", loginUser.getName());
-		        model.addAttribute("email", loginUser.getEmail());
-		        return "account/mypage";
-		    }
+        User dbUser = userService.getUser(loginUser.getId());
+        if (dbUser == null) return "redirect:/account/login";
 
-		    loginUser.setPw(pw);
-		    userService.updateUserPassword(loginUser); // 비밀번호만 업데이트
+        // 평문 비교
+        if (!currentPw.equals(dbUser.getPw())) {
+            ra.addFlashAttribute("pwMsg", "현재 비밀번호가 일치하지 않습니다.");
+            ra.addFlashAttribute("pwOk", false);
+            return "redirect:/account/mypage";
+        }
+        if (!newPw.equals(newPwCheck)) {
+            ra.addFlashAttribute("pwMsg", "새 비밀번호가 서로 일치하지 않습니다.");
+            ra.addFlashAttribute("pwOk", false);
+            return "redirect:/account/mypage";
+        }
+        if (newPw.length() < 1) { // 
+            ra.addFlashAttribute("pwMsg", "새 비밀번호를 입력해주세요.");
+            ra.addFlashAttribute("pwOk", false);
+            return "redirect:/account/mypage";
+        }
 
-		    
-		    // 
-		    User updatedUser = userService.getUser(loginUser.getId()); // 최신 정보 조회
-		    session.setAttribute("loginUser", updatedUser);
-		    
-		    model.addAttribute("msg", "비밀번호가 성공적으로 변경되었습니다.");
-		    model.addAttribute("loginUser", updatedUser);
-		    model.addAttribute("id", updatedUser.getId());
-		    model.addAttribute("name", updatedUser.getName());
-		    model.addAttribute("email", updatedUser.getEmail());
-		    return "account/mypage";
-		}
+        userService.updateUserPassword(loginUser.getId(), newPw);
+
+	    // 세션 최신화
+	    User updated = userService.getUser(loginUser.getId());
+	    session.setAttribute("loginUser", updated);
+
+	    ra.addFlashAttribute("pwMsg", "비밀번호가 성공적으로 변경되었습니다.");
+	    ra.addFlashAttribute("pwOk", true);
+	    return "redirect:/account/mypage";
+	}
 		
+	
+	
+	@PostMapping("/mypage/update")
+	public String updateProfile(@RequestParam String id,
+	                            @RequestParam String name,
+	                            @RequestParam String email,
+	                            HttpSession session,
+	                            RedirectAttributes ra) {
+
+	    User user = new User();
+	    user.setId(id);
+	    user.setName(name);
+	    user.setEmail(email);
+
+	    if (!userService.updateUserProfile(user)) {
+	        ra.addFlashAttribute("profileMsg", "이미 사용 중인 이메일입니다.");
+	        ra.addFlashAttribute("profileOk", false);
+	    } else {
+	        // 세션 최신화
+	        User updatedUser = userService.getUser(id);
+	        session.setAttribute("loginUser", updatedUser);
+
+	        ra.addFlashAttribute("profileMsg", "프로필이 성공적으로 수정되었습니다.");
+	        ra.addFlashAttribute("profileOk", true);
+	    }
+
+	    return "redirect:/account/mypage";
 	}
 	
 	
-	
-	
+
+	//delete
+	 @PostMapping("/delete")
+	    public String deleteAccount(@RequestParam String currentPw,
+	                                HttpSession session,
+	                                HttpServletRequest request,
+	                                RedirectAttributes ra) {
+	        User loginUser = (User) session.getAttribute("loginUser");
+	        if (loginUser == null) return "redirect:/account/login";
+
+	        User dbUser = userService.getUser(loginUser.getId());
+	        if (dbUser == null) return "redirect:/account/login";
+
+	        // 평문 비교
+	        if (!currentPw.equals(dbUser.getPw())) {
+	            ra.addFlashAttribute("deleteMsg", "현재 비밀번호가 일치하지 않습니다.");
+	            ra.addFlashAttribute("deleteOk", false);
+	            return "redirect:/mainpage";
+	        }
+
+	        userService.deleteUser(dbUser.getId());
+	        session.invalidate();
+	        
+	        request.setAttribute("message", "회원 탈퇴가 완료되었습니다.");
+	        request.setAttribute("redirecter", "/");  // 홈으로 이동
+	        return "common/message";
+	    }
+	}
+
 	
 	
 	

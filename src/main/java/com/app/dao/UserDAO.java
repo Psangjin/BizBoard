@@ -21,7 +21,15 @@ public interface UserDAO {
 
     // 마이페이지 비밀번호 변경
 	 int updateUserPassword(User user);
+	
+	 // 
+	 int deleteUser(String id);
 
+	 //email 중복
+	 int checkEmailDuplicate(User user);
+	 
+	 //마이프로필 수정
+	 int updateUserProfile(User user);
    
 
 }
