@@ -48,6 +48,11 @@ public class MainpageController {
 		return "inquiry/inquiryOne";
 
 	}
+	
+	@RequestMapping("/error")
+	public String error() {
+		return "errorScreen";
+	}
 /*	@RequestMapping("/project/{projectId}")
 	public String showProjectDetail(@PathVariable int projectId, HttpSession session) {
 	    Project project = projectService.getProject(projectId);

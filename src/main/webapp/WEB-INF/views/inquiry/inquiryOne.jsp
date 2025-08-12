@@ -6,16 +6,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>1:1 문의</title>
-<link rel="stylesheet"
-	href="${pageContext.request.contextPath}/resources/css/inquiryOne.css">
+<link rel="stylesheet" href="/css/inquiryOne.css">
 </head>
 <body>
 	<div class="container">
 		<div class="sidebar">
-			<a href="${pageContext.request.contextPath}/"> <img
-				class="logo-image"
-				src="${pageContext.request.contextPath}/resources/image/logo2.png"
-				alt="BizBoard 로고" />
+			<a href="/"> <img class="logo-image" src="/image/logo2.png"	alt="BizBoard 로고" />
 			</a>
 			<h2>문의하기</h2>
 			<div class="sidebar-menu">

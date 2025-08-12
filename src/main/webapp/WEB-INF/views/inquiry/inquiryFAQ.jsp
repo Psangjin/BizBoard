@@ -5,20 +5,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>문의 및 FAQ</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/inquiryFAQ.css">
+    <link rel="stylesheet" href="/css/inquiryFAQ.css">
 </head>
 <body>
     <div class="container">
         <div class="sidebar">
             <a href="${pageContext.request.contextPath}/">
-                <img class="logo-image" src="${pageContext.request.contextPath}/resources/image/logo2.png" alt="BizBoard 로고" />
+                <img class="logo-image" src="/image/logo2.png" alt="BizBoard 로고" />
             </a>
             <h2>문의하기</h2>
             <div class="sidebar-menu">
                 <hr />
                 <a href="#" class="current-page">자주 묻는 질문</a>
                 <hr />
-                <a href="${pageContext.request.contextPath}/inquiryOne">1 : 1 문의</a>
+                <a href="/inquiryOne">1 : 1 문의</a>
             </div>
         </div>
         <div class="content">
