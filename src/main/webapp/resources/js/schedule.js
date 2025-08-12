@@ -903,7 +903,14 @@ document.getElementById("save-task-modify")?.addEventListener("click", async fun
    	    trashEl.classList.remove("hovered");
    	  }
    	}
+	//올데이버그추가
+	function toDatetimeLocalString(d) {
+	  const pad = n => String(n).padStart(2, '0');
+	  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+	}
 	
+	
+	/////모달에선 무조건 데이트인풋을 유티씨로 바꾸기!!!!!!!!!!
 	function openEditModal(event) {
 	  // 모달에 데이터 채우기
 	  document.getElementById('fc-modal-title').value = event.title || '';
@@ -925,11 +932,17 @@ document.getElementById("save-task-modify")?.addEventListener("click", async fun
 	  document.getElementById('fc-event-allday').checked = event.allDay;
 	  
 	  // 시작일 설정 (datetime-local 포맷)
-	  //document.getElementById('fc-event-start').value = toDatetimeLocal(event.start);
+	  ///document.getElementById('fc-event-start').value = toDatetimeLocal(event.start);
 	  document.getElementById('fc-event-start').value = toDatetimeUTC(event.start);
 	  
-	  // 종료일 설정 (있으면)
+	  //// 종료일 설정 (있으면)
+	  /////document.getElementById('fc-event-end').value = toDatetimeLocal(event.end);
 	  document.getElementById('fc-event-end').value = toDatetimeUTC(event.end);
+	  
+	  // ✅ 로컬 문자열로 세팅 (UTC 변환 금지)
+	    //document.getElementById('fc-event-start').value = toDatetimeLocalString(event.start);
+	    //document.getElementById('fc-event-end').value   = event.end ? toDatetimeLocalString(event.end) : '';
+
 
 	  // 모달 보이기
 	  document.getElementById('fc-eventModal').style.display = 'block';
@@ -1150,9 +1163,9 @@ document.getElementById("save-task-modify")?.addEventListener("click", async fun
 
   	  });
     
-
+	//////밑에거 쓰기
     //일정 추가 완료
-    document.getElementById('fc-save-event').addEventListener('click', function() {
+    /*document.getElementById('fc-save-event').addEventListener('click', function() {
    	  const title = document.getElementById('fc-modal-title').value.trim();
    	  const desc = document.getElementById('fc-modal-description').value.trim();
    	  const color = document.getElementById('fc-modal-color').value;
@@ -1225,7 +1238,57 @@ document.getElementById("save-task-modify")?.addEventListener("click", async fun
     	  });
 
       closeModal();
-    });
+    });*/
+	
+	///////////올데이는 문자로, 아닐때는 유티씨로 
+	document.getElementById('fc-save-event').addEventListener('click', function () {
+	  const title = document.getElementById('fc-modal-title').value.trim();
+	  const desc  = document.getElementById('fc-modal-description').value.trim();
+	  const color = document.getElementById('fc-modal-color').value;
+
+	  const startInput = document.getElementById('fc-event-start').value; // 'YYYY-MM-DDTHH:MM'
+	  const endInput   = document.getElementById('fc-event-end').value;   // (없을 수 있음)
+
+	  const alldayCheckbox = document.getElementById('fc-event-allday');
+	  const id   = document.getElementById('fc-modal-id').value;
+
+	  if (!title) { alert('제목을 입력해주세요.'); return; }
+
+	  let startDt, endDt;
+	  if (alldayCheckbox.checked) {
+	    // ✅ 올데이는 날짜만! (로컬 값을 그대로 사용)
+	    startDt = startInput.slice(0, 10);                 // 'YYYY-MM-DD'
+	    endDt   = endInput ? endInput.slice(0, 10) : null; // 'YYYY-MM-DD' | null
+	  } else {
+	    // ✅ 시간 있는 일정만 UTC(Z)로 보냄
+	    startDt = new Date(startInput).toISOString().slice(0, 16) + 'Z';
+	    endDt   = endInput ? new Date(endInput).toISOString().slice(0, 16) + 'Z' : null;
+	  }
+
+	  const scheduleData = {
+	    id,
+	    title,
+	    content: desc,
+	    type: alldayCheckbox.checked ? alldayCheckbox.value : '',
+	    startDt,
+	    endDt,
+	    color,
+	    allDay: alldayCheckbox.checked,
+	    projectId
+	  };
+
+	  $.ajax({
+	    url: id ? '/project/schedule/update' : '/project/schedule/save',
+	    type: 'POST',
+	    contentType: 'application/json',
+	    data: JSON.stringify(scheduleData),
+	    success: function () { alert('저장 완료'); calendar.refetchEvents(); },
+	    error: function () { alert('저장 실패'); }
+	  });
+
+	  closeModal();
+	});
+
 
     //일정 생성 취소
     document.getElementById('fc-cancel-event').addEventListener('click', function() {
