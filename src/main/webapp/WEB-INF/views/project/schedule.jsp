@@ -31,7 +31,6 @@
 
 </head>
 <body>
-	
 	 <%@ include file="../include/layout.jsp" %>	<!-- layout.jsp에서 형식 그대로 가져오기(마지막에 div3개 닫기) -->
 	
 		<input type="hidden" id="project-id" value="${projectId}" />
@@ -45,6 +44,7 @@
 				<div class="body-left">
 					<!-- 외부 이벤트 등록용 DIV -->
 					<button id="toggle-edit-mode" class="btn btn-outline-danger mb-2">편집 모드 켜기</button>
+					
 					<div id="fc-external-events">
 						<p>
 							<strong>달력에 드래그하여 추가</strong>
@@ -110,7 +110,9 @@
 										id="gantt-view-day" autocomplete="off"> <label
 										class="btn btn-outline-dark" for="gantt-view-day">일</label>
 								</div>
+								
 								<button id="open-add-task" class="btn btn-primary">새 작업</button>
+								
 							</div>
 						</div>
 						<div id="gantt-target"></div>
@@ -298,6 +300,11 @@
 	      }<c:if test="${!status.last}">,</c:if>
 	    </c:forEach>
 	];
+	const isAdmin = ${isAdmin};
+	if (!isAdmin) {
+		  document.getElementById("open-add-task").classList.add("invisible"); 
+		  document.getElementById("toggle-edit-mode").classList.add("invisible");
+		}
 	</script>
 <script src="/js/schedule.js"></script>
 </body>

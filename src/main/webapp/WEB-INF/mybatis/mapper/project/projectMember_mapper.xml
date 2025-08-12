@@ -78,5 +78,32 @@
     ]]>
   </update>
 
+<select id="findRoleByProjectAndUser" parameterType="map" resultType="String">
+        SELECT
+            ROLE
+        FROM
+            project_member
+        WHERE
+            PROJECT_ID = #{projectId}
+            AND USER_ID = #{userId}
+    </select>
+    
+    <insert id="insertProjectMemberAsAdmin" parameterType="map">
+        INSERT INTO project_member (
+        	ID,
+            PROJECT_ID,
+            USER_ID,
+            ROLE,
+            STATUS,
+            JOINED_AT
+        ) VALUES (
+        	SEQ_PROJECT_MEMBER.NEXTVAL,
+            #{projectId},
+            #{userId},
+            'ADMIN',
+            'ACTIVE',
+            SYSDATE
+        )
+    </insert>
 </mapper>
 

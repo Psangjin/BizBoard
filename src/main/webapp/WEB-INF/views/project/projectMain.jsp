@@ -31,7 +31,7 @@
 			<div class="project-info-container">
 					<span class="project-dday">마감일까지 : D-${daysLeft}</span>
 					<h1>${project.title}</h1>
-					<h3>PM : ${project.manager}</h3>
+					<h3>PM : ${pmName}</h3>
 					<h3>${project.content}</h3>
 			</div>
 			<div class="progress-container">
@@ -76,12 +76,19 @@
 			    
 			    <div class="project-main-innerbox-scroll">
 				  <ul class="schedule-list">
-				    <c:forEach var="schedule" items="${schedulesByUserAndProject}">
-				      <li>
-				        <strong>${schedule.title}</strong>
-				        <div class="dates">${schedule.startDt} ~ ${schedule.endDt}</div>
-				      </li>
-				    </c:forEach>
+				  <c:choose>
+			            <c:when test="${not empty schedulesByUserAndProject}">
+						    <c:forEach var="schedule" items="${schedulesByUserAndProject}">
+						      <li>
+						        <strong>${schedule.title}</strong>
+						        <div class="dates">${schedule.startDt} ~ ${schedule.endDt}</div>
+						      </li>
+						    </c:forEach>
+				    	</c:when>
+			            <c:otherwise>
+			                <li>아직 할당 받은 일이 없습니다.</li>
+			            </c:otherwise>
+			        </c:choose>
 				  </ul>
 				</div>
 			</div>
@@ -94,10 +101,12 @@
 	  <div class="d-flex justify-content-between align-items-center">
 	    <h3 class="mb-0">공지사항</h3>
 	    <div class="d-flex gap-2">
+	    <c:if test="${sessionScope.loginUserRole == 'ADMIN'}">
 	      <button type="button" class="btn btn-sm btn-outline-secondary" id="btnNoticeEditToggle">편집</button>
 	      <button type="button" class="btn btn-sm btn-primary" id="btnNoticeAdd">
 	        <i class="fa fa-plus"></i>
 	      </button>
+        </c:if>
 	    </div>
 	  </div>
 	
@@ -121,7 +130,9 @@
   <!-- 팀원 목록 (기존 그대로) -->
   <div class="project-main-member project-main-innerbox">
     <h3 style="display:inline;margin-right:40px;">팀원 목록</h3>
-    <button class="btn btn-primary invite-btn" data-bs-toggle="modal" data-bs-target="#memberManageModal">팀원관리</button>
+    <c:if test="${sessionScope.loginUserRole == 'ADMIN'}">
+    	<button class="btn btn-primary invite-btn" data-bs-toggle="modal" data-bs-target="#memberManageModal">팀원관리</button>
+    </c:if>
     <div class="project-main-innerbox-scroll mt-2">
     <c:forEach var="m" items="${projectMemberList}">
       <p>${m.name}</p>

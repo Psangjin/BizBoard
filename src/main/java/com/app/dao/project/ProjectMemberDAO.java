@@ -10,4 +10,6 @@ public interface ProjectMemberDAO {
 	  int insertMember(Long projectId, String email, String role);
 	  int updateRole(Long projectId, String email, String role);
 	  int softRemove(Long projectId, String email);
+	  String findRoleByProjectAndUser(Long projectId, String userId);
+	  void insertProjectMemberAsAdmin(Long projectId, String userId);
 }

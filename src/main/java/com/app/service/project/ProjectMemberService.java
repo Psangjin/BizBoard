@@ -9,4 +9,6 @@ public interface ProjectMemberService {
 	  void invite(Long projectId, String email, String role);
 	  void changeRole(Long projectId, String email, String role);
 	  void remove(Long projectId, String email);
+	  String findRoleByProjectAndUser(Long projectId, String userId);
+	  void insertProjectMemberAsAdmin(Long projectId, String userId);
 }

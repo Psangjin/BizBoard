@@ -6,17 +6,22 @@
 <mapper namespace="project_mapper">
 
 	<insert id="createProject" parameterType="Project">
-		INSERT INTO t_project (
-      id, manager, title, content, start_dt, end_dt
-    ) VALUES (
-      project_seq.NEXTVAL,
-      #{manager},
-      #{title},
-      #{content},
-      #{startDt},
-      #{endDt}
-    )
-	</insert>
+        <!-- 시퀀스 값 미리 가져오기 -->
+        <selectKey keyProperty="id" order="BEFORE" resultType="long">
+            SELECT project_seq.NEXTVAL FROM dual
+        </selectKey>
+
+        INSERT INTO t_project (
+            id, manager, title, content, start_dt, end_dt
+        ) VALUES (
+            #{id},
+            #{manager},
+            #{title},
+            #{content},
+            #{startDt},
+            #{endDt}
+        )
+    </insert>
 	
 	<select id="findAllProjects" resultType="Project">
 		SELECT * FROM t_project
