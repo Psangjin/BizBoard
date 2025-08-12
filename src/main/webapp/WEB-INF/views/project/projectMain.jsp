@@ -120,11 +120,14 @@
 
   <!-- 팀원 목록 (기존 그대로) -->
   <div class="project-main-member project-main-innerbox">
-    <h3>팀원 목록</h3>
+    <h3 style="display:inline;margin-right:40px;">팀원 목록</h3>
+    <button class="btn btn-primary invite-btn" data-bs-toggle="modal" data-bs-target="#memberManageModal">팀원관리</button>
+    <div class="project-main-innerbox-scroll mt-2">
     <c:forEach var="m" items="${projectMemberList}">
       <p>${m.name}</p>
     </c:forEach>
-    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#memberManageModal">팀원초대</button>
+    </div>
+    
   </div>
 </div>
 <!-- 공지 상세 모달 (읽기 전용) -->
