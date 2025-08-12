@@ -1,6 +1,8 @@
 package com.app.dao.project.impl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +20,7 @@ public class ProjectDAOImpl implements ProjectDAO{
 	@Override
 	public int createProject(Project project) {
 		
-		int result = sqlSessionTemplate.insert("project_mapper.createProject", project);
-		
-		return result;
+		return  sqlSessionTemplate.insert("project_mapper.createProject", project);
 	}
 
 	@Override
@@ -44,6 +44,26 @@ public class ProjectDAOImpl implements ProjectDAO{
 		
 		List<Project> projectList = sqlSessionTemplate.selectList("project_mapper.findProjectsByUserId", userId);
 		return projectList;
+	}
+
+	@Override
+	public int updateProject(Project project) {
+		return sqlSessionTemplate.update("project_mapper.updateProject",project);
+	}
+
+	@Override
+	public int deleteProject(Long id) {
+		return sqlSessionTemplate.delete("project_mapper.deleteProject",id);
+	}
+
+	@Override
+	public boolean isAdmin(Long projectId, String userId) {
+		 Map<String, Object> param = new HashMap<>();
+		    param.put("projectId", projectId);
+		    param.put("userId", userId);
+
+		    Integer n = sqlSessionTemplate.selectOne("ProjectMapper.isAdmin", param); // ← 네임스페이스.id
+		    return n != null && n == 1;
 	}
 
 }

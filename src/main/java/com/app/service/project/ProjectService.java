@@ -13,4 +13,8 @@ public interface ProjectService {
 	Project findProjectById(Long projectId);
 	
 	List<Project> findProjectsByUserId(String userId);
+	
+	void updateProject(Project updated, String actorUserId);
+	
+	int deleteProject(Long id);
 }

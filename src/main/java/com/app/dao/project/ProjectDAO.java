@@ -14,4 +14,10 @@ public interface ProjectDAO {
 	Project findProjectById(Long projectId);
 	
 	List<Project> findProjectsByUserId(String userId);
+	
+	int updateProject(Project project);
+	
+	int deleteProject(Long id);
+	
+	boolean isAdmin(Long projectId,String userId);
 }

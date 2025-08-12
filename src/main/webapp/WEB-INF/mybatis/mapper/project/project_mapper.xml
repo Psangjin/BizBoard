@@ -5,7 +5,7 @@
 		   
 <mapper namespace="project_mapper">
 
-	<insert id="createProject" parameterType="Project">
+	<!-- <insert id="createProject" parameterType="Project">
 		INSERT INTO t_project (
       id, manager, title, content, start_dt, end_dt
     ) VALUES (
@@ -16,7 +16,15 @@
       #{startDt},
       #{endDt}
     )
+	</insert> -->
+	<insert id="createProject" parameterType="com.app.dto.project.Project">
+	  <selectKey keyProperty="id" resultType="long" order="BEFORE">
+	    SELECT project_seq.NEXTVAL FROM DUAL
+	  </selectKey>
+	  INSERT INTO T_PROJECT (ID, MANAGER, TITLE, CONTENT, START_DT, END_DT)
+	  VALUES (#{id}, #{manager}, #{title}, #{content}, #{startDt}, #{endDt})
 	</insert>
+	
 	
 	<select id="findAllProjects" resultType="Project">
 		SELECT * FROM t_project
@@ -33,5 +41,31 @@
   JOIN t_project p ON m.project_id = p.id
   WHERE m.user_id = #{userId}
 	</select>
+	
+	  <!-- 프로젝트 업데이트 (동적) -->
+  <update id="updateProject" parameterType="com.app.dto.project.Project">
+    UPDATE t_project
+       <set>
+         <if test="manager != null"> manager = #{manager}, </if>
+         <if test="title   != null"> title   = #{title},   </if>
+         <if test="content != null"> content = #{content}, </if>
+         <if test="endDt   != null"> end_dt  = #{endDt},   </if>
+       </set>
+     WHERE id = #{id}
+  </update>
+  
+    <!-- 삭제 -->
+  <delete id="deleteProject" parameterType="long">
+    DELETE FROM t_project WHERE id = #{id}
+  </delete>
+  
+  <!-- caller(변경한 사람)가 ADMIN인지 검사 -->
+  <select id="isAdmin" parameterType="map" resultType="int">
+    SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END
+      FROM t_project_member
+     WHERE project_id = #{projectId}
+       AND user_id    = #{userId}
+       AND role       = 'ADMIN'
+  </select>
 
 </mapper>

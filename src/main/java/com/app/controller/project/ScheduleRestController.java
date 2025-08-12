@@ -25,12 +25,20 @@ import org.springframework.web.bind.annotation.RestController;
 import com.app.dto.project.Project;
 import com.app.dto.project.Schedule;
 import com.app.dto.user.User;
+import com.app.service.UserService;
 import com.app.service.project.InformService;
+import com.app.service.project.ProjectMemberService;
 import com.app.service.project.ProjectService;
 import com.app.service.project.ScheduleService;
 
 @RestController
 public class ScheduleRestController {
+	
+	@Autowired
+	private UserService userService;
+	
+	@Autowired
+	private ProjectMemberService projectMemberService;
 	
 	@Autowired
 	private ScheduleService scheduleService;
@@ -65,8 +73,12 @@ public class ScheduleRestController {
 	}
 	
 	@PostMapping("/project/create")
-	public ResponseEntity<String> createProject(@RequestBody Project project) {
+	public ResponseEntity<String> createProject(@RequestBody Project project,HttpSession session) {
         int result = projectService.createProject(project);
+        Long createProjectId = project.getId();
+        User user = (User) session.getAttribute("loginUser");
+        String createEmail = userService.findEmailByUser(user);
+        projectMemberService.invite(createProjectId, createEmail, "admin");
         System.out.println("백");
         System.out.println(project);
         if (result > 0) {
