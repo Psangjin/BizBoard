@@ -156,17 +156,13 @@ public class AccountController {
 		} else {
 			
 			String userId = loginUser.getId();
-			List<Project> myProjects = projectService.getMyProjects(userId);
-		    List<Project> participatedProjects = projectService.getParticipatedProjects(userId);
-
 
 			
 			model.addAttribute("id", loginUser.getId()); //id
 			model.addAttribute("name", loginUser.getName()); //name
 			model.addAttribute("email", loginUser.getEmail()); //email
 			model.addAttribute("loginUser", loginUser); // 비밀번호 수정용
-			model.addAttribute("myProjects", myProjects); // 마이 프로젝트
-			model.addAttribute("participatedProjects", participatedProjects); // 프로젝트 참여 
+			
 			return "account/mypage";
 			}
 		}

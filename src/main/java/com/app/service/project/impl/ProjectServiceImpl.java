@@ -49,18 +49,9 @@ public class ProjectServiceImpl implements ProjectService {
 	
 	
 	
-	@Override
-    public List<Project> getMyProjects(String userId) {
-        return projectDAO.findMyProjects(userId);
-    }
 	
 	
-
-    @Override
-    public List<Project> getParticipatedProjects(String userId) {
-        return projectDAO.findParticipatedProjects(userId);
-	
-    }
+   
 	
 	
 }
