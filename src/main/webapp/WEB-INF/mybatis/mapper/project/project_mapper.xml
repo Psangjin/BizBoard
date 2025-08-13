@@ -74,7 +74,7 @@
 	
 	<select id="countNumberofScheduleDoneByProjectId" resultType="int" parameterType="map">
 	select count(*) from schedule
-	where project_id=#{projectId} AND completed is not null
+	where project_id=#{projectId} AND completed = 'Done'
 	and type=#{type}
 	</select>
 	
