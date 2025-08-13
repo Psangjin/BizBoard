@@ -39,7 +39,7 @@
 					
 			</div>
 			<i class="fa-solid fa-arrow-right-from-bracket"
-					id="mainpage-header-icon" ></i>	
+					id="mainpage-header-icon"></i>	
 		</div>
 	</div>
 	
@@ -63,7 +63,7 @@
 	<script>
 	  document.addEventListener('DOMContentLoaded', function () {
 	    // 아이콘 스타일/클래스/ID 유지. 
-	    const logoutIcon = document.querySelector('.user-dropdown .fa-arrow-right-from-bracket');
+	    const logoutIcon = document.querySelector('.fa-arrow-right-from-bracket');
 	    if (!logoutIcon) return;
 	    
 
