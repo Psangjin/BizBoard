@@ -95,6 +95,8 @@
 }
 
 .memo-info {
+	height: 120px;
+	overflow: hidden;
 	width: 100%; /* 다 담기도록*/
 }
 
@@ -364,7 +366,7 @@
 </head>
 <body>
 	<input type="hidden" id="memo-project-id" value="${sessionScope.project.id}">
-	<input type="hidden" id="memo-login-user" value="${loginUser}">
+	<input type="hidden" id="memo-login-user" value="${loginUser.name}">
 
 	<%@ include file="../include/layout.jsp"%>
 	<!-- layout.jsp에서 형식 그대로 가져오기(마지막에 div3개 닫기) -->
@@ -511,7 +513,7 @@
 	</div>
 	<script>
 	
-	 const loginUser = "${loginUser}";
+	 const loginUser = "${loginUser.name}";
 	 //const loginUser = "아이디";
 	let currentMemoIndex = null;
 	
