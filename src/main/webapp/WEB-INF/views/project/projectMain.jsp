@@ -230,8 +230,8 @@
 	
 	      <div class="mb-2">
 	        <label for="edit-manager" style="display:block; font-weight:600; margin-bottom:6px;">매니저(ID)</label>
-	        <input id="edit-manager" type="text" class="form-control" style="width:100%; padding:8px 10px; border:1px solid #d0d7de; border-radius:8px;">
-	      </div>
+	        <input id="edit-manager" type="text" class="form-control" style="width:100%; padding:8px 10px; border:1px solid #d0d7de; border-radius:8px;" disabled>
+	      </div> 
 	
 	      <div class="mb-2">
 	        <label for="edit-title" style="display:block; font-weight:600; margin-bottom:6px;">제목</label>
