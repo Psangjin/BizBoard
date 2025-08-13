@@ -21,4 +21,22 @@ public interface UserDAO {
 
      //이메일추출
      String findEmailByUser(User user);
+     
+    // 마이페이지 비밀번호 변경
+	 int updateUserPassword(User user);
+	
+	 // 
+	 int deleteUser(String id);
+
+	 //email 중복
+	 int checkEmailDuplicate(User user);
+	 
+	 //마이프로필 수정
+	 int updateUserProfile(User user);
+	 
+	// 비번찾기 이메밀 확인
+	 User findByIdAndEmail(String id, String email);
+
+   
+
 }

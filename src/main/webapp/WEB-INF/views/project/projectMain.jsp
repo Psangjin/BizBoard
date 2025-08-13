@@ -342,9 +342,9 @@
 								<td>${m.joinedAt}</td>
 								<td>
 									<button class="btn btn-sm btn-outline-danger"
-									        onclick="removeMember('${m.email}')"
+									        onclick="removeMember('${m.name}','${m.email}')"
 									        <c:if test="${m.role=='OWNER'}">disabled</c:if>>
-										강퇴
+										삭제
 									</button>
 								</td>
 							</tr>
@@ -397,8 +397,9 @@
 	}
 
 	// 강퇴
-	function removeMember(email){
-		if(!confirm(`${email} 님을 강퇴하시겠습니까?`)) return;
+	function removeMember(name, email){
+console.log(name, email);
+		if(!confirm(name+ `님을 강퇴하시겠습니까?`)) return;
 		fetch('/project/member/remove', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },

@@ -1,6 +1,9 @@
 package com.app.dao.impl;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -44,5 +47,35 @@ public class UserDAOImpl implements UserDAO {
 		return sqlSession.selectOne("user_mapper.findEmailByUser",user);
 	}
     
-   
+    @Override
+    public int updateUserPassword(User user) {
+        return sqlSession.update("user_mapper.updateUserPassword", user);
+    }
+    
+    @Override
+    public int deleteUser(String id) {
+        return sqlSession.delete("user_mapper.deleteUser", id);
+    }
+
+    @Override
+    public int checkEmailDuplicate(User user) {
+        return sqlSession.selectOne("user_mapper.checkEmailDuplicate", user);
+    }
+
+    @Override
+    public int updateUserProfile(User user) {
+        return sqlSession.update("user_mapper.updateUserProfile", user);
+    }
+    
+    
+ // 비번찾기
+    @Override
+    public User findByIdAndEmail(String id, String email) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("id", id);
+        param.put("email", email);
+        return sqlSession.selectOne("user_mapper.findByIdAndEmail", param);
+    }
+
+
 }

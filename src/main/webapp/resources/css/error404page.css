@@ -1,0 +1,167 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
+    font-family: Arial, sans-serif;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    width: 90vw;
+    height: 80vh;
+    max-width: 1200px;
+    max-height: 800px;
+    background: linear-gradient(135deg, #4a90c2 0%, #6ba6cd 50%, #7bb3d3 100%);
+    padding: 20px;
+    border-radius: 15px;
+}
+
+.inner-container {
+    width: 100%;
+    height: 100%;
+    background-color: #ffffff;
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+    border: 3px solid #d0d0d0;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+}
+
+.error-number {
+    font-size: 200px;
+    font-weight: bold;
+    color: #4a90c2;
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+}
+
+.message-box {
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(255, 255, 255, 1.0);
+    padding: 40px 60px;
+    border-radius: 8px;
+    border: 1px solid;
+    text-align: center;
+    z-index: 10;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.message-text {
+    font-size: 20px;
+    color: #333;
+    margin: 0 0 15px 0;
+    font-weight: bold;
+}
+
+.sub-message {
+    font-size: 16px;
+    color: #333;
+    margin: 0;
+}
+
+.bizboard-logo {
+    position: absolute;
+    bottom: 8%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    text-decoration: none;
+    transition: transform 0.2s ease;
+}
+
+.bizboard-logo:hover {
+    transform: translateX(-50%) scale(1.05);
+}
+
+.logo-image {
+    height: 60px;
+    width: auto;
+    display: block;
+}
+
+/* 장식용 도형들 */
+.shape {
+    position: absolute;
+   
+}
+
+.yellow-rect-1 {
+    width: 180px;
+    height: 180px;
+    background-color: #F7F79F;
+    top: 8%;
+    left: 5%;
+   	border: 1px solid;
+}
+
+.pink-rect-1 {
+    width: 180px;
+    height: 180px;
+    background-color: #E673AB;
+    top: 18%;
+    left: 18%;
+	border: 1px solid;
+}
+
+.blue-rect-1 {
+    width: 180px;
+    height: 180px;
+    background-color: #637BC9;
+    top: 28%;
+    left: 8%;
+	border: 1px solid;
+}
+
+.yellow-rect-2 {
+    width: 180px;
+    height: 180px;
+    background-color: #F7F79F;
+    bottom: 12%;
+    left: 15%;
+	border: 1px solid;
+}
+
+.pink-rect-2 {
+    width: 180px;
+    height: 180px;
+    background-color: #E673AB;
+    top: 12%;
+    right: 12%;
+	border: 1px solid;
+}
+
+.yellow-rect-3 {
+    width: 180px;
+    height: 180px;
+    background-color: #F7F79F;
+    top: 5%;
+    right: 5%;
+	border: 1px solid;
+}
+
+.blue-rect-2 {
+    width: 180px;
+    height: 180px;
+    background-color: #637BC9;
+    bottom: 18%;
+    right: 15%;
+	border: 1px solid;
+}
+
+.yellow-rect-4 {
+    width: 180px;
+    height: 180px;
+    background-color: #F7F79F;
+    bottom: 8%;
+    right: 5%;
+	border: 1px solid;
+}

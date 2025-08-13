@@ -66,6 +66,28 @@
        AND role       = 'ADMIN'
   </select>
 
+
+
+	<!-- 내가 작성한 프로젝트 -->
+	<select id="findMyProjects" resultType="com.app.dto.project.Project">
+	    SELECT * FROM t_project
+	    WHERE manager = #{userId}
+	</select>
+
+
+	<!-- 내가 참여한 프로젝트 (작성자와 상관없이) -->
+	<select id="findParticipatedProjects" resultType="com.app.dto.project.Project">
+	    SELECT p.*
+	    FROM t_project p
+	    JOIN project_user pu ON p.id = pu.project_id
+	    WHERE pu.user_id = #{userId}
+	</select>
+
+
+
+
+
+
 	<select id="countNumberofScheduleByProjectId" resultType="int" parameterType="map">
 	select count(*) from schedule
 	where project_id=#{projectId}

@@ -48,31 +48,15 @@
 	</annotation-driven>						
 
 
-	<!-- <interceptors>
-		<interceptor>
-			<mapping path="/customer/**"/>
-			<exclude-mapping path="/customer/signin"/>
-			<exclude-mapping path="/customer/signup"/>
-			<exclude-mapping path="/customer/checkDupIdJson"/>
-			<beans:bean class="com.app.interceptor.LoginInterceptor"></beans:bean>
-			<mapping path="/**"/>
-			<exclude-mapping path="/customer/signin"/>
-			<exclude-mapping path="/customer/signup"/>
-			<exclude-mapping path="/customer/checkDupIdJson"/>
-			<exclude-mapping path="/"/>
-			<exclude-mapping path="/main"/>
-			<exclude-mapping path="/css/**"/>
-			<exclude-mapping path="/js/**"/>
-			<exclude-mapping path="/image/**"/>
-			<beans:bean class="com.app.interceptor.LoginInterceptor"></beans:bean>
-		</interceptor>
+	<interceptors>
 		
 		<interceptor>
-			<mapping path="/admin/**"/>
-			<exclude-mapping path="/admin/signin"/>
-			<beans:bean class="com.app.interceptor.AdminInterceptor"></beans:bean>
+		    <mapping path="/project/main/*"/>
+		    <mapping path="/project/schedule/*"/>
+		    <mapping path="/project/memo/*"/>
+		    <beans:bean class="com.app.interceptor.ProjectAuthInterceptor"></beans:bean>
 		</interceptor>
 		
-	</interceptors> -->
+	</interceptors>
 
 </beans:beans>
