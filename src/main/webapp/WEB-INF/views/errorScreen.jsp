@@ -24,12 +24,12 @@
                     <h2 class="warning-title">경고</h2>
                     	
                     <div class="warning-message">
-                           <img class="error-image" src="/images/subtract.png" alt="경고로고" />
+                           <img class="error-image" src="/image/error.png" alt="경고로고" />
                         <p>허가되지 않는 프로젝트입니다.<br>프로젝트를 보기 위해선<br>프로젝트 관계자의 허가가 필요합니다.</p>
                     </div>
                 </div>
 
-                <button class="confirm-button">확인</button>
+                <button class="confirm-button" onclick="location.href='/mainpage'">확인</button>
             </div>
         </div>
     </div>
