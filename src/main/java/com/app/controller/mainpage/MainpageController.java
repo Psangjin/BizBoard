@@ -9,11 +9,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-<<<<<<< HEAD
-=======
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
->>>>>>> b88f9d4a6583b75a23397c8ea326d90808b4df1b
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -53,7 +49,7 @@ public class MainpageController {
 	public String service() {
 		return "service/service";
 	}
-<<<<<<< HEAD
+
 	@RequestMapping("/inquiryFAQ")
 	public String inquiryFAQ() {
 		return "inquiry/inquiryFAQ";
@@ -74,7 +70,7 @@ public class MainpageController {
 	}
 	*/
 
-=======
+
 	
 	@ResponseBody
 	@GetMapping("/main/data")
@@ -92,6 +88,6 @@ public class MainpageController {
         return ResponseEntity.ok(schedulesMap);
     }
 	
->>>>>>> b88f9d4a6583b75a23397c8ea326d90808b4df1b
+
 }
 

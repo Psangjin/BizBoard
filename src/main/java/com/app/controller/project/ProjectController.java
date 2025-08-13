@@ -12,22 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-<<<<<<< HEAD
-=======
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
->>>>>>> b88f9d4a6583b75a23397c8ea326d90808b4df1b
 
 import com.app.dto.project.Project;
 import com.app.dto.project.ProjectMember;
 import com.app.dto.project.Schedule;
-<<<<<<< HEAD
-=======
 import com.app.dto.user.User;
 import com.app.service.UserService;
->>>>>>> b88f9d4a6583b75a23397c8ea326d90808b4df1b
 import com.app.service.project.ProjectMemberService;
 import com.app.service.project.ProjectService;
 import com.app.service.project.ScheduleService;
