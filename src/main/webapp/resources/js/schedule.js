@@ -1269,6 +1269,8 @@ document.getElementById("save-task-modify")?.addEventListener("click", async fun
 
 	  const alldayCheckbox = document.getElementById('fc-event-allday');
 	  const id   = document.getElementById('fc-modal-id').value;
+	  
+	  const completed = document.getElementById('state-select-modify-cal').value;
 
 	  if (!title) { alert('제목을 입력해주세요.'); return; }
 
@@ -1292,6 +1294,7 @@ document.getElementById("save-task-modify")?.addEventListener("click", async fun
 	    endDt,
 	    color,
 	    allDay: alldayCheckbox.checked,
+		completed: completed,
 	    projectId
 	  };
 
