@@ -77,11 +77,6 @@ public class ScheduleRestController {
 		User user = (User) session.getAttribute("loginUser");
 		project.setManager(user.getId());
 		int result = projectService.createProject(project);
-        Long createProjectId = project.getId();
-        String createEmail = userService.findEmailByUser(user);
-        projectMemberService.invite(createProjectId, createEmail, "admin");
-        System.out.println("백");
-        System.out.println(project);
         if (result > 0) {
         	projectMemberService.insertProjectMemberAsAdmin(project.getId(), user.getId());
             String loginUserRole = projectMemberService.findRoleByProjectAndUser(project.getId(), user.getId());
