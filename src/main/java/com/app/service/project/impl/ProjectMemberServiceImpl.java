@@ -43,4 +43,16 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
 		    }
 		  }
 
+		  @Override
+		  public String findRoleByProjectAndUser(Long projectId, String userId) {
+			String result = projectMemberDAO.findRoleByProjectAndUser(projectId, userId);
+			return result;
+		  }
+
+		  @Override
+		  public void insertProjectMemberAsAdmin(Long projectId, String userId) {
+			projectMemberDAO.insertProjectMemberAsAdmin(projectId, userId);
+			
+		  }
+
 }

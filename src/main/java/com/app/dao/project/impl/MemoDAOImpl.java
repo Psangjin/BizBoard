@@ -1,6 +1,8 @@
 package com.app.dao.project.impl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +36,12 @@ public class MemoDAOImpl implements MemoDAO {
 	}
 
 	@Override
-	public List<Memo> getMemosByProjectId(Long projectId) {
-		List<Memo> memoList = sqlSessionTemplate.selectList("memo_mapper.getMemosByProjectId",projectId);
-		return memoList;
+	public List<Memo> selectByProjectId(Long projectId, String order) {
+	    Map<String, Object> params = new HashMap<>();
+	    params.put("projectId", projectId);
+	    params.put("order", order); // "asc" 또는 "desc"
+	    return sqlSessionTemplate.selectList("memo_mapper.selectByProjectId", params);
 	}
+
 
 }

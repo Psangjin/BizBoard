@@ -38,6 +38,11 @@ public class UserDAOImpl implements UserDAO {
     public User findByEmail(String email) {
         return sqlSession.selectOne("user_mapper.findByEmail", email);
     }
+
+	@Override
+	public String findEmailByUser(User user) {
+		return sqlSession.selectOne("user_mapper.findEmailByUser",user);
+	}
     
    
 }

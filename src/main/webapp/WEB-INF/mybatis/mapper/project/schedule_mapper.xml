@@ -48,5 +48,65 @@
 		WHERE id=#{id}
 	</update>
 	
+	<select id="selectSchedulesByUserAndProject" resultType="Schedule" parameterType="map">
+  SELECT 
+    s.ID          AS id,
+    s.TITLE       AS title,
+    s.CONTENT     AS content,
+    s.TYPE        AS type,
+    s.START_DT    AS startDt,
+    s.END_DT      AS endDt,
+    s.COMPLETED   AS completed,
+    s.COLOR       AS color,
+    s.PROJECT_ID  AS projectId
+  FROM taskmember tm
+  INNER JOIN schedule s ON tm.SCHEDULE_ID = s.ID
+  WHERE tm.USER_ID = #{userId}
+    AND s.PROJECT_ID = #{projectId}
+</select>
+	
+	<resultMap id="scheduleWithProjectResultMap" type="com.app.dto.project.ScheduleWithProject">
+    <id property="id" column="SCHEDULE_ID"/>
+    <result property="title" column="SC_TITLE"/>
+    <result property="type" column="TYPE"/>
+    <result property="startDt" column="START_DT"/>
+    <result property="endDt" column="END_DT"/>
+    <result property="completed" column="COMPLETED"/>
+    <result property="color" column="COLOR"/>
+    
+    <result property="projectId" column="PROJECT_ID"/>
+    <result property="projectTitle" column="P_TITLE"/>
+  </resultMap>
+  
+  <select id="selectUserSchedules" parameterType="String" resultMap="scheduleWithProjectResultMap">
+     SELECT 
+        sc.id AS SCHEDULE_ID, 
+        sc.title AS SC_TITLE, 
+        sc.type AS TYPE, 
+        sc.start_dt AS START_DT, 
+        sc.end_dt AS END_DT, 
+        sc.completed AS COMPLETED, 
+        sc.color AS COLOR,
+        p.id AS PROJECT_ID, 
+        p.title AS P_TITLE
+    FROM 
+        taskmember tm, 
+        schedule sc, 
+        t_project p
+    WHERE 
+        tm.schedule_id = sc.id 
+        AND p.id = sc.project_id 
+        AND tm.user_id = #{userId}
+        AND TRUNC(SYSDATE) BETWEEN TRUNC(sc.start_dt) AND TRUNC(sc.end_dt)
+        </select>
+	<!-- 단건 조회 -->
+  <select id="selectById" parameterType="long" resultType="Schedule">
+    SELECT
+      ID, PROJECT_ID, TITLE, CONTENT, TYPE,
+      START_DT, END_DT, COLOR, COMPLETED
+    FROM SCHEDULE
+    WHERE ID = #{id}
+  </select>
+	
 
 </mapper>

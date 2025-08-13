@@ -19,6 +19,7 @@
 		<typeAlias type="com.app.dto.project.ProjectMember" alias="ProjectMember"/>
 		<typeAlias type="com.app.dto.project.TaskMember" alias="TaskMember"/>
 		<typeAlias type="com.app.dto.project.TaskComment" alias="TaskComment"/>
+		<typeAlias type="com.app.dto.project.Inform" alias="Inform"/>
 	</typeAliases>	
 		
 		

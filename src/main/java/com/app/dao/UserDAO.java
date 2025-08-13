@@ -19,6 +19,6 @@ public interface UserDAO {
     // 이메일 중복 체크
      User findByEmail(String email);
 
-   
-
+     //이메일추출
+     String findEmailByUser(User user);
 }

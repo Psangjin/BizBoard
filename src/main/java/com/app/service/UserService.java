@@ -8,5 +8,7 @@ public interface UserService {
 	public void signup(User user);						// 일반 회원가입					
 	public User getUser(String id); 					// ID로 사용자 조회
 	public User findByEmail(String email);  			// 이메일로 사용자 조회
+	
+	public String findEmailByUser(User user);			//이메일 추출
 }
 

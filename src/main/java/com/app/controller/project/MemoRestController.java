@@ -62,9 +62,15 @@ public class MemoRestController {
 
 
     // ✅ 프로젝트별 메모 목록 조회
+ // MemoRestController
     @GetMapping("/list")
-    public List<Memo> getMemoList(@RequestParam Long projectId) {
-        System.out.println("📥 [list] projectId = " + projectId);
-        return memoService.getMemosByProjectId(projectId);
+    public List<Memo> getMemoList(@RequestParam Long projectId,
+                                  @RequestParam(required = false, defaultValue = "desc") String order) {
+        // 화이트리스트(안전)
+        order = "asc".equalsIgnoreCase(order) ? "asc" : "desc";
+        System.out.println("[/memo/list] projectId=" + projectId + ", order=" + order); // ✅ 확인
+        return memoService.getMemosByProjectId(projectId, order);
     }
+
+
 }
