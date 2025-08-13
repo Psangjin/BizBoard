@@ -1,12 +1,44 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"  %>
+<%@ taglib prefix="fn"  uri="http://java.sun.com/jsp/jstl/functions" %>
+
+
+<c:set var="endDtIso" value=""/>
+
+<c:if test="${not empty project and not empty project.endDt}">
+  <c:set var="s" value="${project.endDt}"/>
+  <!-- 문자열화 + / → -, 소수점 제거 -->
+  <c:set var="s" value="${fn:substringBefore(s, '.')}"/>
+  <c:set var="s" value="${fn:replace(s, '/', '-')}"/>
+
+  <c:set var="year" value="${fn:substringBefore(s, '-')}"/>
+
+  <c:catch var="dateError">
+    <c:choose>
+      <c:when test="${fn:length(year) == 2}">
+        <fmt:parseDate value="${s}" pattern="yy-MM-dd HH:mm:ss" var="tmp"/>
+      </c:when>
+      <c:otherwise>
+        <fmt:parseDate value="${s}" pattern="yyyy-MM-dd HH:mm:ss" var="tmp"/>
+      </c:otherwise>
+    </c:choose>
+    <fmt:formatDate value="${tmp}" pattern="yyyy-MM-dd'T'HH:mm" var="endDtIso"/>
+  </c:catch>
+</c:if>
+
+
+
+
+	
+
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>BizBoard</title>
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 <!-- ✅ Bootstrap 5.3 CSS -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
 <!-- ✅ Bootstrap 5.3 JS -->
@@ -21,6 +53,10 @@
 
 <body>
 
+	<c:if test="${not empty sessionScope.loginUser}">
+	  <meta name="current-user" content="${sessionScope.loginUser.id}">
+	</c:if>
+	
 <input type="hidden" id="projectMain-project-id" value="${projectId}">
 <input type="hidden" id="projectMain-projectMemberList" value="${projectMemberList}">
 <%@ include file="../include/layout.jsp"%>
@@ -33,6 +69,20 @@
 					<h1>${project.title}</h1>
 					<h3>PM : ${pmName}</h3>
 					<h3>${project.content}</h3>
+					<c:if test="${not empty sessionScope.loginUser and sessionScope.loginUser.id eq project.manager}">
+					  <button id="toggle-edit-mode" class="btn btn-outline-primary btn-sm">
+					    <i class="bi bi-pencil-square me-1"></i> 편집
+					  </button>
+					</c:if>
+					<c:if test="${not empty sessionScope.loginUser and sessionScope.loginUser.id eq project.manager}">
+					  <button type="button"
+					          id="btn-project-delete"
+					          class="btn btn-outline-danger me-auto"
+					          data-project-id="${project.id}">삭제</button>
+					</c:if>
+
+					
+
 			</div>
 			<div class="progress-container">
 				<div class="progress-display">
@@ -167,7 +217,44 @@
     </div>
   </div>
 </div>
-
+<!-- (추가) 프로젝트 수정 모달 -->
+	<div id="project-edit-modal" class="modal-backdrop" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.35); z-index:9999;">
+	  <div class="modal-card" style="width:520px; max-width:90vw; background:#fff; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.2); margin:8vh auto; padding:18px 20px;">
+	    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+	      <h3 style="margin:0; font-size:18px;">프로젝트 수정</h3>
+	      <button type="button" id="modal-close" style="border:none; background:transparent; font-size:20px;">×</button>
+	    </div>
+	
+	    <form id="project-edit-form">
+	      <input type="hidden" id="edit-id">
+	
+	      <div class="mb-2">
+	        <label for="edit-manager" style="display:block; font-weight:600; margin-bottom:6px;">매니저(ID)</label>
+	        <input id="edit-manager" type="text" class="form-control" style="width:100%; padding:8px 10px; border:1px solid #d0d7de; border-radius:8px;">
+	      </div>
+	
+	      <div class="mb-2">
+	        <label for="edit-title" style="display:block; font-weight:600; margin-bottom:6px;">제목</label>
+	        <input id="edit-title" type="text" class="form-control" style="width:100%; padding:8px 10px; border:1px solid #d0d7de; border-radius:8px;">
+	      </div>
+	
+	      <div class="mb-2">
+	        <label for="edit-content" style="display:block; font-weight:600; margin-bottom:6px;">내용</label>
+	        <textarea id="edit-content" rows="5" class="form-control" style="width:100%; padding:8px 10px; border:1px solid #d0d7de; border-radius:8px;"></textarea>
+	      </div>
+	
+	      <div class="mb-3">
+	        <label for="edit-enddt" style="display:block; font-weight:600; margin-bottom:6px;">마감 시간</label>
+	        <input id="edit-enddt" type="datetime-local" class="form-control" style="width:100%; padding:8px 10px; border:1px solid #d0d7de; border-radius:8px;">
+	      </div>
+	
+	      <div style="display:flex; gap:8px; justify-content:flex-end;">
+	        <button type="button" id="modal-cancel" style="padding:8px 12px; border:1px solid #ccc; background:#fff; border-radius:8px;">취소</button>
+	        <button type="submit" style="padding:8px 12px; border:1px solid #2b8a3e; background:#2ecc71; color:#fff; border-radius:8px;">저장</button>
+	      </div>
+	    </form>
+	  </div>
+	</div>
 <!-- 공지 모달 (등록/수정 겸용) -->
 <div class="modal fade" id="noticeModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-scrollable">
@@ -382,6 +469,142 @@
         ddayElement.textContent = `종료된 프로젝트`;
         ddayElement.style.backgroundColor = '#616161';
     }
+    
+    //////////프로젝트 편집
+    
+    const CURRENT_USER =
+  document.querySelector('meta[name="current-user"]')?.content ||
+  document.body?.dataset?.userid ||
+  (window.CURRENT_USER || null);
+    
+ window.PROJECT_DETAIL = {
+    id:     <c:out value="${project.id}" default="null"/>,
+    manager:'<c:out value="${project.manager}" default=""/>',
+    title:  '<c:out value="${project.title}"   default=""/>',
+    content:'<c:out value="${project.content}" default=""/>',
+    endDt:  '${endDtIso}'   // ← 이미 input[type=datetime-local]이 먹는 형식
+  };
+
+  // 확인용 로그
+  console.log('DEBUG endDt raw =', '<c:out value="${project.endDt}" default=""/>');
+  console.log('DEBUG endDt iso =', '${endDtIso}');
+    	/* ===== 프로젝트 편집 모달 열기 연결 ===== */
+document.addEventListener('DOMContentLoaded', () => {
+  // 엘리먼트
+  const $btn     = document.getElementById('toggle-edit-mode');
+  const $backdrop= document.getElementById('project-edit-modal');
+  const $form    = document.getElementById('project-edit-form');
+  const $close   = document.getElementById('modal-close');
+  const $cancel  = document.getElementById('modal-cancel');
+
+  // 안전 기본값 유틸
+  const safe = (v) => (v == null ? '' : v);
+
+//← 이 함수로 교체
+  function toInputDatetimeLocal(ts){
+    if (!ts) return '';
+
+    // 문자열로 통일
+    let s = String(ts).trim();
+
+    // 공백 → T, 슬래시 → 하이픈, 소수점(.0, .000000000) 제거, 타임존(Z, +09:00 등) 제거
+    s = s.replace(' ', 'T')
+         .replace(/\//g, '-')
+         .replace(/\.\d+$/, '')
+         .replace(/(Z|[+-]\d{2}:\d{2})$/, '');
+
+    // 연도 2자리/4자리 모두 허용, 분까지만 사용
+    const m = s.match(/^(\d{2,4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})/);
+    if (!m) return '';
+
+    let [_, yRaw, mm, dd, HH, MM] = m;
+    const yyyy = yRaw.length === 2 ? '20' + yRaw : yRaw; // 2자리 연도 보정(예: 25 → 2025)
+
+    return `${yyyy}-${mm}-${dd}T${HH}:${MM}`;
+  }
+
+
+
+
+  // 모달 열기/닫기
+function openEditModal(p = {}) {
+  document.getElementById('edit-id').value      = p.id ?? '';
+  document.getElementById('edit-manager').value = p.manager ?? '';
+  document.getElementById('edit-title').value   = p.title ?? '';
+  document.getElementById('edit-content').value = p.content ?? '';
+  document.getElementById('edit-enddt').value   = p.endDt || ''; // 변환 불필요
+  document.getElementById('project-edit-modal').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+
+  function closeEditModal(){
+    $backdrop.style.display = 'none';
+    document.body.style.overflow = '';
+    // 값이 없어도 모달만 닫게 하려면 reset 생략 가능
+    $form?.reset();
+  }
+
+  // 버튼이 없어도 에러 안 나게 가드
+  $btn?.addEventListener('click', () => {
+    // 서버에서 PROJECT_DETAIL을 못 내려줘도 빈 객체로 오픈
+    openEditModal(window.PROJECT_DETAIL || {});
+  });
+  $close?.addEventListener('click', closeEditModal);
+  $cancel?.addEventListener('click', closeEditModal);
+  $backdrop?.addEventListener('click', (e)=> { if (e.target === $backdrop) closeEditModal(); });
+  
+//저장
+  $form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const payload = {
+      id:       document.getElementById('edit-id').value || window.PROJECT_DETAIL?.id,
+      manager:  document.getElementById('edit-manager').value.trim(),
+      title:    document.getElementById('edit-title').value.trim(),
+      content:  document.getElementById('edit-content').value.trim(),
+      endDt:    document.getElementById('edit-enddt').value || null // '' -> null
+    };
+
+    if (!payload.id) { alert('프로젝트 ID가 없습니다.'); return; }
+    if (!payload.title) { alert('제목을 입력하세요.'); return; }
+
+    try {
+      const r = await fetch('/project/update', {
+        method: 'POST',                 // 서버가 PUT이면 'PUT'로 바꾸세요
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!r.ok) throw new Error('저장 실패');
+      alert('저장되었습니다.');
+      location.reload();
+    } catch (err) {
+      alert(err.message || '저장 중 오류');
+    }
+  });
+
+//삭제
+  document.getElementById('btn-project-delete')?.addEventListener('click', async (e) => {
+    const id = e.currentTarget.dataset.projectId;
+    if (!id) { alert('프로젝트 ID가 없습니다.'); return; }
+    if (!confirm('프로젝트를 삭제하시겠습니까? 되돌릴 수 없습니다.')) return;
+
+    try {
+      const r = await fetch('/project/delete/' + encodeURIComponent(id), { method: 'POST' });
+      if (!r.ok) {
+        const t = await r.text().catch(()=> '');
+        throw new Error('삭제 실패 (' + r.status + ') ' + t);
+      }
+      alert('삭제되었습니다.');
+      location.href = '/';
+    } catch (err) {
+      alert(err.message || '삭제 중 오류');
+    }
+  });
+
+
+
+
+});
 </script>
 </body>
 </html>

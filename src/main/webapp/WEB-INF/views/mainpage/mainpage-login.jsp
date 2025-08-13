@@ -68,9 +68,6 @@
 			<div>참여중인 프로젝트</div>
 			<div class="create-project-wrapper" style="display:inline;">
 		        <button class="create-project-btn open-new-project-modal-btn">＋ 새 프로젝트</button>
-		      <button id="toggle-edit-mode" class="btn btn-outline-primary btn-sm">
-			    <i class="bi bi-pencil-square me-1"></i> 편집
-			  </button>
           </div>
 			</div>
 			
@@ -88,44 +85,7 @@
 			</div>
 		</div>
 		
-		<!-- (추가) 프로젝트 수정 모달 -->
-	<div id="project-edit-modal" class="modal-backdrop" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.35); z-index:9999;">
-	  <div class="modal-card" style="width:520px; max-width:90vw; background:#fff; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.2); margin:8vh auto; padding:18px 20px;">
-	    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-	      <h3 style="margin:0; font-size:18px;">프로젝트 수정</h3>
-	      <button type="button" id="modal-close" style="border:none; background:transparent; font-size:20px;">×</button>
-	    </div>
-	
-	    <form id="project-edit-form">
-	      <input type="hidden" id="edit-id">
-	
-	      <div class="mb-2">
-	        <label for="edit-manager" style="display:block; font-weight:600; margin-bottom:6px;">매니저(ID)</label>
-	        <input id="edit-manager" type="text" class="form-control" style="width:100%; padding:8px 10px; border:1px solid #d0d7de; border-radius:8px;">
-	      </div>
-	
-	      <div class="mb-2">
-	        <label for="edit-title" style="display:block; font-weight:600; margin-bottom:6px;">제목</label>
-	        <input id="edit-title" type="text" class="form-control" style="width:100%; padding:8px 10px; border:1px solid #d0d7de; border-radius:8px;">
-	      </div>
-	
-	      <div class="mb-2">
-	        <label for="edit-content" style="display:block; font-weight:600; margin-bottom:6px;">내용</label>
-	        <textarea id="edit-content" rows="5" class="form-control" style="width:100%; padding:8px 10px; border:1px solid #d0d7de; border-radius:8px;"></textarea>
-	      </div>
-	
-	      <div class="mb-3">
-	        <label for="edit-enddt" style="display:block; font-weight:600; margin-bottom:6px;">마감 시간</label>
-	        <input id="edit-enddt" type="datetime-local" class="form-control" style="width:100%; padding:8px 10px; border:1px solid #d0d7de; border-radius:8px;">
-	      </div>
-	
-	      <div style="display:flex; gap:8px; justify-content:flex-end;">
-	        <button type="button" id="modal-cancel" style="padding:8px 12px; border:1px solid #ccc; background:#fff; border-radius:8px;">취소</button>
-	        <button type="submit" style="padding:8px 12px; border:1px solid #2b8a3e; background:#2ecc71; color:#fff; border-radius:8px;">저장</button>
-	      </div>
-	    </form>
-	  </div>
-	</div>
+		
 
 	</div>
 	

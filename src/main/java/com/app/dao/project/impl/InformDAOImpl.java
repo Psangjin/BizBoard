@@ -54,6 +54,7 @@ public class InformDAOImpl implements InformDAO {
 
     @Override
     public int insertInformReceivers(Long informId, List<String> userIds) {
+    	if (userIds == null || userIds.isEmpty()) return -1;  // ★ 가드
         Map<String, Object> params = new HashMap<>();
         params.put("informId", informId);
         params.put("userIds", userIds);
