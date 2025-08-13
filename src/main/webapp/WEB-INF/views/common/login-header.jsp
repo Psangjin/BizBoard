@@ -43,7 +43,7 @@
 		</div>
 	</div>
 	
-	<%-- 
+	
 	<!-- SweetAlert2 사용한 로그아웃 폼. 꾸미기 좋음. -->
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -91,7 +91,7 @@
 	    });
 	  });
 	</script>
-	 --%>
+	 
 	
 </body>
 </html>
