@@ -244,6 +244,16 @@ document.querySelector('.fa-arrow-right-arrow-left').addEventListener('click', f
 
     applyMemberSelection(selDetail, members);                    // ✅ 선택 반영
     selDetail.disabled = true;                                   // 읽기전용이면 disable
+	
+	
+	// ✅ 현재 스케줄 id를 계산해서 댓글용 전역에 반영
+	  const sid =
+	    (window.selectedSchedule && window.selectedSchedule.id) ??
+	    (selectedTask && selectedTask.scheduleId) ??
+	    selectedTask.id;
+	  if (sid != null) {
+	    setCurrentScheduleForComments(String(sid).trim());
+	  }
 
     // 이름 표시(오른쪽 텍스트 영역 등)
     renderDetailMemberNames(members, '#form-select-detail');     // ✅ 이름 매핑 기반 출력
@@ -321,19 +331,7 @@ document.querySelectorAll('.comment-edit-btn').forEach(function (editBtn) {
  document.getElementById("close-task-detail-panel-btn").addEventListener("click", function () {
 	 document.getElementById("task-detail-panel").style.display = "none";
 });
- document.getElementById("open-add-comment-btn").addEventListener("click", function () {
-	  const modal = document.getElementById("task-comment-add-modal");
-	  modal.style.display = "block";
 
-	  // 약간의 지연을 두고 초기화
-	/* setTimeout(() => {
-	    document.getElementById("task-comment-time-add").value = "";
-	    //document.getElementById("task-comment-writter-add").value = ""; 지우기 금지
-	    document.getElementById("task-comment-title-add").value = "";
-	    document.getElementById("task-comment-description-add").value = "";
-	    document.getElementById("task-comment-file-add").value = null;
-	  }, 10);*/
-});
 
 document.getElementById("task-comment-add-btn").addEventListener("click", function () {
 	  const newComment = {
@@ -1468,21 +1466,25 @@ document.getElementById("save-task-modify")?.addEventListener("click", async fun
 	  document.getElementById('task-comment-add-modal').style.display = 'block';
 	});
     const openAddBtn = document.getElementById('open-add-comment-btn');
+	if (openAddBtn) openAddBtn.addEventListener('click', openAddCommentModal);
     const addModal   = document.getElementById('task-comment-add-modal');
     const addBackdrop= document.getElementById('fc-modalBackdrop');
 
+	// 기존 함수 교체
 	function openAddCommentModal() {
-	  if (!currentScheduleId) { alert('스케줄을 먼저 선택하세요.'); return; }
-	  setTodayDateTime();                        // ✅ 여기서만 세팅
+	  if (!currentScheduleId) {        // ← 전역 사용
+	    alert('스케줄을 먼저 선택하세요.');
+	    return;
+	  }
+	  setTodayDateTime();
 	  const loginUser = document.getElementById('login-user')?.value || '';
-	  document.getElementById('task-comment-writter-add').value = loginUser; // 서버 바인딩 유지
+	  document.getElementById('task-comment-writter-add').value = loginUser;
 	  document.getElementById('task-comment-title-add').value = '';
 	  document.getElementById('task-comment-description-add').value = '';
 	  document.getElementById('task-comment-file-add').value = '';
-	  addModal.style.display = 'block';
-	  if (addBackdrop) addBackdrop.style.display = 'block';
+	  document.getElementById('task-comment-add-modal').style.display = 'block';
+	  document.getElementById('fc-modalBackdrop')?.style && (document.getElementById('fc-modalBackdrop').style.display = 'block');
 	}
-
     function closeAddCommentModal() {
       addModal.style.display = 'none';
       if (addBackdrop) addBackdrop.style.display = 'none';
@@ -1540,20 +1542,24 @@ document.getElementById("save-task-modify")?.addEventListener("click", async fun
 
 	  // 편집
 	  if (e.target.matches('[data-action="edit"]')) {
-	    view.classList.add('d-none');
-	    edit.classList.remove('d-none');
-	    btnEdit.classList.add('d-none');
-	    btnSave.classList.remove('d-none');
-	    btnCancel.classList.remove('d-none');
+	    view.classList.add('hidden-section');
+	    edit.classList.remove('hidden-section');
+	    btnEdit.classList.add('hidden-section');
+	    btnSave.classList.remove('hidden-section');
+	    btnCancel.classList.remove('hidden-section');
 	    return;
 	  }
 
-	  // 취소 (리셋: 다시 로드해서 원복)
+	  // 취소 (내용을 원상복구하려면 서버 재로딩 로직 대신 토글만)
 	  if (e.target.matches('[data-action="cancel"]')) {
-	    const order = document.getElementById('comment-orderby')?.value || '최신순';
-	    await loadAndRenderComments(order);
+	    view.classList.remove('hidden-section');
+	    edit.classList.add('hidden-section');
+	    btnEdit.classList.remove('hidden-section');
+	    btnSave.classList.add('hidden-section');
+	    btnCancel.classList.add('hidden-section');
 	    return;
 	  }
+
 
 	  // 저장
 	  if (e.target.matches('[data-action="save"]')) {
