@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-
+<title>SignUp</title>
 <style>
 /* 전체 박스 */
 .form-container {

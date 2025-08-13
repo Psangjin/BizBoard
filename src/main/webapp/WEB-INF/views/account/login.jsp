@@ -6,6 +6,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<title>Login</title>
 
 <style>
 /* 전체 박스 */
