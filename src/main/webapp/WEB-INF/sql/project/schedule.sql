@@ -21,3 +21,10 @@ CREATE TABLE t_project (
 );
 
 CREATE SEQUENCE project_seq START WITH 1 INCREMENT BY 1 NOCACHE;
+
+
+CREATE TABLE project_user (
+  user_id VARCHAR2(32),	
+  project_id NUMBER,
+  PRIMARY KEY (user_id, project_id)
+);

@@ -41,7 +41,7 @@ public class MainpageController {
 	public String mainPage_login(HttpServletRequest request) {
 		Boolean afterLogin = (Boolean) request.getAttribute("afterLogin");
 	    if (afterLogin == null || !afterLogin) {
-	        return "redirect:/error"; // 직접 접근 차단
+	        return "redirect:/"; // 직접 접근 차단
 	    }
 		return "mainpage/mainpage-login";
 	}
@@ -50,6 +50,29 @@ public class MainpageController {
 	public String service() {
 		return "service/service";
 	}
+	@RequestMapping("/inquiryFAQ")
+	public String inquiryFAQ() {
+		return "inquiry/inquiryFAQ";
+
+	}
+	@RequestMapping("/inquiryOne")
+	public String inquiryOne() {
+		return "inquiry/inquiryOne";
+
+	}
+	
+	@RequestMapping("/error")
+	public String error() {
+		return "errorScreen";
+	}
+/*	@RequestMapping("/project/{projectId}")
+	public String showProjectDetail(@PathVariable int projectId, HttpSession session) {
+	    Project project = projectService.getProject(projectId);
+	    if (project == null || !project.isMember(session.getAttribute("loggedInUser"))) {
+	        return "error/errorScreen"; 
+	    }
+	    return "project/projectDetail";
+	}  */
 	
 	@ResponseBody
 	@GetMapping("/main/data")

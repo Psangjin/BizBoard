@@ -91,9 +91,10 @@
     <h2>회원가입</h2>
     
       <!-- 서버에서 전달된 에러 메시지 -->
-    <c:if test="${not empty error}">
-        <p class="error-text">${error}</p>
-    </c:if>
+   
+		<c:if test="${not empty error}">
+		  <p class="error-text">${error}</p>
+		</c:if>
     
     <form action="${ctx}/account/signup" method="post">
         <input type="text" name="id" placeholder="아이디 입력"

@@ -1,0 +1,113 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: Arial, sans-serif;
+    background-color: #f0f2f5;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+/* 왼쪽 사이드바 스타일 */
+.sidebar {
+    width: 200px;
+    background-color: #1a49a2;
+    flex-shrink: 0;
+}
+
+/* 오른쪽 메인 콘텐츠 스타일 */
+.main-content {
+    flex-grow: 1;
+    background-color: #fff;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    justify-content: flex-start;
+}
+
+.header {
+    width: 100%;
+    margin-bottom: 50px;
+}
+
+.logo-image {
+    width: 300px;
+}
+
+.error-container {
+    flex-grow: 1; 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    /* transform을 사용하여 요소 자체를 위로 올립니다. */
+    transform: translateY(-70px);
+}
+
+/* "Error" 텍스트 스타일 */
+.error-code {
+    font-size: 8em;
+    font-weight: bold;
+    color: #1a49a2;
+    margin: 0 0 10px 0;
+}
+
+/* 경고 박스 스타일 */
+.warning-box {
+    width: 800px;
+    padding: 30px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.warning-title {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #444;
+    margin: 0 0 20px 0;
+}
+
+.warning-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 100px;
+}
+
+.error-image {
+	width: 200px;
+	text-align: left;
+}
+
+.warning-message p {
+    margin: 0;
+    font-size: 1.8em;
+    color: #666;
+    line-height: 1.4;
+    text-align: left;
+}
+
+/* 확인 버튼 스타일 */
+.confirm-button {
+    margin-top: 40px;
+    padding: 15px 50px;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #fff;
+    background-color: #1a49a2;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.confirm-button:hover {
+    background-color: #14357a;
+}
