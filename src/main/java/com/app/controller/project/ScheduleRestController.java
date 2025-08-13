@@ -74,10 +74,10 @@ public class ScheduleRestController {
 	
 	@PostMapping("/project/create")
 	public ResponseEntity<String> createProject(@RequestBody Project project,HttpSession session) {
-        project.setManager(user.getId());
+		User user = (User) session.getAttribute("loginUser");
+		project.setManager(user.getId());
 		int result = projectService.createProject(project);
         Long createProjectId = project.getId();
-        User user = (User) session.getAttribute("loginUser");
         String createEmail = userService.findEmailByUser(user);
         projectMemberService.invite(createProjectId, createEmail, "admin");
         System.out.println("백");

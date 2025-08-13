@@ -98,6 +98,7 @@
         AND p.id = sc.project_id 
         AND tm.user_id = #{userId}
         AND TRUNC(SYSDATE) BETWEEN TRUNC(sc.start_dt) AND TRUNC(sc.end_dt)
+        </select>
 	<!-- 단건 조회 -->
   <select id="selectById" parameterType="long" resultType="Schedule">
     SELECT

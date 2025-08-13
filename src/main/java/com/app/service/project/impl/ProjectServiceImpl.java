@@ -74,6 +74,7 @@ public class ProjectServiceImpl implements ProjectService {
 		int cnt = projectDAO.countNumberofScheduleByProjectId(projectId, type);
 		
 		return cnt;
+	}
 	@Transactional
 	public void updateProject(Project req, String actorUserId) {
 	  if (req.getId() == null) throw new IllegalArgumentException("id is required");

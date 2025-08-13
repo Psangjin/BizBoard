@@ -64,6 +64,7 @@ public class ProjectDAOImpl implements ProjectDAO{
 		int cnt = sqlSessionTemplate.selectOne("project_mapper.countNumberofScheduleDoneByProjectId", paramMap);
 		
 		return cnt;
+	}
 	public int updateProject(Project project) {
 		return sqlSessionTemplate.update("project_mapper.updateProject",project);
 	}
