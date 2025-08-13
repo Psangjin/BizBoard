@@ -5,6 +5,12 @@
 
 <mapper namespace="user_mapper">
 
+	<select id="findEmailByUser" parameterType="User" resultType="String">
+		SELECT email
+		FROM users
+		WHERE id = #{id}
+	</select>
+
     
     <!-- 회원가입 -->
     <insert id="insertUser" parameterType="User">

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="inform_mapper">
+
+  <!-- =========================
+       1) 알림 목록 조회 (userId, onlyUnread)
+       ========================= -->
+  <select id="selectForUser" resultType="com.app.dto.project.Inform">
+    SELECT
+      i.inform_id                  AS informId,
+      i.inform_type                AS type,
+      i.inform_occurredatetime     AS occurredAt,
+      CASE i.inform_type
+        WHEN 'PROJECT_EVENT' THEN '프로젝트 이벤트'
+        WHEN 'TASK_EVENT'    THEN '작업 이벤트'
+        WHEN 'NOTICE_EVENT'  THEN '프로젝트 공지'
+        ELSE '알림'
+      END                          AS title,
+      NVL(i.inform_memo, '')       AS message,
+      CASE NVL(ir.informreceiver_readingstatus, 0)
+        WHEN 1 THEN 1 ELSE 0
+      END                          AS read
+    FROM INFORM i
+    JOIN INFORMRECEIVER ir
+      ON ir.informreceiver_inform_id_ref = i.inform_id
+    WHERE ir.informreceiver_emp_id_ref = #{userId}
+    <if test="onlyUnread">
+      AND NVL(ir.informreceiver_readingstatus, 0) = 0
+    </if>
+    ORDER BY i.inform_occurredatetime DESC
+  </select>
+
+  <!-- =========================
+       2) 읽음 처리
+       ========================= -->
+  <update id="updateRead">
+    UPDATE INFORMRECEIVER
+       SET informreceiver_readingstatus = 1,
+           informreceiver_read_at = SYSTIMESTAMP
+     WHERE informreceiver_emp_id_ref    = #{userId}
+       AND informreceiver_inform_id_ref = #{informId}
+  </update>
+
+  <!-- (옵션) 모두 읽음 -->
+  <update id="updateReadAll">
+    UPDATE INFORMRECEIVER
+       SET informreceiver_readingstatus = 1,
+           informreceiver_read_at = SYSTIMESTAMP
+     WHERE informreceiver_emp_id_ref = #{userId}
+       AND NVL(informreceiver_readingstatus,0) = 0
+  </update>
+
+  <!-- (옵션) 안읽은 개수 -->
+  <select id="countUnread" resultType="int">
+    SELECT COUNT(*)
+      FROM INFORMRECEIVER
+     WHERE informreceiver_emp_id_ref = #{userId}
+       AND NVL(informreceiver_readingstatus,0) = 0
+  </select>
+
+  <!-- =========================
+       3) INFORM INSERT (시퀀스 + selectKey BEFORE)
+       - SEQ_INFORM 필요
+       ========================= -->
+  <insert id="insertInform" parameterType="map">
+    <selectKey keyProperty="informId" resultType="long" order="BEFORE">
+      SELECT SEQ_INFORM.NEXTVAL FROM DUAL
+    </selectKey>
+    INSERT INTO INFORM (
+      INFORM_ID,
+      INFORM_TYPE,
+      INFORM_MEMO,
+      INFORM_OCCURREDATETIME
+    ) VALUES (
+      #{informId},
+      #{type},
+      #{memo},
+      SYSTIMESTAMP
+    )
+  </insert>
+
+  <!-- =========================
+       4) INFORMRECEIVER 배치 INSERT
+       ========================= -->
+<!-- inform_mapper.xml -->
+<insert id="insertInformReceivers">
+  INSERT INTO INFORMRECEIVER (
+    INFORMRECEIVER_INFORM_ID_REF,
+    INFORMRECEIVER_EMP_ID_REF,
+    INFORMRECEIVER_READINGSTATUS
+  )
+  <foreach collection="userIds" item="uid" separator=" UNION ALL ">
+    SELECT #{informId}, #{uid}, 0 FROM DUAL
+  </foreach>
+</insert>
+
+
+  <!-- =========================
+       5) 대상자 조회
+       ========================= -->
+  <select id="selectProjectMemberIds" resultType="string">
+    SELECT pm.user_id
+      FROM PROJECT_MEMBER pm
+     WHERE pm.project_id = #{projectId}
+  </select>
+
+<!-- 작업 담당자(수신 대상) 조회 -->
+<select id="selectTaskMemberIds" parameterType="map" resultType="string">
+  SELECT tm.user_id
+  FROM TASKMEMBER tm
+  WHERE tm.schedule_id = #{scheduleId}
+</select>
+
+<select id="selectTaskBrief"
+        parameterType="long"
+        resultType="com.app.dto.project.TaskBrief">
+  SELECT
+    p.ID          AS projectId,
+    p.TITLE       AS projectTitle,
+    s.ID          AS scheduleId,
+    s.TITLE       AS taskTitle
+  FROM SCHEDULE s
+  JOIN T_PROJECT p ON p.ID = s.PROJECT_ID
+  WHERE s.ID = #{value}  <!-- 단일 파라미터면 #{value} -->
+</select>
+
+<select id="selectProjectTitle" parameterType="long" resultType="string">
+  SELECT TITLE FROM T_PROJECT WHERE ID = #{value}
+</select>
+
+
+
+</mapper>

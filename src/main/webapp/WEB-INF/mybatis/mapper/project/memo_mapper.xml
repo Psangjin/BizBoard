@@ -12,7 +12,8 @@
 		UPDATE MEMO
 		SET TITLE = #{title},
 		CONTENT = #{content},
-		MODIFYTIME = SYSTIMESTAMP
+		MODIFYTIME = SYSTIMESTAMP,
+		WRITTER = #{writter}
 		WHERE ID = #{id}
 	</update>
 
@@ -20,9 +21,20 @@
 		DELETE FROM MEMO WHERE ID = #{id}
 	</delete>
 
-	<select id="getMemosByProjectId" resultType="Memo" parameterType="long">
-		SELECT * FROM MEMO WHERE PROJECT_ID = #{projectId} ORDER BY MODIFYTIME
-		DESC
-	</select>
+
+<select id="selectByProjectId" parameterType="map"
+        resultType="com.app.dto.project.Memo">
+  SELECT id, project_id AS projectId, title, content, writter, modifytime
+  FROM MEMO
+  WHERE project_id = #{projectId}
+  ORDER BY modifytime
+  <choose>
+    <when test='order == "asc"'>ASC</when>
+    <otherwise>DESC</otherwise>
+  </choose>
+</select>
+
+
+
 
 </mapper>

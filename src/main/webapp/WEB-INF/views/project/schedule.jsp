@@ -118,7 +118,7 @@
 						<div id="gantt-target"></div>
 					</div>
 				</div>
-				<!-- 기존 요소들 사이에 모달창 추가 -->
+				<!-- 기존 요소들 사이에 모달창 추가 -->	
 				<div id="fc-eventModal">
 					<h3>일정 추가</h3>
 					<input type="hidden" id="fc-modal-id" /> <!-- id전달 위한 hidden -->
@@ -223,7 +223,7 @@
 					<h2>커멘트 등록</h2>
 					<label>커멘트 날짜일시: <input type="datetime-local"
 						id="task-comment-time-add" /></label><br> <br> <label>커멘트
-						작성자: <input type="text" id="task-comment-writter-add"  value="${loginUser}" readonly />
+						작성자: <input type="text" id="task-comment-writter-add"  value="${sessionScope.loginUser.id}" readonly />
 					</label><br> <br> <label>커멘트 제목: <input type="text"
 						id="task-comment-title-add" /></label><br> <br> <label>커멘트
 						설명: <input type="text" id="task-comment-description-add" />

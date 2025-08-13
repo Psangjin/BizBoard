@@ -5,8 +5,66 @@ function postJson(url, payload) {
     body: JSON.stringify(payload)
   });
 }
+/////////////커멘트는 자기만 편집하도록 하기 위해 렌더커멘츠 수정(전역으로)/////
+function toggleAddCommentButton(members) {
+  const isMember = (members || []).some(m => String(m.userId).trim() === String(LOGIN_ID).trim());
+  document.getElementById('open-add-comment-btn')
+    ?.classList.toggle('hidden-section', !isMember);
+}
+
+// 로그인 아이디
+ const LOGIN_ID =
+   document.getElementById('login-user')?.value ||
+   document.querySelector('meta[name="current-user"]')?.content || '';
+
+/////자기거만 편집
+ function renderComments(list) {
+   const box = document.getElementById('task-comment');
+   if (!list?.length) { box.innerHTML = '<div class="text-muted">등록된 코멘트가 없습니다.</div>'; return; }
+
+   box.innerHTML = list.map(c => {
+     const ts = c.writeTime ? new Date(c.writeTime) : null;
+     const tsText = ts ? ts.toLocaleString() : '';
+     const writerText = c.writterName || c.userName || `User#${c.userId ?? ''}`;
+
+     const isMine = String(c.userId ?? c.writerId ?? c.writterId)
+                      .trim() === String(LOGIN_ID).trim();
+
+     return `
+       <div class="card mb-2" data-comment-id="${c.id}" data-user-id="${c.userId}">
+         <div class="card-body p-2">
+           <div class="d-flex justify-content-between">
+             <div>
+               <div class="view-area">
+                 <div class="fw-bold comment-title-text">${c.title ?? ''}</div>
+                 <div class="small text-secondary">${writerText} · ${tsText}</div>
+                 <div class="mt-2 comment-desc-text">${c.description ?? ''}</div>
+                 ${c.filePath ? `<div class="mt-1"><i class="fa-regular fa-file"></i> ${c.filePath}</div>` : ''}
+               </div>
+
+               <div class="edit-area hidden-section">
+                 <input class="form-control form-control-sm mb-2" name="title" value="${c.title ?? ''}">
+                 <textarea class="form-control form-control-sm mb-2" rows="3" name="desc">${c.description ?? ''}</textarea>
+                 <input type="file" class="form-control form-control-sm" name="file">
+                 <div class="small text-muted mt-1">현재 파일: ${c.filePath ?? '없음'}</div>
+               </div>
+             </div>
+
+             <div class="text-nowrap ms-2">
+               <button class="btn btn-sm btn-outline-primary ${isMine ? '' : 'hidden-section'}" data-action="edit">편집</button>
+               <button class="btn btn-sm btn-outline-success hidden-section" data-action="save">저장</button>
+               <button class="btn btn-sm btn-outline-secondary hidden-section" data-action="cancel">취소</button>
+               <button class="btn btn-sm btn-outline-danger ${isMine ? '' : 'hidden-section'}" data-action="delete">삭제</button>
+             </div>
+           </div>
+         </div>
+       </div>
+     `;
+   }).join('');
+ }
+ ////////////커멘트 수정 
 document.addEventListener('DOMContentLoaded', function () {
-	renderComments();  // ⬅ 이걸 꼭 추가
+	//renderComments();  // ⬅ 이걸 꼭 추가
 	
 	const projectId = document.getElementById("project-id")?.value;
 	  if (projectId) {
@@ -528,21 +586,21 @@ document.getElementById("save-task-modify")?.addEventListener("click", async fun
   
   // 상세 select에 선택 반영(문자열 userId + trim)
   async function loadAndApplyTaskMembers(scheduleId) {
-    const token = ++detailLoadToken;
-    const res = await fetch(`/schedule/${encodeURIComponent(scheduleId)}/members?t=${Date.now()}`, { cache: 'no-store' });
+    const res = await fetch(`/task-member/list?scheduleId=${encodeURIComponent(scheduleId)}`, { cache: 'no-store' });
     if (!res.ok) return;
-    const memberIds = await res.json(); // ["u01","u02",...]
-    if (token !== detailLoadToken) return;
+    const list = await res.json();                  // [{userId, name}, ...]
+    const memberIds = list.map(m => String(m.userId).trim());
 
     const sel = document.getElementById('form-select-detail');
     if (!sel) return;
     for (const opt of sel.options) opt.selected = false;
 
-    const want = new Set(memberIds.map(x => String(x).trim()));
+    const want = new Set(memberIds);
     for (const opt of sel.options) {
       if (want.has(String(opt.value).trim())) opt.selected = true;
     }
   }
+
 
 
   
@@ -765,6 +823,9 @@ document.getElementById("save-task-modify")?.addEventListener("click", async fun
     fillSelectWithMembers(selDetail, members);                // 콤보
     renderDetailMemberNames(members, '#form-select-detail');  // 오른쪽 텍스트
     selDetail.disabled = true;                                // 읽기전용
+	
+	// showGanttTaskDetail(...) 안에서 members를 구한 뒤
+	toggleAddCommentButton(members);
   }
 
 
@@ -779,176 +840,9 @@ document.getElementById("save-task-modify")?.addEventListener("click", async fun
 	    	document.getElementById("task-edit-panel").classList.remove("hidden-section");
 	    } 
   }
-  function renderComments() {
-	  const container = document.getElementById('task-comment');
-	  container.innerHTML = ''; // 기존 댓글 초기화
+ 
 
-	  commentList.forEach((comment, index) => {
-	    const row = document.createElement('div');
-	    row.className = 'comment-row';
 
-	    // 편집 버튼
-	    const editBtn = document.createElement('button');
-	    editBtn.className = 'comment-edit-btn btn btn-secondary';
-	    editBtn.textContent = '편집';
-
-	    // 수정/취소/삭제 버튼 영역
-	    const btnArea = document.createElement('div');
-	    btnArea.className = 'comment-modify-btn-area';
-
-	    const cancelBtn = document.createElement('button');
-	    cancelBtn.className = 'comment-modify-cancel-btn btn btn-secondary hidden-section';
-	    cancelBtn.textContent = '취소하기';
-
-	    const deleteBtn = document.createElement('button');
-	    deleteBtn.className = 'comment-delete-btn btn btn-danger hidden-section';
-	    deleteBtn.textContent = '삭제하기';
-
-	    const modifyBtn = document.createElement('button');
-	    modifyBtn.className = 'comment-modify-btn btn btn-warning hidden-section';
-	    modifyBtn.textContent = '수정하기';
-
-	    btnArea.append(cancelBtn, deleteBtn, modifyBtn);
-
-	    const fields = [
-	      { label: '커멘트 날짜일시', class: 'task-comment-time', value: comment.time },
-	      { label: '커멘트 작성자', class: 'task-comment-writter', value: comment.writter },
-	      { label: '커멘트 제목', class: 'task-comment-title', value: comment.title },
-	      { label: '커멘트 설명', class: 'task-comment-description', value: comment.description },
-	      { label: '커멘트 파일', class: 'task-comment-file', value: comment.file }
-	    ];
-
-	    const inputArea = document.createElement('div');
-	    inputArea.className = 'comment-input-area';
-
-	    fields.forEach((f, fieldIndex) => {
-	      const fieldDiv = document.createElement('div');
-	      fieldDiv.className = 'comment-field';
-
-	      const label = document.createElement('label');
-	      label.textContent = f.label + ':';
-
-	      if (f.class === 'task-comment-file') {
-	        const fileWrapper = document.createElement('div');
-	        fileWrapper.style.display = 'flex';
-	        fileWrapper.style.alignItems = 'center';
-	        fileWrapper.style.gap = '8px';
-
-	        const inputId = `commentFile-${index}`;
-
-	        const fileInput = document.createElement('input');
-	        fileInput.type = 'file';
-	        fileInput.className = 'task-comment-file-modify';
-	        fileInput.style.display = 'none';
-	        fileInput.id = inputId;
-	        
-	     // ✅ 선택 시 파일명 갱신 로직 추가
-	        fileInput.addEventListener('change', function () {
-	          const selectedFile = fileInput.files[0];
-	          if (selectedFile) {
-	            fileText.textContent = selectedFile.name;
-	          } else {
-	            fileText.textContent = '없음';
-	          }
-	        });
-
-	        const fileLabel = document.createElement('label');
-	        fileLabel.setAttribute('for', inputId);
-	        fileLabel.style.cursor = 'pointer';
-	        fileLabel.classList.add('file-disabled');  // ✅ 초기 비활성화
-
-	        const icon = document.createElement('i');
-	        icon.className = 'fas fa-paperclip';
-	        icon.style.color = '#007bff';
-	        icon.title = '파일 선택';
-
-	        fileLabel.appendChild(icon);
-
-	        const fileText = document.createElement('span');
-	        fileText.textContent = f.value || '없음';
-
-	        fileWrapper.appendChild(fileLabel);
-	        fileWrapper.appendChild(fileText);
-
-	        label.appendChild(fileWrapper);
-	        fieldDiv.appendChild(label);
-	        fieldDiv.appendChild(fileInput);
-
-	      } else {
-	        const input = document.createElement('input');
-	        input.type = 'text';
-	        input.className = f.class;
-	        input.value = f.value || '';
-	        input.readOnly = true;
-
-	        label.appendChild(input);
-	        fieldDiv.appendChild(label);
-	      }
-
-	      inputArea.appendChild(fieldDiv);
-	    });
-
-	    // 편집 버튼
-	    editBtn.addEventListener('click', () => {
-	      inputArea.querySelectorAll('input').forEach(input => {
-	        input.removeAttribute('readonly');
-	        input.removeAttribute('disabled');
-	      });
-
-	      inputArea.querySelectorAll('label[for^="commentFile-"]').forEach(label => {
-	        label.classList.remove('file-disabled'); // ✅ 클릭 허용
-	      });
-
-	      editBtn.classList.add('hidden-section');
-	      modifyBtn.classList.remove('hidden-section');
-	      cancelBtn.classList.remove('hidden-section');
-	      deleteBtn.classList.remove('hidden-section');
-	    });
-
-	    // 수정 완료 버튼
-	    modifyBtn.addEventListener('click', () => {
-	      inputArea.querySelectorAll('input[type="text"]').forEach(input => {
-	        input.setAttribute('readonly', 'readonly');
-	      });
-
-	      inputArea.querySelectorAll('label[for^="commentFile-"]').forEach(label => {
-	        label.classList.add('file-disabled'); // ✅ 다시 클릭 막기
-	      });
-
-	      editBtn.classList.remove('hidden-section');
-	      modifyBtn.classList.add('hidden-section');
-	      cancelBtn.classList.add('hidden-section');
-	      deleteBtn.classList.add('hidden-section');
-	    });
-
-	    // 취소 버튼
-	    cancelBtn.addEventListener('click', () => {
-	      inputArea.querySelectorAll('input[type="text"]').forEach(input => {
-	        input.setAttribute('readonly', 'readonly');
-	      });
-
-	      inputArea.querySelectorAll('label[for^="commentFile-"]').forEach(label => {
-	        label.classList.add('file-disabled'); // ✅ 다시 클릭 막기
-	      });
-
-	      editBtn.classList.remove('hidden-section');
-	      modifyBtn.classList.add('hidden-section');
-	      cancelBtn.classList.add('hidden-section');
-	      deleteBtn.classList.add('hidden-section');
-	    });
-
-	    // 삭제 버튼
-	    deleteBtn.addEventListener('click', () => {
-	      commentList.splice(index, 1);
-	      row.remove();
-	    });
-
-	    row.appendChild(editBtn);
-	    row.appendChild(inputArea);
-	    row.appendChild(btnArea);
-	    container.appendChild(row);
-	  });
-	}
 
 	
 	
@@ -988,6 +882,13 @@ document.getElementById("save-task-modify")?.addEventListener("click", async fun
 
 	  return `${year}-${month}-${day}T${hour}:${minute}`;
 	}
+	function toDatetimeUTC(date) {
+	  if (!(date instanceof Date)) return '';
+	  
+	  const dtValue = toDatetimeLocal(date);
+	  
+	  return new Date(dtValue).toISOString().slice(0, 16);
+	}
 	//시작 날짜 자동 설정 함수
     function setInputDate(datetimeStr) {
    	  const input = document.getElementById('fc-event-start');
@@ -1017,7 +918,14 @@ document.getElementById("save-task-modify")?.addEventListener("click", async fun
    	    trashEl.classList.remove("hovered");
    	  }
    	}
+	//올데이버그추가
+	function toDatetimeLocalString(d) {
+	  const pad = n => String(n).padStart(2, '0');
+	  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+	}
 	
+	
+	/////모달에선 무조건 데이트인풋을 유티씨로 바꾸기!!!!!!!!!!
 	function openEditModal(event) {
 	  // 모달에 데이터 채우기
 	  document.getElementById('fc-modal-title').value = event.title || '';
@@ -1039,10 +947,17 @@ document.getElementById("save-task-modify")?.addEventListener("click", async fun
 	  document.getElementById('fc-event-allday').checked = event.allDay;
 	  
 	  // 시작일 설정 (datetime-local 포맷)
-	  document.getElementById('fc-event-start').value = toDatetimeLocal(event.start);
+	  ///document.getElementById('fc-event-start').value = toDatetimeLocal(event.start);
+	  document.getElementById('fc-event-start').value = toDatetimeUTC(event.start);
 	  
-	  // 종료일 설정 (있으면)
-	  document.getElementById('fc-event-end').value = toDatetimeLocal(event.end);
+	  //// 종료일 설정 (있으면)
+	  /////document.getElementById('fc-event-end').value = toDatetimeLocal(event.end);
+	  document.getElementById('fc-event-end').value = toDatetimeUTC(event.end);
+	  
+	  // ✅ 로컬 문자열로 세팅 (UTC 변환 금지)
+	    //document.getElementById('fc-event-start').value = toDatetimeLocalString(event.start);
+	    //document.getElementById('fc-event-end').value   = event.end ? toDatetimeLocalString(event.end) : '';
+
 
 	  // 모달 보이기
 	  document.getElementById('fc-eventModal').style.display = 'block';
@@ -1146,6 +1061,7 @@ document.getElementById("save-task-modify")?.addEventListener("click", async fun
 	  // calendar.render(); 앞/뒤 어느 쪽이든 setOption은 즉시 반영됨.
 	 
     const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
+	  timeZone: 'UTC',
       initialView: 'dayGridMonth',
       headerToolbar: {
         left: 'prevYear,prev,next,nextYear today',
@@ -1160,7 +1076,7 @@ document.getElementById("save-task-modify")?.addEventListener("click", async fun
       eventDurationEditable: false,
       events: `/project/schedule/events?projectId=${projectId}`, //초기 설정 일정
       eventDisplay: 'block',
-	  timeZone: 'Asia/Seoul',
+	  
       
 	  //캘린더에 일정 드래그앤 드롭시
       eventReceive: function(info) {
@@ -1169,9 +1085,12 @@ document.getElementById("save-task-modify")?.addEventListener("click", async fun
         // 드롭한 날짜 시작날짜로 설정
         const droppedDate = info.event.startStr;
         setInputDate(droppedDate);
+		
 		info.event.remove();
         
         //새로운 데이터 입력을 위한 다른 데이터 초기화
+		document.getElementById('fc-modal-id').value = null;
+		
         document.getElementById('fc-modal-title').value = '';
         document.getElementById('fc-modal-description').value = '';
         document.getElementById('fc-modal-color').value = '#007bff';
@@ -1261,14 +1180,26 @@ document.getElementById("save-task-modify")?.addEventListener("click", async fun
 
   	  });
     
-
+	//////밑에거 쓰기
     //일정 추가 완료
-    document.getElementById('fc-save-event').addEventListener('click', function() {
+    /*document.getElementById('fc-save-event').addEventListener('click', function() {
    	  const title = document.getElementById('fc-modal-title').value.trim();
    	  const desc = document.getElementById('fc-modal-description').value.trim();
    	  const color = document.getElementById('fc-modal-color').value;
-   	  const start = document.getElementById('fc-event-start').value;
-   	  const end = document.getElementById('fc-event-end').value;
+   	  //const start = document.getElementById('fc-event-start').value;
+	  const start = new Date(document.getElementById('fc-event-start').value).toISOString().slice(0, 16) + 'Z'; 
+   	  //const end = document.getElementById('fc-event-end').value;
+	  //const end = new Date(document.getElementById('fc-event-end').value).toISOString().slice(0, 16) + 'Z';
+	  let end = null; // 기본값 (없으면 null 전송)
+
+	  const endEl = document.getElementById('fc-event-end');
+	  if (endEl && endEl.value.trim() !== '') {
+	    const d = new Date(endEl.value);              // 'YYYY-MM-DDTHH:MM' (로컬) → Date
+	    if (!Number.isNaN(d.getTime())) {             // 유효성 체크
+	      end = d.toISOString().slice(0, 16) + 'Z';   // → 'YYYY-MM-DDTHH:MMZ' (UTC)
+	    }
+	  }
+
    	  const alldayCheckbox = document.getElementById('fc-event-allday');
 	  const id = document.getElementById('fc-modal-id').value;
 	  const complete = document.getElementById("state-select-modify-cal").value;
@@ -1283,6 +1214,7 @@ document.getElementById("save-task-modify")?.addEventListener("click", async fun
       }
       const allDay = alldayCheckbox.checked;
 
+	  console.log(start);
       let startDt = '';
       let endDt = null;
 
@@ -1324,7 +1256,57 @@ document.getElementById("save-task-modify")?.addEventListener("click", async fun
     	  });
 
       closeModal();
-    });
+    });*/
+	
+	///////////올데이는 문자로, 아닐때는 유티씨로 
+	document.getElementById('fc-save-event').addEventListener('click', function () {
+	  const title = document.getElementById('fc-modal-title').value.trim();
+	  const desc  = document.getElementById('fc-modal-description').value.trim();
+	  const color = document.getElementById('fc-modal-color').value;
+
+	  const startInput = document.getElementById('fc-event-start').value; // 'YYYY-MM-DDTHH:MM'
+	  const endInput   = document.getElementById('fc-event-end').value;   // (없을 수 있음)
+
+	  const alldayCheckbox = document.getElementById('fc-event-allday');
+	  const id   = document.getElementById('fc-modal-id').value;
+
+	  if (!title) { alert('제목을 입력해주세요.'); return; }
+
+	  let startDt, endDt;
+	  if (alldayCheckbox.checked) {
+	    // ✅ 올데이는 날짜만! (로컬 값을 그대로 사용)
+	    startDt = startInput.slice(0, 10);                 // 'YYYY-MM-DD'
+	    endDt   = endInput ? endInput.slice(0, 10) : null; // 'YYYY-MM-DD' | null
+	  } else {
+	    // ✅ 시간 있는 일정만 UTC(Z)로 보냄
+	    startDt = new Date(startInput).toISOString().slice(0, 16) + 'Z';
+	    endDt   = endInput ? new Date(endInput).toISOString().slice(0, 16) + 'Z' : null;
+	  }
+
+	  const scheduleData = {
+	    id,
+	    title,
+	    content: desc,
+	    type: alldayCheckbox.checked ? alldayCheckbox.value : '',
+	    startDt,
+	    endDt,
+	    color,
+	    allDay: alldayCheckbox.checked,
+	    projectId
+	  };
+
+	  $.ajax({
+	    url: id ? '/project/schedule/update' : '/project/schedule/save',
+	    type: 'POST',
+	    contentType: 'application/json',
+	    data: JSON.stringify(scheduleData),
+	    success: function () { alert('저장 완료'); calendar.refetchEvents(); },
+	    error: function () { alert('저장 실패'); }
+	  });
+
+	  closeModal();
+	});
+
 
     //일정 생성 취소
     document.getElementById('fc-cancel-event').addEventListener('click', function() {
@@ -1449,47 +1431,7 @@ document.getElementById("save-task-modify")?.addEventListener("click", async fun
       }
     }
 
-	function renderComments(list) {
-	  const box = document.getElementById('task-comment');
-	  if (!list?.length) { box.innerHTML = '<div class="text-muted">등록된 코멘트가 없습니다.</div>'; return; }
-
-	  box.innerHTML = list.map(c => {
-	    const ts = c.writeTime ? new Date(c.writeTime) : null;
-	    const tsText = ts ? ts.toLocaleString() : '';
-	    const writerText = c.writterName || c.userName || `User#${c.userId ?? ''}`;
-	    return `
-	      <div class="card mb-2" data-comment-id="${c.id}">
-	        <div class="card-body p-2">
-	          <div class="d-flex justify-content-between">
-	            <div>
-	              <!-- 보기 모드 -->
-	              <div class="view-area">
-	                <div class="fw-bold comment-title-text">${c.title ?? ''}</div>
-	                <div class="small text-secondary">${writerText} · ${tsText}</div>
-	                <div class="mt-2 comment-desc-text">${c.description ?? ''}</div>
-	                ${c.filePath ? `<div class="mt-1"><i class="fa-regular fa-file"></i> ${c.filePath}</div>` : ''}
-	              </div>
-
-	              <!-- 편집 모드 (초기 숨김) -->
-	              <div class="edit-area d-none">
-	                <input class="form-control form-control-sm mb-2" name="title" value="${c.title ?? ''}">
-	                <textarea class="form-control form-control-sm mb-2" rows="3" name="desc">${c.description ?? ''}</textarea>
-	                <input type="file" class="form-control form-control-sm" name="file">
-	                <div class="small text-muted mt-1">현재 파일: ${c.filePath ?? '없음'}</div>
-	              </div>
-	            </div>
-	            <div class="text-nowrap ms-2">
-	              <button class="btn btn-sm btn-outline-primary" data-action="edit">편집</button>
-	              <button class="btn btn-sm btn-outline-success d-none" data-action="save">저장</button>
-	              <button class="btn btn-sm btn-outline-secondary d-none" data-action="cancel">취소</button>
-	              <button class="btn btn-sm btn-outline-danger" data-action="delete">삭제</button>
-	            </div>
-	          </div>
-	        </div>
-	      </div>
-	    `;
-	  }).join('');
-	}
+	
 
 
     // ====== 정렬 셀렉트 ======

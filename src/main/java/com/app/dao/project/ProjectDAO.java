@@ -18,4 +18,9 @@ public interface ProjectDAO {
 	int countNumberofScheduleByProjectId(Long projectId, String type);
 	
 	int countNumberofScheduleDoneByProjectId(Long projectId, String type);
+	int updateProject(Project project);
+	
+	int deleteProject(Long id);
+	
+	boolean isAdmin(Long projectId,String userId);
 }

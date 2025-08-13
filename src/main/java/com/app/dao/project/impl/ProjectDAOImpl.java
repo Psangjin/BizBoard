@@ -20,9 +20,7 @@ public class ProjectDAOImpl implements ProjectDAO{
 	@Override
 	public int createProject(Project project) {
 		
-		int result = sqlSessionTemplate.insert("project_mapper.createProject", project);
-		
-		return result;
+		return  sqlSessionTemplate.insert("project_mapper.createProject", project);
 	}
 
 	@Override
@@ -66,6 +64,23 @@ public class ProjectDAOImpl implements ProjectDAO{
 		int cnt = sqlSessionTemplate.selectOne("project_mapper.countNumberofScheduleDoneByProjectId", paramMap);
 		
 		return cnt;
+	public int updateProject(Project project) {
+		return sqlSessionTemplate.update("project_mapper.updateProject",project);
+	}
+
+	@Override
+	public int deleteProject(Long id) {
+		return sqlSessionTemplate.delete("project_mapper.deleteProject",id);
+	}
+
+	@Override
+	public boolean isAdmin(Long projectId, String userId) {
+		 Map<String, Object> param = new HashMap<>();
+		    param.put("projectId", projectId);
+		    param.put("userId", userId);
+
+		    Integer n = sqlSessionTemplate.selectOne("ProjectMapper.isAdmin", param); // ← 네임스페이스.id
+		    return n != null && n == 1;
 	}
 
 }

@@ -69,6 +69,10 @@ public class ScheduleDAOImpl implements ScheduleDAO{
 	public List<ScheduleWithProject> selectUserSchedules(String userId) {
 		List<ScheduleWithProject> scheduleList = sqlSessionTemplate.selectList("schedule_mapper.selectUserSchedules", userId);
 		return scheduleList;
+	
+	@Override
+	public Schedule selectById(Long id) {
+		return sqlSessionTemplate.selectOne("schedule_mapper.selectById",id);
 	}
 
 }

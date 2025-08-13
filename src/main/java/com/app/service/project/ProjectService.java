@@ -17,4 +17,7 @@ public interface ProjectService {
 	int countNumberofScheduleByProjectId(Long projectId,String type);
 	
 	int countNumberofScheduleDoneByProjectId(Long projectId,String type);
+	void updateProject(Project updated, String actorUserId);
+	
+	int deleteProject(Long id);
 }

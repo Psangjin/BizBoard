@@ -1,6 +1,8 @@
 package com.app.service.project.impl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,10 +36,10 @@ public class MemoServiceImpl implements MemoService {
 		return result;
 	}
 
-	@Override
-	public List<Memo> getMemosByProjectId(Long projectId) {
-		List<Memo> memoList = memoDAO.getMemosByProjectId(projectId);
-		return memoList;
+	public List<Memo> getMemosByProjectId(Long projectId, String order) {
+	    return memoDAO.selectByProjectId(projectId, order);
 	}
+
+
 
 }

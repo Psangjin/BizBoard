@@ -20,4 +20,5 @@ public interface ScheduleDAO {
 	List<Schedule> selectSchedulesByUserAndProject(String userId, Long projectId);
 	
 	List<ScheduleWithProject> selectUserSchedules(String userId);
+	Schedule selectById(Long id);
 }

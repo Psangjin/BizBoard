@@ -21,4 +21,5 @@ public interface ScheduleService {
 	List<Schedule> selectSchedulesByUserAndProject(String userId, Long projectId);
 	
 	 Map<String, List<ScheduleWithProject>> getUserSchedulesAndTasks(String userId);
+	Schedule getById(Long id);
 }

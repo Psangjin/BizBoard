@@ -8,5 +8,5 @@ public interface MemoService {
 	int insertMemo(Memo memo);
 	int updateMemo(Memo memo);
 	int deleteMemo(Long id);
-	List<Memo> getMemosByProjectId(Long projectId);
+	List<Memo> getMemosByProjectId(Long projectId,String order);
 }

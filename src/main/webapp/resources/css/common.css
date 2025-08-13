@@ -339,3 +339,67 @@ body {
 .create-project-btn:hover {
   background-color: #1e5685;
 }
+
+/**********알림********************/
+/* ========== Modal ========== */
+.bb-modal-backdrop{
+  position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:999;
+}
+.bb-modal{
+  position:fixed; top:50%; left:50%; transform:translate(-50%, -50%);
+  width:720px; max-width:calc(100vw - 32px);
+  max-height:80vh; overflow:hidden; background:#fff; border-radius:14px;
+  box-shadow:0 10px 30px rgba(0,0,0,.25); z-index:1000; display:flex; flex-direction:column;
+  font-family:system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+}
+.bb-modal-header{ display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid #eee; }
+.bb-close{ background:none; border:0; font-size:20px; line-height:1; cursor:pointer; }
+.bb-modal-tabs{ display:flex; gap:8px; padding:10px 12px; border-bottom:1px solid #f1f1f1; }
+.bb-tab{ padding:8px 12px; border:1px solid #e5e5e5; border-radius:8px; background:#fafafa; cursor:pointer; }
+.bb-tab.active{ background:#0d6efd; color:#fff; border-color:#0d6efd; }
+
+.bb-modal-body{ padding:10px 12px; overflow:auto; }
+.bb-modal-footer{ padding:10px 12px; border-top:1px solid #eee; display:flex; justify-content:flex-end; }
+.bb-btn{ padding:8px 14px; border-radius:8px; border:1px solid #e5e5e5; background:#f8f8f8; cursor:pointer; }
+
+.inform-list{ list-style:none; margin:0; padding:0; }
+.inform-row{
+  display:grid; grid-template-columns: 1fr auto; gap:10px;
+  padding:10px 8px; border-bottom:1px solid #f3f3f3;
+}
+.inform-main{ display:flex; flex-direction:column; gap:2px; }
+.inform-title{ font-weight:600; }
+.inform-meta{ font-size:12px; color:#666; }
+.inform-type.badge{
+  display:inline-block; font-size:11px; padding:2px 6px; border-radius:999px; background:#eef2ff; color:#3b5bdb; margin-right:6px;
+}
+.inform-type.badge.task{ background:#e6fffa; color:#0b7285; }
+.inform-type.badge.notice{ background:#fff3bf; color:#a07900; }
+
+.inform-actions{ display:flex; align-items:center; gap:6px; }
+.btn-read{
+  padding:6px 10px; border-radius:8px; border:1px solid #dcdcdc; background:#fff; cursor:pointer;
+}
+.btn-read[disabled]{ opacity:.45; cursor:default; }
+.inform-empty{ padding:24px; text-align:center; color:#777; }
+/*********/
+/* FAB 메인 + 버튼 뱃지 */
+.fab-main { position: relative; }
+.fab-badge-dot {
+  position: absolute; top: -6px; right: -6px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: #e02424; color: #fff; font-size: 12px;
+  display: none; align-items: center; justify-content: center;
+  box-shadow: 0 0 0 2px #fff;
+}
+
+/* 🔔 알림 메뉴 숫자 뱃지 */
+.fab-item { position: relative; }
+.fab-badge-count {
+  position: absolute; top: -6px; right: -6px;
+  min-width: 20px; height: 18px; padding: 0 6px;
+  border-radius: 9px; background: #e02424; color: #fff;
+  font-size: 12px; line-height: 18px; text-align: center;
+  display: none; box-shadow: 0 0 0 2px #fff;
+}
+
