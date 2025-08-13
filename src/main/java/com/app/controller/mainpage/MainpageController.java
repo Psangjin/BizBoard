@@ -38,11 +38,13 @@ public class MainpageController {
 	}
 	
 	@RequestMapping("/mainpage")
-	public String mainPage_login(HttpServletRequest request) {
+	public String mainPage_login(HttpServletRequest request, Model model, HttpSession session) {
 		Boolean afterLogin = (Boolean) request.getAttribute("afterLogin");
 	    if (afterLogin == null || !afterLogin) {
 	        return "redirect:/"; // 직접 접근 차단
 	    }
+	    User user = (User) session.getAttribute("loginUser");
+	    model.addAttribute("loginUserName", user.getName());
 		return "mainpage/mainpage-login";
 	}
 

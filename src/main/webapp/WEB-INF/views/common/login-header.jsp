@@ -24,6 +24,7 @@
 			<p onClick="location.href='${pageContext.request.contextPath}/inquiryFAQ'">고객지원</p>
 
 			<div class="user-dropdown">
+				<span>${loginUserName}</span>
 				<i class="fa-solid fa-user-check mainpage-header-icon"
 					id="mainpage-header-icon"></i>
 				<ul class="dropdown-menu">
@@ -35,11 +36,10 @@
 				<!-- <i class="fa-solid fa-arrow-right-from-bracket"
 					id="mainpage-header-icon" onClick="location.href='/account/logout'"></i> -->
 					
-				<!-- 로그아웃 수정 후 -->
-				<i class="fa-solid fa-arrow-right-from-bracket"
-					id="mainpage-header-icon" ></i>		
 					
 			</div>
+			<i class="fa-solid fa-arrow-right-from-bracket"
+					id="mainpage-header-icon" ></i>	
 		</div>
 	</div>
 	
