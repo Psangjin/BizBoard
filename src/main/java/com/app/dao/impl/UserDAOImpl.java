@@ -1,6 +1,9 @@
 package com.app.dao.impl;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -58,5 +61,16 @@ public class UserDAOImpl implements UserDAO {
     public int updateUserProfile(User user) {
         return sqlSession.update("user_mapper.updateUserProfile", user);
     }
+    
+    
+ // 비번찾기
+    @Override
+    public User findByIdAndEmail(String id, String email) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("id", id);
+        param.put("email", email);
+        return sqlSession.selectOne("user_mapper.findByIdAndEmail", param);
+    }
+
 
 }

@@ -14,6 +14,8 @@ public interface UserService {
 	
 	boolean updateUserProfile(User user);
 
-	
+	// 아이디 이메일 확인 비번 변경
+	User findByIdAndEmail(String id, String email);
+
 }
 

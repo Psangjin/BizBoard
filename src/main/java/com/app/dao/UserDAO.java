@@ -30,6 +30,10 @@ public interface UserDAO {
 	 
 	 //마이프로필 수정
 	 int updateUserProfile(User user);
+	 
+	// 비번찾기 이메밀 확인
+	 User findByIdAndEmail(String id, String email);
+
    
 
 }

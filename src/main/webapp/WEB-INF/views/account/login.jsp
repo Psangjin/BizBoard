@@ -147,7 +147,11 @@
 		</a>
 
 
-
+		<!-- 비밀번호 찾기 -->
+		<div style="margin-top:10px; font-size: 11px;">
+		  비밀번호를 잃어버리셨나요? 
+		  <a href="${ctx}/account/forgot"> 비밀번호 찾기</a>
+		</div>
 
 	</div>
 

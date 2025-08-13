@@ -167,6 +167,7 @@ public class AccountController {
 			}
 		}
 	
+	
 	// 비밀번호 수정
 	@PostMapping("/mypage/change-password")
     public String changePassword(@RequestParam String currentPw,
@@ -265,14 +266,82 @@ public class AccountController {
 	        request.setAttribute("redirecter", "/");  // 홈으로 이동
 	        return "common/message";
 	    }
+	 
+	 
+	 
+	 
+
+	 
+	 
+//	 비밀번호 찾기 즉시변경
+	 
+
+	 @GetMapping("/forgot")
+	 public String forgotPasswordForm() {
+	     return "account/forgot";
+	 }
+
+	 @PostMapping("/forgot")
+	 public String forgotPasswordChange(
+	         @RequestParam String id,
+	         @RequestParam String email,
+	         @RequestParam String newPw,
+	         @RequestParam String newPwCheck,
+	         RedirectAttributes ra,
+	         HttpServletRequest request) {
+
+	     // 앞뒤 공백 제거
+	     id = id.trim();
+	     email = email.trim();
+
+	     // 1) 아이디+이메일 확인
+	     User user = userService.findByIdAndEmail(id, email);
+	     if (user == null) {
+	         ra.addFlashAttribute("forgotMsg", "아이디와 이메일이 일치하는 계정이 없습니다.");
+	         ra.addFlashAttribute("forgotOk", false);
+	         return "redirect:/account/forgot";
+	     }
+
+	     // 2) 비밀번호 검증
+	     if (newPw == null || newPw.isEmpty()) {
+	         ra.addFlashAttribute("forgotMsg", "새 비밀번호를 입력해 주세요.");
+	         ra.addFlashAttribute("forgotOk", false);
+	         return "redirect:/account/forgot";
+	     }
+	     if (!newPw.equals(newPwCheck)) {
+	         ra.addFlashAttribute("forgotMsg", "새 비밀번호가 서로 일치하지 않습니다.");
+	         ra.addFlashAttribute("forgotOk", false);
+	         return "redirect:/account/forgot";
+	     }
+			/*
+			 * // 길이/규칙 간단 검증 if (newPw.length() < 4) { // 필요시 숫자/특수문자 규칙 추가
+			 * ra.addFlashAttribute("forgotMsg", "비밀번호는 4자 이상으로 설정해 주세요.");
+			 * ra.addFlashAttribute("forgotOk", false); return "redirect:/account/forgot"; }
+			 */
+
+	     // 3) 비밀번호 변경 
+	     userService.updateUserPassword(id, newPw);
+
+	     // 4) 완료 안내
+	     request.setAttribute("message", "비밀번호가 변경되었습니다.<br>새 비밀번호로 로그인해 주세요.");
+	     request.setAttribute("redirecter", "/account/login");
+	     return "common/message";
+	 }
+	 
+	 
+	 
 	}
 
+
+
 	
+
 	
 	
 	
 
 	
+
 	
 	
 	

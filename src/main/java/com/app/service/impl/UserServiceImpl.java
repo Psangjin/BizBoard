@@ -92,6 +92,12 @@ public class UserServiceImpl implements UserService {
         return userDAO.updateUserProfile(user) > 0;
     }
 
+    
+ // 아이디 이메일 확인후 비번변경
+    @Override
+    public User findByIdAndEmail(String id, String email) {
+        return userDAO.findByIdAndEmail(id, email);
+    }
    
    
 }

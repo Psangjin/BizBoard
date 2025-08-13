@@ -90,6 +90,14 @@
 	    WHERE id = #{id}
 	</update>
 	
+	
+	<!-- 아이디,이메일 확인후 비번 변경 -->
+	<select id="findByIdAndEmail" parameterType="map" resultType="User">
+	  SELECT *
+	  FROM USERS
+	  WHERE ID = #{id}
+	    AND EMAIL = #{email}
+	</select>
 
 
 </mapper>
