@@ -53,6 +53,9 @@
 	    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
 	  </c:if>
 	</form>
+	<form id="deleteForm" method="post" action="/account/delete" style="display:none;">
+    <input type="hidden" name="currentPw" value="사용자가_입력한_비번">
+</form>
 	
 	<style>	 
 	  .swal-compact .swal2-title{font-size:18px}
@@ -62,10 +65,19 @@
 	
 	<script>
 	  document.addEventListener('DOMContentLoaded', function () {
+		  document.getElementById("btnOpenDeleteModal").addEventListener("click", function() {
+			    // 예: 비밀번호 입력 받기
+			    let pw = prompt("현재 비밀번호를 입력하세요:");
+			    if (pw && pw.trim() !== "") {
+			        document.querySelector("#deleteForm input[name='currentPw']").value = pw;
+			        document.getElementById("deleteForm").submit();
+			    }
+			});
+		  
 	    // 아이콘 스타일/클래스/ID 유지. 
 	    const logoutIcon = document.querySelector('.fa-arrow-right-from-bracket');
 	    if (!logoutIcon) return;
-	    
+	   
 
 	    logoutIcon.addEventListener('click', function (e) {
 	      e.preventDefault();
